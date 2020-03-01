@@ -2,7 +2,10 @@ package app;
 
 import javax.swing.JFrame;
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.image.BufferStrategy;
 
 public class Window extends Canvas implements Runnable {
     private static final long serialVersionUID = 1L;
@@ -39,8 +42,27 @@ public class Window extends Canvas implements Runnable {
 
     public void run() {
         while(running) {
-
+            update();
+            render();
         }
+    }
+
+    public void update() {
+
+    }
+
+    public void render() {
+        BufferStrategy buffer = getBufferStrategy();
+        if (buffer == null) {
+            createBufferStrategy(3);
+            return;
+        }
+        
+        Graphics display = buffer.getDrawGraphics();
+        display.setColor(Color.BLACK);
+        display.fillRect(0, 0, getWidth(), getHeight());
+        display.dispose();
+        buffer.show();
     }
 
 

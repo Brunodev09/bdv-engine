@@ -10,5 +10,7 @@ public class Loader {
         win.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         win.frame.setLocationRelativeTo(null);
         win.frame.setVisible(true);
+
+        win.start();
     }
 }
