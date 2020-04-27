@@ -1,4 +1,7 @@
 .classpath
 .project
 .settings
+.idea
 bin
+bdv-engine-java.iml
+out
