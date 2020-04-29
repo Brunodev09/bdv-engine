@@ -1,6 +1,6 @@
 package app.Math;
 
-public class Point<T extends Number> {
+public class Point<T> {
     public T x;
     public T y;
 
