@@ -12,6 +12,8 @@ import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+// @TODO - Make a logger manager
+
 public class Bdv {
     private final BdvRuntime bdvWin;
     private String title;
