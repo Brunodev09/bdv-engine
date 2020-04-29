@@ -10,8 +10,7 @@ public class Vector2D {
         Components = new Point<Float>(components.x, components.y);
     }
 
-    public void SumOrSubtract(Point<Float> components)
-    {
+    public void SumOrSubtract(Point<Float> components) {
         Components.x += components.x;
         Components.y += components.y;
     }
