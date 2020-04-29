@@ -57,7 +57,7 @@ public class Bdv {
             // Could've done: clazz.getConstructor(String.class, Integer.class);
             // if I didn't have @NoArgsConstructor and instead had a constructor(String s, int i);
             Object instance = constructor.newInstance();
-        } catch (ClassNotFoundException | FileNotFoundException e) {
+        } catch (ClassNotFoundException | FileNotFoundException | IndexOutOfBoundsException e) {
             throw new Exception(e);
         }
 
