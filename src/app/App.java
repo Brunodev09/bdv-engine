@@ -6,7 +6,9 @@ public class App {
             Bdv loader = new Bdv("bdv-engine-test", new int[] { 800, 600 }, 1, true);
             loader.exec("GRID_TEMPLATE");
         } catch (Exception e) {
-            System.out.println(e.toString());
+            System.out.println("Error class -> " + e.toString());
+            System.out.println("Stack:");
+            e.printStackTrace();
         }
     }
 }

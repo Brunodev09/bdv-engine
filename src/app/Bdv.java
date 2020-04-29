@@ -7,6 +7,8 @@ import app.Templates.SHAPES_TEMPLATE;
 
 import javax.swing.JFrame;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.lang.reflect.Constructor;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -38,9 +40,25 @@ public class Bdv {
 
     public void exec(String script) throws Exception {
 //        @TODO - Implement folder reading for dynamic script creation
-//        Path currentDir = Paths.get(System.getProperty("user.dir"));
-//        Path currentPath = Paths.get(System.getProperty("user.dir"));
-//        Path filePath = Paths.get(currentPath.toString(), "data", "foo.txt");
+        try {
+            Path currentDir = Paths.get(System.getProperty("user.dir"));
+            Path filePath = Paths.get(currentDir.toString(), "src", "app", "Templates");
+            File temp = new File(filePath.toString());
+            String[] dataInDir = temp.list();
+            String templateToLoad = "TemplateNotFound";
+            for (String file : dataInDir) {
+                if (file.contains(script)) templateToLoad = file.split(".java")[0];
+            }
+            if (templateToLoad.equals("TemplateNotFound")) throw new Exception("Template " + script + " not found in Templates folder.");
+            Class<?> classReflection = Class.forName("app.Templates." + templateToLoad);
+            Constructor<?> constructor = classReflection.getConstructor();
+            // Could've done: clazz.getConstructor(String.class, Integer.class);
+            // if I didn't have @NoArgsConstructor and instead had a constructor(String s, int i);
+            Object instance = constructor.newInstance();
+        } catch (ClassNotFoundException | FileNotFoundException e) {
+            throw new Exception(e);
+        }
+
         switch (script) {
             case "GRID_TEMPLATE":
                 GRID_TEMPLATE grid = new GRID_TEMPLATE();
