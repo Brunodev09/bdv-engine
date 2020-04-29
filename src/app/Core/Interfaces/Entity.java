@@ -149,6 +149,14 @@ public class Entity {
         this.speed = speed;
     }
 
+    public void setSpeedX(float sx) {
+        this.speed.x = sx;
+    }
+
+    public void setSpeedY(float sy) {
+        this.speed.y = sy;
+    }
+
     public void setTexture(Texture texture) {
         this.texture = texture;
     }

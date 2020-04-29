@@ -86,9 +86,10 @@ public class BdvRuntime extends Canvas implements Runnable {
     }
 
     public void run() {
+
         long timer = System.currentTimeMillis();
         long lastTime = System.nanoTime();
-        final double ns = 1000000000.0 / 60.0;
+        final double ns = 1000000000.0 / this.fps;
         double delta = 0;
         requestFocus();
 
@@ -98,13 +99,13 @@ public class BdvRuntime extends Canvas implements Runnable {
             lastTime = now;
             while (delta >= 1) {
                 update();
+                render();
                 delta--;
             }
-            render();
 
             if (System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
-                frame.setTitle(title + " | " + "By BrunoDev");
+                frame.setTitle(title + " | " + this.fps + " FPS | " + "By BrunoDev");
             }
         }
         stop();

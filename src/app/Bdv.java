@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 // @TODO - Make a logger manager
+// @TODO - Make dimensions loadable from scripts
 
 public class Bdv {
     private final BdvRuntime bdvWin;
