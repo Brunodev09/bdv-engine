@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 
 // @TODO - Make a logger manager
 // @TODO - Make dimensions loadable from scripts
+// @TODO - Implement texture reading and spritesheet abstraction
 
 public class Bdv {
     private final BdvRuntime bdvWin;
@@ -58,21 +59,10 @@ public class Bdv {
             // Could've done: clazz.getConstructor(String.class, Integer.class);
             // if I didn't have @NoArgsConstructor and instead had a constructor(String s, int i);
             Object instance = constructor.newInstance();
+            Script instanceConversion = (Script) instance;
+            this.bdvWin.setTemplate(instanceConversion);
         } catch (ClassNotFoundException | FileNotFoundException | IndexOutOfBoundsException e) {
             throw new Exception(e);
-        }
-
-        switch (script) {
-            case "GRID_TEMPLATE":
-                GRID_TEMPLATE grid = new GRID_TEMPLATE();
-                this.bdvWin.setTemplate(grid);
-                break;
-            case "SHAPES_TEMPLATE":
-                SHAPES_TEMPLATE shapes = new SHAPES_TEMPLATE();
-                this.bdvWin.setTemplate(shapes);
-                break;
-            default:
-                break;
         }
     }
 
