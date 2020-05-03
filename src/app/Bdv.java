@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 
 // @TODO - Make a logger manager
 // @TODO - Make dimensions loadable from scripts
+// @TODO - Resize instance after packed frame. Don't even know if its possible yet
 // @TODO - Implement texture reading and spritesheet abstraction
 
 public class Bdv {
@@ -43,7 +44,6 @@ public class Bdv {
     }
 
     public void exec(String script) throws Exception {
-//        @TODO - Implement folder reading for dynamic script creation
         try {
             Path currentDir = Paths.get(System.getProperty("user.dir"));
             Path filePath = Paths.get(currentDir.toString(), "src", "app", "Templates");
@@ -73,7 +73,6 @@ public class Bdv {
     boolean setDimension(int[] dimension) throws Exception {
         if (dimension.length != 2) throw new Exception("Dimension must be an array with 2 integers.");
         this.dimension = new Dimension(dimension[0], dimension[1]);
-//        @TODO - Resize instance after packed frame. Don't even know if its possible yet
         return true;
     }
 
