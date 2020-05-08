@@ -14,6 +14,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.util.Arrays;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+
 public class BdvRuntime extends Canvas implements Runnable {
     private static final long serialVersionUID = 1L;
 
@@ -33,6 +37,8 @@ public class BdvRuntime extends Canvas implements Runnable {
     private RenderQueue queue;
 
     private int fps = 60;
+
+    private ExecutorService exec;
 
     public BdvRuntime(int width, int height, int scale, String title) {
         BdvRuntime.width = width;
@@ -70,18 +76,28 @@ public class BdvRuntime extends Canvas implements Runnable {
     }
 
 
-    public synchronized void start() {
+    public void start() {
         running = true;
-        thread = new Thread(this, "bdv-engine 0.0.1");
-        thread.start();
+        this.exec = Executors.newSingleThreadExecutor();
+        this.exec.submit(this);
     }
 
-    public synchronized void stop() {
+    public void stop() {
         running = false;
         try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Attempting to shutdown thread.");
+            this.exec.shutdown();
+            this.exec.awaitTermination(5, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e) {
+            System.err.println("Thread interrupted.");
+        }
+        finally {
+            if (!this.exec.isTerminated()) {
+                System.err.println("Cancel non finished tasks in thread.");
+            }
+            this.exec.shutdownNow();
+            System.out.println("Thread shutdown.");
         }
     }
 
@@ -145,7 +161,6 @@ public class BdvRuntime extends Canvas implements Runnable {
                         display.fillRect(renderable.getPosition().x, renderable.getPosition().y,
                                 renderable.getDimension().width, renderable.getDimension().height);
                         break;
-
                 }
             }
         }
