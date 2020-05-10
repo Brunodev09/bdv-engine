@@ -27,14 +27,14 @@ public class BdvRuntime extends Canvas implements Runnable {
     public static String title;
     public int background = 0x892D6F;
 
-    private Thread thread;
     public JFrame frame;
     private boolean running = false;
 
-    private BufferedImage image;
-    private int[] pixels;
+    private final BufferedImage image;
+    private final int[] pixels;
+    private final RenderQueue queue;
+
     private Script script;
-    private RenderQueue queue;
 
     private int fps = 60;
 
@@ -68,6 +68,7 @@ public class BdvRuntime extends Canvas implements Runnable {
 
     public void setTemplate(Script script) {
         this.script = script;
+        this.resizeFrame(script.resolution.width, script.resolution.height);
         this.setupRenderQueue();
     }
 
@@ -143,7 +144,6 @@ public class BdvRuntime extends Canvas implements Runnable {
         Graphics display = buffer.getDrawGraphics();
         display.drawImage(image, 0, 0, getWidth(), getHeight(), null);
 
-
         if (this.queue.getRenderQueue().size() > 0) {
             for (Entity renderable : this.queue.getRenderQueue()) {
                 switch (renderable.getMdl()) {
@@ -179,5 +179,10 @@ public class BdvRuntime extends Canvas implements Runnable {
         for (Entity obj : this.script.entities) {
             this.queue.Enqueue(obj);
         }
+    }
+
+    public void resizeFrame(int w, int h) {
+        this.frame.setSize(new Dimension(w, h));
+        this.frame.pack();
     }
 }
