@@ -10,8 +10,8 @@ public class TCPClient {
             System.err.println("Pass the server IP as the sole command line argument");
             return;
         }
-        var socket = new Socket(ip, port);
-        var in = new Scanner(socket.getInputStream());
+        Socket socket = new Socket(ip, port);
+        Scanner in = new Scanner(socket.getInputStream());
         System.out.println("Server response: " + in.nextLine());
     }
 }

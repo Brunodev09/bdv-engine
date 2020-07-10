@@ -5,14 +5,15 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class TCPServer {
 
     public static void listen(int port) throws Exception {
-        try (var listener = new ServerSocket(port)) {
+        try (ServerSocket listener = new ServerSocket(port)) {
             System.out.println("The server is running at port " + port);
-            var pool = Executors.newFixedThreadPool(20);
+            ExecutorService pool = Executors.newFixedThreadPool(20);
             while (true) {
                 pool.execute(new SocketThreadInstance(listener.accept()));
             }
@@ -30,8 +31,8 @@ public class TCPServer {
         public void run() {
             System.out.println("Connected: " + socket);
             try {
-                var in = new Scanner(socket.getInputStream());
-                var out = new PrintWriter(socket.getOutputStream(), true);
+                Scanner in = new Scanner(socket.getInputStream());
+                PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
                 while (in.hasNextLine()) {
                     out.println(in.nextLine().toUpperCase());
                 }

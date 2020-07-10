@@ -22,7 +22,7 @@ public class GRID_TEMPLATE extends Script {
     public void init(List<Entity> entities, Dimension resolution, RGBA background) {
         int rows = 10;
         int cols = 10;
-        var tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
+        Dimension tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 this.entities.add(new Entity(new Point<>(tileSize.width * i + i, tileSize.height * j + j),

@@ -5,10 +5,8 @@ import app.Core.Interfaces.Entity;
 import app.Video.RenderQueue;
 
 import javax.swing.JFrame;
-import java.awt.Canvas;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+
+import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -109,6 +107,7 @@ public class BdvRuntime extends Canvas implements Runnable {
         final double ns = 1000000000.0 / this.fps;
         double delta = 0;
         requestFocus();
+        int counter = 0;
 
         while (running) {
             long now = System.nanoTime();
@@ -118,12 +117,15 @@ public class BdvRuntime extends Canvas implements Runnable {
                 update();
                 render();
                 delta--;
+                counter++;
             }
 
             if (System.currentTimeMillis() - timer > 1000) {
                 timer += 1000;
-                frame.setTitle(title + " | " + this.fps + " FPS | " + "By BrunoDev");
+                frame.setTitle(title + " | " + counter + " FPS | " + "By BrunoDev");
+                counter = 0;
             }
+
         }
         stop();
     }
@@ -160,6 +162,20 @@ public class BdvRuntime extends Canvas implements Runnable {
                         display.setColor(new Color(color[0], color[1], color[2], color[3]));
                         display.fillRect(renderable.getPosition().x, renderable.getPosition().y,
                                 renderable.getDimension().width, renderable.getDimension().height);
+                        break;
+                    case POINT:
+                        int[] color2 = renderable.getColor().getColorCodes();
+                        display.setColor(new Color(color2[0], color2[1], color2[2], color2[3]));
+
+                        Graphics2D g2d = (Graphics2D) display;
+                        int width = 20;
+                        g2d.setStroke(new BasicStroke(width));
+
+                        g2d.drawLine(
+                                renderable.getPosition().x,
+                                renderable.getPosition().y,
+                                renderable.getPosition().x,
+                                renderable.getPosition().y);
                         break;
                 }
             }

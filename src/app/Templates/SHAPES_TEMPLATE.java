@@ -29,7 +29,7 @@ public class SHAPES_TEMPLATE extends Script {
     @Override
     public void update() {
         for (Entity entity : this.entities) {
-            entity.setPosition(new Point<>(entity.getPosition().x + ((Number) entity.getSpeed().x).intValue(), entity.getPosition().y + ((Number) entity.getSpeed().y).intValue()));
+            entity.setPosition(new Point<Integer>(entity.getPosition().x + ((Number) entity.getSpeed().x).intValue(), entity.getPosition().y + ((Number) entity.getSpeed().y).intValue()));
 
             if (entity.getPosition().x > this.resolution.width || entity.getPosition().x < 0) {
                 entity.setSpeedX(entity.getSpeed().x * -1.0f);

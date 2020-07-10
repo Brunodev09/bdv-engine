@@ -10,7 +10,7 @@ public class Entity {
     public static int _c = 0;
     private int id;
     private Model mdl;
-    private Point<Integer> position;
+    private Point position;
     private Point<Float> speed;
     private Dimension dimension;
     private RGBA color;
@@ -30,6 +30,15 @@ public class Entity {
     public Entity(Point<Integer> position, Point<Float> speed, Dimension dimension, RGBA color) {
         this.id = ++_c;
         this.mdl = Model.RECTANGLE;
+        this.position = position;
+        this.speed = speed;
+        this.dimension = dimension;
+        this.color = color;
+    }
+
+    public Entity(Point<Integer> position, Point<Float> speed, Dimension dimension, RGBA color, Model primitive) {
+        this.id = ++_c;
+        this.mdl = primitive;
         this.position = position;
         this.speed = speed;
         this.dimension = dimension;
