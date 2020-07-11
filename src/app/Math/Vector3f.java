@@ -1,12 +1,14 @@
 package app.Math;
 
-public class Vector2f {
+public class Vector3f {
     private float x;
     private float y;
+    private float z = -1;
 
-    public Vector2f(float x, float y) {
+    public Vector3f(float x, float y, float z) {
         this.x = x;
         this.y = y;
+        this.z = z;
     }
 
     public float getX() {
@@ -25,5 +27,11 @@ public class Vector2f {
         this.y = y;
     }
 
+    public float getZ() {
+        return z;
+    }
 
+    public void setZ(float z) {
+        this.z = z;
+    }
 }
