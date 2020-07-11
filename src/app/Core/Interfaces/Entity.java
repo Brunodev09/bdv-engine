@@ -10,7 +10,9 @@ public class Entity {
     public static int _c = 0;
     private int id;
     private Model mdl;
-    private Point position;
+    private Point<Integer> position;
+    private Point<Integer> previousPosition;
+    private Point<Integer> initialPosition;
     private Point<Float> speed;
     private Dimension dimension;
     private RGBA color;
@@ -31,6 +33,7 @@ public class Entity {
         this.id = ++_c;
         this.mdl = Model.RECTANGLE;
         this.position = position;
+        this.initialPosition = new Point<>(this.position.x, this.position.y);
         this.speed = speed;
         this.dimension = dimension;
         this.color = color;
@@ -40,6 +43,7 @@ public class Entity {
         this.id = ++_c;
         this.mdl = primitive;
         this.position = position;
+        this.initialPosition = new Point<>(this.position.x, this.position.y);
         this.speed = speed;
         this.dimension = dimension;
         this.color = color;
@@ -49,6 +53,7 @@ public class Entity {
         this.id = ++_c;
         this.mdl = Model.TEXTURE;
         this.position = position;
+        this.initialPosition = new Point<>(this.position.x, this.position.y);
         this.speed = speed;
         this.dimension = dimension;
         this.texture = texture;
@@ -56,6 +61,14 @@ public class Entity {
 
     public Dimension getDimension() {
         return dimension;
+    }
+
+    public Point<Integer> getPreviousPosition() {
+        return previousPosition;
+    }
+
+    public Point<Integer> getInitialPosition() {
+        return initialPosition;
     }
 
     public boolean getFollowing() {
@@ -147,6 +160,7 @@ public class Entity {
     }
 
     public void setPosition(Point<Integer> position) {
+        this.previousPosition = new Point<>(this.position.x, this.position.y);
         this.position = position;
     }
 

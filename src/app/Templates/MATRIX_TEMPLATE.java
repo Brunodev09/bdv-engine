@@ -12,37 +12,28 @@ import java.util.List;
 
 public class MATRIX_TEMPLATE extends Script {
 
-    private int counter = 0;
     private double angle = 0;
-    private int[][] pointsInitialPositions;
 
     public MATRIX_TEMPLATE() {
         this.entities = new ArrayList<Entity>();
         this.resolution = new Dimension(800, 600);
         this.background = new RGBA(255, 20, 147, 255);
-
-        pointsInitialPositions = new int[][] {
-                { resolution.width / 2, resolution.width / 2 },
-                { (resolution.width / 2) + 100, resolution.width / 2 },
-                { resolution.width / 2, (resolution.width / 2) + 100 },
-                { (resolution.width / 2) + 100, (resolution.width / 2) + 100 },
-        };
         this.init(entities, resolution, background);
     }
 
     @Override
     public void init(List<Entity> entities, Dimension resolution, RGBA background) {
-        this.entities.add(new Entity(new Point<>(0, 0), new Point<>(5.0f, 5.0f),
+        this.entities.add(new Entity(new Point<>(400, 400), new Point<>(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(255, 0, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Point<>(1, 0), new Point<>(5.0f, 5.0f),
-                new Dimension(50, 50), new RGBA(255, 0, 0, 255), Model.POINT));
+        this.entities.add(new Entity(new Point<>(200, 400), new Point<>(5.0f, 5.0f),
+                new Dimension(50, 50), new RGBA(0, 255, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Point<>(0, 1), new Point<>(5.0f, 5.0f),
-                new Dimension(50, 50), new RGBA(255, 0, 0, 255), Model.POINT));
+        this.entities.add(new Entity(new Point<>(400, 200), new Point<>(5.0f, 5.0f),
+                new Dimension(50, 50), new RGBA(0, 0, 255, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Point<>(1, 1), new Point<>(5.0f, 5.0f),
-                new Dimension(50, 50), new RGBA(255, 0, 0, 255), Model.POINT));
+        this.entities.add(new Entity(new Point<>(200, 200), new Point<>(5.0f, 5.0f),
+                new Dimension(50, 50), new RGBA(255, 255, 255, 255), Model.POINT));
 
     }
 
@@ -50,51 +41,52 @@ public class MATRIX_TEMPLATE extends Script {
     public void update() {
 
         angle += 0.01;
-        int ptr = 0;
-        int ptr2 = -1;
         for (Entity point : entities) {
             double[][] projectionMatrix = {
-                    { 1, 0, 0 },
-                    { 0, 1, 0 },
-                    { 0, 0, 1 }
+                    {1, 0, 0},
+                    {0, 1, 0},
+                    {0, 0, 1}
             };
 
-            double[][] positionVector = new double[][] {
-                    { (double) pointsInitialPositions[ptr][0] },
-                    { (double) pointsInitialPositions[ptr2 + 1][0] },
-                    { 0 }
+            double[][] positionVector = new double[][]{
+                    {(double) point.getInitialPosition().x},
+                    {(double) point.getInitialPosition().y},
+                    {1}
             };
+
+//        newX = centerX + (point2x-centerX)*Math.cos(x) - (point2y-centerY)*Math.sin(x);
+//        newY = centerY + (point2x-centerX)*Math.sin(x) + (point2y-centerY)*Math.cos(x);
 
             double[][] rotation = getRotationMatrix(angle);
-            double[][] translation = getTranslationMatrix(resolution.width / 2, resolution.height / 2);
-            double[][] newPositionVector = matrixmult(projectionMatrix, positionVector);
-            double[][] rotatedPositionVector = matrixmult(rotation, newPositionVector);
-//            double[][] translatedVector = matrixmult(translation, rotatedPositionVector);
+            double[][] translation = getTranslationMatrix(-resolution.width / 2, -resolution.height / 2);
+            double[][] translation2 = getTranslationMatrix(resolution.width / 2, resolution.height / 2);
 
+            double[][] newPositionVector = matrixmult(projectionMatrix, positionVector);
+            double[][] translatedVector1 = matrixmult(translation, newPositionVector);
+            double[][] rotatedPositionVector = matrixmult(rotation, translatedVector1);
+            double[][] translatedVector2 = matrixmult(translation2, rotatedPositionVector);
 
             point.setPosition(
                     new Point<Integer>(
-                            (int) rotatedPositionVector[0][0],
-                            (int) rotatedPositionVector[1][0]));
-            ptr++;
-            ptr2++;
+                            (int) translatedVector2[0][0],
+                            (int) translatedVector2[1][0]));
         }
 
     }
 
     private double[][] getRotationMatrix(double angle) {
-        return new double[][] {
-                { Math.cos(angle), -Math.sin(angle), 0 },
-                { Math.sin(angle), Math.cos(angle), 0 },
-                { 0, 0, 1 }
+        return new double[][]{
+                {Math.cos(angle), Math.sin(angle), 0},
+                {-Math.sin(angle), Math.cos(angle), 0},
+                {0, 0, 1}
         };
     }
 
     private double[][] getTranslationMatrix(int tx, int ty) {
-        return new double[][] {
-                { 1, 0, 0 },
-                { 0, 1, 0 },
-                { tx, ty, 1 }
+        return new double[][]{
+                {1, 0, tx},
+                {0, 1, ty},
+                {0, 0, 1}
         };
     }
 
