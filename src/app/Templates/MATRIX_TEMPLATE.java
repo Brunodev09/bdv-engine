@@ -4,8 +4,8 @@ import app.API.Script;
 import app.Core.Interfaces.Entity;
 import app.Core.Interfaces.Model;
 import app.Math.Dimension;
-import app.Math.Point;
 import app.Math.RGBA;
+import app.Math.Vector2f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +23,16 @@ public class MATRIX_TEMPLATE extends Script {
 
     @Override
     public void init(List<Entity> entities, Dimension resolution, RGBA background) {
-        this.entities.add(new Entity(new Point<>(400, 400), new Point<>(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector2f(400, 400), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(255, 0, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Point<>(200, 400), new Point<>(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector2f(200, 400), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(0, 255, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Point<>(400, 200), new Point<>(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector2f(400, 200), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(0, 0, 255, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Point<>(200, 200), new Point<>(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector2f(200, 200), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(255, 255, 255, 255), Model.POINT));
 
     }
@@ -67,7 +67,7 @@ public class MATRIX_TEMPLATE extends Script {
             double[][] translatedVector2 = matrixmult(translation2, rotatedPositionVector);
 
             point.setPosition(
-                    new Point<Integer>(
+                    new Vector2f(
                             (int) translatedVector2[0][0],
                             (int) translatedVector2[1][0]));
         }

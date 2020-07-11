@@ -1,8 +1,7 @@
 package app.Core.Interfaces;
 import app.Math.Dimension;
-import app.Math.Point;
 import app.Math.RGBA;
-import app.Math.Vector2D;
+import app.Math.Vector2f;
 import app.Video.Texture;
 
 
@@ -10,15 +9,14 @@ public class Entity {
     public static int _c = 0;
     private int id;
     private Model mdl;
-    private Point<Integer> position;
-    private Point<Integer> previousPosition;
-    private Point<Integer> initialPosition;
-    private Point<Float> speed;
+    private Vector2f position;
+    private Vector2f previousPosition;
+    private Vector2f initialPosition;
+    private Vector2f speed;
+    private Vector2f middle;
     private Dimension dimension;
     private RGBA color;
-    private Point<Number> middle;
     private boolean player;
-    private Vector2D vector;
     private Entity referenced;
     private boolean following;
     private boolean lockMovement;
@@ -29,31 +27,31 @@ public class Entity {
         this.id = ++_c;
     }
 
-    public Entity(Point<Integer> position, Point<Float> speed, Dimension dimension, RGBA color) {
+    public Entity(Vector2f position, Vector2f speed, Dimension dimension, RGBA color) {
         this.id = ++_c;
         this.mdl = Model.RECTANGLE;
         this.position = position;
-        this.initialPosition = new Point<>(this.position.x, this.position.y);
+        this.initialPosition = new Vector2f(this.position.x, this.position.y);
         this.speed = speed;
         this.dimension = dimension;
         this.color = color;
     }
 
-    public Entity(Point<Integer> position, Point<Float> speed, Dimension dimension, RGBA color, Model primitive) {
+    public Entity(Vector2f position, Vector2f speed, Dimension dimension, RGBA color, Model primitive) {
         this.id = ++_c;
         this.mdl = primitive;
         this.position = position;
-        this.initialPosition = new Point<>(this.position.x, this.position.y);
+        this.initialPosition = new Vector2f(this.position.x, this.position.y);
         this.speed = speed;
         this.dimension = dimension;
         this.color = color;
     }
 
-    public Entity(Point<Integer> position, Point<Float> speed, Dimension dimension, Texture texture) {
+    public Entity(Vector2f position, Vector2f speed, Dimension dimension, Texture texture) {
         this.id = ++_c;
         this.mdl = Model.TEXTURE;
         this.position = position;
-        this.initialPosition = new Point<>(this.position.x, this.position.y);
+        this.initialPosition = new Vector2f(this.position.x, this.position.y);
         this.speed = speed;
         this.dimension = dimension;
         this.texture = texture;
@@ -63,11 +61,11 @@ public class Entity {
         return dimension;
     }
 
-    public Point<Integer> getPreviousPosition() {
+    public Vector2f getPreviousPosition() {
         return previousPosition;
     }
 
-    public Point<Integer> getInitialPosition() {
+    public Vector2f getInitialPosition() {
         return initialPosition;
     }
 
@@ -83,10 +81,6 @@ public class Entity {
         return player;
     }
 
-    public Vector2D getVector() {
-        return vector;
-    }
-
     public Entity getReferenced() {
         return referenced;
     }
@@ -99,15 +93,11 @@ public class Entity {
         return mdl;
     }
 
-    public Point<Number> getMiddle() {
-        return middle;
-    }
-
-    public Point<Integer> getPosition() {
+    public Vector2f getPosition() {
         return position;
     }
 
-    public Point<Float> getSpeed() {
+    public Vector2f getSpeed() {
         return speed;
     }
 
@@ -151,16 +141,12 @@ public class Entity {
         this.message = message;
     }
 
-    public void setMiddle(Point<Number> middle) {
-        this.middle = middle;
-    }
-
     public void setPlayer(boolean player) {
         this.player = player;
     }
 
-    public void setPosition(Point<Integer> position) {
-        this.previousPosition = new Point<>(this.position.x, this.position.y);
+    public void setPosition(Vector2f position) {
+        this.previousPosition = new Vector2f(this.position.x, this.position.y);
         this.position = position;
     }
 
@@ -168,7 +154,7 @@ public class Entity {
         this.referenced = referenced;
     }
 
-    public void setSpeed(Point<Float> speed) {
+    public void setSpeed(Vector2f speed) {
         this.speed = speed;
     }
 
@@ -184,7 +170,4 @@ public class Entity {
         this.texture = texture;
     }
 
-    public void setVector(Vector2D vector) {
-        this.vector = vector;
-    }
 }

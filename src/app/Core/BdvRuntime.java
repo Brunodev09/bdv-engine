@@ -2,15 +2,13 @@ package app.Core;
 
 import app.API.Script;
 import app.Core.Interfaces.Entity;
+import app.Video.Render;
 import app.Video.RenderQueue;
 
 import javax.swing.JFrame;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.util.Arrays;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,9 +26,9 @@ public class BdvRuntime extends Canvas implements Runnable {
     public JFrame frame;
     private boolean running = false;
 
-    private final BufferedImage image;
-    private final int[] pixels;
+
     private final RenderQueue queue;
+    private final Render render;
 
     private Script script;
 
@@ -44,10 +42,10 @@ public class BdvRuntime extends Canvas implements Runnable {
         BdvRuntime.scale = scale;
         BdvRuntime.title = title;
         Dimension size = new Dimension(width * scale, height * scale);
-        image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
+
         setPreferredSize(size);
         this.queue = new RenderQueue();
+        this.render = new Render();
 
         load();
     }
@@ -68,6 +66,10 @@ public class BdvRuntime extends Canvas implements Runnable {
         this.script = script;
         this.resizeFrame(script.resolution.width, script.resolution.height);
         this.setupRenderQueue();
+        render.setBackground(this.background);
+        render.replaceQueue(this.queue);
+        render.setDimensions(script.resolution.width, script.resolution.height);
+        render.init();
     }
 
     private void load() {
@@ -141,48 +143,7 @@ public class BdvRuntime extends Canvas implements Runnable {
             createBufferStrategy(3);
             return;
         }
-
-        Arrays.fill(pixels, this.background);
-        Graphics display = buffer.getDrawGraphics();
-        display.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-
-        if (this.queue.getRenderQueue().size() > 0) {
-            for (Entity renderable : this.queue.getRenderQueue()) {
-                switch (renderable.getMdl()) {
-                    case TEXTURE:
-                        break;
-                    case SPRITESHEET:
-                        break;
-                    case ARC:
-                        break;
-                    case TEXT:
-                        break;
-                    case RECTANGLE:
-                        int[] color = renderable.getColor().getColorCodes();
-                        display.setColor(new Color(color[0], color[1], color[2], color[3]));
-                        display.fillRect(renderable.getPosition().x, renderable.getPosition().y,
-                                renderable.getDimension().width, renderable.getDimension().height);
-                        break;
-                    case POINT:
-                        int[] color2 = renderable.getColor().getColorCodes();
-                        display.setColor(new Color(color2[0], color2[1], color2[2], color2[3]));
-
-                        Graphics2D g2d = (Graphics2D) display;
-                        int width = 20;
-                        g2d.setStroke(new BasicStroke(width));
-
-                        g2d.drawLine(
-                                renderable.getPosition().x,
-                                renderable.getPosition().y,
-                                renderable.getPosition().x,
-                                renderable.getPosition().y);
-                        break;
-                }
-            }
-        }
-
-        display.dispose();
-        buffer.show();
+        this.render.render(buffer);
     }
 
 
