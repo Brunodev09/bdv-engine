@@ -24,29 +24,29 @@ public class MATRIX_TEMPLATE extends Script {
 
     @Override
     public void init(List<Entity> entities, Dimension resolution, RGBA background) {
-        this.entities.add(new Entity(new Vector3f(400, 400), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(400, 400, -1), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(255, 0, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Vector3f(200, 400), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(200, 400, -1), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(0, 255, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Vector3f(400, 200), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(400, 200, -1), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(0, 0, 255, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Vector3f(200, 200), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(200, 200, -1), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(255, 255, 255, 255), Model.POINT));
 
 
-        this.entities.add(new Entity(new Vector3f(400, 400, -50), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(400, 400, -2), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(255, 0, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Vector3f(200, 400, -50), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(200, 400, -2), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(0, 255, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Vector3f(400, 200, -50), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(400, 200, -2), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(0, 0, 255, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Vector3f(200, 200, -50), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(200, 200, -2), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(255, 255, 255, 255), Model.POINT));
 
     }
@@ -56,11 +56,6 @@ public class MATRIX_TEMPLATE extends Script {
 
         angle += 0.01;
         for (Entity point : entities) {
-            double[][] projectionMatrix = {
-                    {1, 0, 0},
-                    {0, 1, 0},
-                    {0, 0, 1}
-            };
 
             double[][] positionVector = new double[][]{
                     {(double) point.getInitialPosition().x},
@@ -71,8 +66,22 @@ public class MATRIX_TEMPLATE extends Script {
 //        newX = centerX + (point2x-centerX)*Math.cos(x) - (point2y-centerY)*Math.sin(x);
 //        newY = centerY + (point2x-centerX)*Math.sin(x) + (point2y-centerY)*Math.cos(x);
 
-            int distance = 2;
-            int z = 1 / (int) (distance - translatedVector2[2][0]);
+            double[][] rotation = getRotationMatrix(angle);
+            double[][] translation = getTranslationMatrix(
+                    -resolution.width / 2,
+                    -resolution.height / 2,
+                    0);
+            double[][] translation2 = getTranslationMatrix(
+                    resolution.width / 2,
+                    resolution.height / 2,
+                    0);
+
+            double[][] translatedVector1 = matrixmult(translation, positionVector);
+            double[][] rotatedPositionVector = matrixmult(rotation, translatedVector1);
+            double[][] translatedVector2 = matrixmult(translation2, rotatedPositionVector);
+
+            double distance = 2;
+            double z = 1 / (distance - translatedVector2[2][0]);
 
             double[][] projectionMatrix = {
                     {z, 0, 0},
@@ -80,20 +89,10 @@ public class MATRIX_TEMPLATE extends Script {
                     {0, 0, z}
             };
 
-            double[][] rotation = getRotationMatrix(angle);
-            double[][] translation = getTranslationMatrix(-resolution.width / 2, -resolution.height / 2);
-            double[][] translation2 = getTranslationMatrix(resolution.width / 2, resolution.height / 2);
+            double[][] newPositionVector = matrixmult(projectionMatrix, translatedVector2);
 
-            double[][] newPositionVector = matrixmult(projectionMatrix, positionVector);
-            double[][] translatedVector1 = matrixmult(translation, newPositionVector);
-            double[][] rotatedPositionVector = matrixmult(rotation, translatedVector1);
-            double[][] translatedVector2 = matrixmult(translation2, rotatedPositionVector);
-
-
-
-            int x = (int) translatedVector2[0][0] / z;
-            int y = (int) translatedVector2[1][0] / z;
-
+            int x = (int) (newPositionVector[0][0]);
+            int y = (int) (newPositionVector[1][0]);
 
             point.setPosition(new Vector3f(x, y));
         }
@@ -108,11 +107,11 @@ public class MATRIX_TEMPLATE extends Script {
         };
     }
 
-    private double[][] getTranslationMatrix(int tx, int ty) {
+    private double[][] getTranslationMatrix(int tx, int ty, int tz) {
         return new double[][]{
                 {1, 0, tx},
                 {0, 1, ty},
-                {0, 0, 1}
+                {0, 0, tz}
         };
     }
 

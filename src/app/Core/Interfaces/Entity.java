@@ -31,8 +31,8 @@ public class Entity {
     public Entity(Vector3f position, Vector2f speed, Dimension dimension, RGBA color) {
         this.id = ++_c;
         this.mdl = Model.RECTANGLE;
-        this.position = position;
-        this.initialPosition = new Vector3f(this.position.x, this.position.y, this.position.z);
+        this.position = new Vector3f(position.x, position.y, position.z);
+        this.initialPosition = new Vector3f(position.x, position.y, position.z);
         this.speed = speed;
         this.dimension = dimension;
         this.color = color;
@@ -41,8 +41,8 @@ public class Entity {
     public Entity(Vector3f position, Vector2f speed, Dimension dimension, RGBA color, Model primitive) {
         this.id = ++_c;
         this.mdl = primitive;
-        this.position = position;
-        this.initialPosition = new Vector3f(this.position.x, this.position.y, this.position.z);
+        this.position = new Vector3f(position.x, position.y, position.z);
+        this.initialPosition = new Vector3f(position.x, position.y, position.z);
         this.speed = speed;
         this.dimension = dimension;
         this.color = color;
@@ -51,8 +51,8 @@ public class Entity {
     public Entity(Vector3f position, Vector2f speed, Dimension dimension, Texture texture) {
         this.id = ++_c;
         this.mdl = Model.TEXTURE;
-        this.position = position;
-        this.initialPosition = new Vector3f(this.position.x, this.position.y, this.position.z);
+        this.position = new Vector3f(position.x, position.y, position.z);
+        this.initialPosition = new Vector3f(position.x, position.y, position.z);
         this.speed = speed;
         this.dimension = dimension;
         this.texture = texture;
