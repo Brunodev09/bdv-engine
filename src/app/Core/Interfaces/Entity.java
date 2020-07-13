@@ -2,6 +2,7 @@ package app.Core.Interfaces;
 import app.Math.Dimension;
 import app.Math.RGBA;
 import app.Math.Vector2f;
+import app.Math.Vector3f;
 import app.Video.Texture;
 
 
@@ -9,9 +10,9 @@ public class Entity {
     public static int _c = 0;
     private int id;
     private Model mdl;
-    private Vector2f position;
-    private Vector2f previousPosition;
-    private Vector2f initialPosition;
+    private Vector3f position;
+    private Vector3f previousPosition;
+    private Vector3f initialPosition;
     private Vector2f speed;
     private Vector2f middle;
     private Dimension dimension;
@@ -27,31 +28,31 @@ public class Entity {
         this.id = ++_c;
     }
 
-    public Entity(Vector2f position, Vector2f speed, Dimension dimension, RGBA color) {
+    public Entity(Vector3f position, Vector2f speed, Dimension dimension, RGBA color) {
         this.id = ++_c;
         this.mdl = Model.RECTANGLE;
         this.position = position;
-        this.initialPosition = new Vector2f(this.position.x, this.position.y);
+        this.initialPosition = new Vector3f(this.position.x, this.position.y, this.position.z);
         this.speed = speed;
         this.dimension = dimension;
         this.color = color;
     }
 
-    public Entity(Vector2f position, Vector2f speed, Dimension dimension, RGBA color, Model primitive) {
+    public Entity(Vector3f position, Vector2f speed, Dimension dimension, RGBA color, Model primitive) {
         this.id = ++_c;
         this.mdl = primitive;
         this.position = position;
-        this.initialPosition = new Vector2f(this.position.x, this.position.y);
+        this.initialPosition = new Vector3f(this.position.x, this.position.y, this.position.z);
         this.speed = speed;
         this.dimension = dimension;
         this.color = color;
     }
 
-    public Entity(Vector2f position, Vector2f speed, Dimension dimension, Texture texture) {
+    public Entity(Vector3f position, Vector2f speed, Dimension dimension, Texture texture) {
         this.id = ++_c;
         this.mdl = Model.TEXTURE;
         this.position = position;
-        this.initialPosition = new Vector2f(this.position.x, this.position.y);
+        this.initialPosition = new Vector3f(this.position.x, this.position.y, this.position.z);
         this.speed = speed;
         this.dimension = dimension;
         this.texture = texture;
@@ -61,11 +62,11 @@ public class Entity {
         return dimension;
     }
 
-    public Vector2f getPreviousPosition() {
+    public Vector3f getPreviousPosition() {
         return previousPosition;
     }
 
-    public Vector2f getInitialPosition() {
+    public Vector3f getInitialPosition() {
         return initialPosition;
     }
 
@@ -93,7 +94,7 @@ public class Entity {
         return mdl;
     }
 
-    public Vector2f getPosition() {
+    public Vector3f getPosition() {
         return position;
     }
 
@@ -145,8 +146,8 @@ public class Entity {
         this.player = player;
     }
 
-    public void setPosition(Vector2f position) {
-        this.previousPosition = new Vector2f(this.position.x, this.position.y);
+    public void setPosition(Vector3f position) {
+        this.previousPosition = new Vector3f(this.position.x, this.position.y, this.position.z);
         this.position = position;
     }
 

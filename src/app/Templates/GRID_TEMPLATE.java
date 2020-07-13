@@ -5,6 +5,7 @@ import app.Core.Interfaces.Entity;
 import app.Math.Dimension;
 import app.Math.RGBA;
 import app.Math.Vector2f;
+import app.Math.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,7 @@ public class GRID_TEMPLATE extends Script {
         Dimension tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                this.entities.add(new Entity(new Vector2f(tileSize.width * i + i, tileSize.height * j + j),
+                this.entities.add(new Entity(new Vector3f(tileSize.width * i + i, tileSize.height * j + j),
                         new Vector2f(0f, 0f), tileSize, new RGBA(133, 133, 133, 255)));
             }
         }

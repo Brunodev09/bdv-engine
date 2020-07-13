@@ -6,6 +6,7 @@ import app.Core.Interfaces.Model;
 import app.Math.Dimension;
 import app.Math.RGBA;
 import app.Math.Vector2f;
+import app.Math.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +24,29 @@ public class MATRIX_TEMPLATE extends Script {
 
     @Override
     public void init(List<Entity> entities, Dimension resolution, RGBA background) {
-        this.entities.add(new Entity(new Vector2f(400, 400), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(400, 400), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(255, 0, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Vector2f(200, 400), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(200, 400), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(0, 255, 0, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Vector2f(400, 200), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(400, 200), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(0, 0, 255, 255), Model.POINT));
 
-        this.entities.add(new Entity(new Vector2f(200, 200), new Vector2f(5.0f, 5.0f),
+        this.entities.add(new Entity(new Vector3f(200, 200), new Vector2f(5.0f, 5.0f),
+                new Dimension(50, 50), new RGBA(255, 255, 255, 255), Model.POINT));
+
+
+        this.entities.add(new Entity(new Vector3f(400, 400, -50), new Vector2f(5.0f, 5.0f),
+                new Dimension(50, 50), new RGBA(255, 0, 0, 255), Model.POINT));
+
+        this.entities.add(new Entity(new Vector3f(200, 400, -50), new Vector2f(5.0f, 5.0f),
+                new Dimension(50, 50), new RGBA(0, 255, 0, 255), Model.POINT));
+
+        this.entities.add(new Entity(new Vector3f(400, 200, -50), new Vector2f(5.0f, 5.0f),
+                new Dimension(50, 50), new RGBA(0, 0, 255, 255), Model.POINT));
+
+        this.entities.add(new Entity(new Vector3f(200, 200, -50), new Vector2f(5.0f, 5.0f),
                 new Dimension(50, 50), new RGBA(255, 255, 255, 255), Model.POINT));
 
     }
@@ -51,11 +65,20 @@ public class MATRIX_TEMPLATE extends Script {
             double[][] positionVector = new double[][]{
                     {(double) point.getInitialPosition().x},
                     {(double) point.getInitialPosition().y},
-                    {1}
+                    {(double) point.getInitialPosition().z}
             };
 
 //        newX = centerX + (point2x-centerX)*Math.cos(x) - (point2y-centerY)*Math.sin(x);
 //        newY = centerY + (point2x-centerX)*Math.sin(x) + (point2y-centerY)*Math.cos(x);
+
+            int distance = 2;
+            int z = 1 / (int) (distance - translatedVector2[2][0]);
+
+            double[][] projectionMatrix = {
+                    {z, 0, 0},
+                    {0, z, 0},
+                    {0, 0, z}
+            };
 
             double[][] rotation = getRotationMatrix(angle);
             double[][] translation = getTranslationMatrix(-resolution.width / 2, -resolution.height / 2);
@@ -66,10 +89,13 @@ public class MATRIX_TEMPLATE extends Script {
             double[][] rotatedPositionVector = matrixmult(rotation, translatedVector1);
             double[][] translatedVector2 = matrixmult(translation2, rotatedPositionVector);
 
-            point.setPosition(
-                    new Vector2f(
-                            (int) translatedVector2[0][0],
-                            (int) translatedVector2[1][0]));
+
+
+            int x = (int) translatedVector2[0][0] / z;
+            int y = (int) translatedVector2[1][0] / z;
+
+
+            point.setPosition(new Vector3f(x, y));
         }
 
     }
