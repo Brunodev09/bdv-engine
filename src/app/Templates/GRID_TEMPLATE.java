@@ -13,9 +13,10 @@ import java.util.List;
 public class GRID_TEMPLATE extends Script {
 
     public GRID_TEMPLATE() {
-        this.entities = new ArrayList<Entity>();
+        this.entities = new ArrayList<>();
         this.resolution = new Dimension(800, 600);
         this.background = new RGBA(255, 20, 147, 255);
+        this.windowTitle = "GRID";
         this.init(entities, resolution, background);
     }
 

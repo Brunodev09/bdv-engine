@@ -19,6 +19,7 @@ public class MATRIX_TEMPLATE extends Script {
         this.entities = new ArrayList<Entity>();
         this.resolution = new Dimension(800, 600);
         this.background = new RGBA(255, 20, 147, 255);
+        this.windowTitle = "GRID";
         this.init(entities, resolution, background);
     }
 

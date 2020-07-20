@@ -11,6 +11,7 @@ public abstract class Script {
     public List<Entity> entities = new ArrayList<Entity>();
     public Dimension resolution;
     public RGBA background;
+    public String windowTitle;
 
     public abstract void init(List<Entity> entities, Dimension resolution, RGBA background);
     public abstract void update();

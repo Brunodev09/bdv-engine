@@ -3,7 +3,7 @@ import app.Math.Dimension;
 import app.Math.RGBA;
 import app.Math.Vector2f;
 import app.Math.Vector3f;
-import app.Video.Texture;
+import app.Texture.Texture;
 
 
 public class Entity {
