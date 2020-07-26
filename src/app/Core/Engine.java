@@ -26,6 +26,7 @@ public class Engine {
         Map<Integer, Entity> toRender2D = new HashMap<>();
         Map<Integer, Entity> toRender3D = new HashMap<>();
         Map<Integer, Lightsource> lights = new HashMap<>();
+        Map<String, Integer> textures = new HashMap<>();
 
         if (config.script.camera == null) {
 
@@ -33,8 +34,18 @@ public class Engine {
 
             BufferedModel defaultData2D = new BufferedModel(Prefab.Square, Prefab.SquareTextureCoordinates, Prefab.SquareIndexes);
             Model mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
+
             for (EntityAPI entity : scriptEntities) {
-                ModelTexture texture2D = new ModelTexture(pipe.loadTexture(entity.getFile()));
+                int textureId = 0;
+
+                if (textures.get(entity.getFile()) == null) {
+                    textureId = pipe.loadTexture(entity.getFile());
+                    textures.put(entity.getFile(), textureId);
+                }
+                else {
+                    textureId = textures.get(entity.getFile());
+                }
+                ModelTexture texture2D = new ModelTexture(textureId);
                 TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
                 Entity formerEntity = new Entity(tmdl2,
                         entity.getPosition(),
