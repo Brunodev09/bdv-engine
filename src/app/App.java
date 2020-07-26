@@ -6,7 +6,7 @@ import app.Network.TCPServer;
 public class App {
     public static void main(String[] args) throws Exception {
         try {
-            new Bdv("GL_TEST_3D");
+            new Bdv("GL_TEST_GRID");
         } catch (Exception e) {
             System.out.println("Error class -> " + e.toString());
             System.out.println("Stack:");
