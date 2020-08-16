@@ -29,9 +29,9 @@ public class GL_MANDELBROT extends ScriptGL {
     final double yCenter = 0;
     double size = 30;
 
-    final SpriteSheet red = new SpriteSheet("spritesheetrgb", new Rectangle(256, 256), 0, 0);
-    final SpriteSheet green = new SpriteSheet("spritesheetrgb", new Rectangle(256, 256), 1, 0);
-    final SpriteSheet blue = new SpriteSheet("spritesheetrgb", new Rectangle(256, 256), 2, 0);
+    final SpriteSheet red = new SpriteSheet("spritesheet", new Rectangle(256, 256), 1, 1);
+    final SpriteSheet green = new SpriteSheet("spritesheet", new Rectangle(256, 256), 1, 0);
+    final SpriteSheet blue = new SpriteSheet("spritesheet", new Rectangle(256, 256), 2, 0);
 
     public GL_MANDELBROT() {
         this.camera2d = new Camera2D();
