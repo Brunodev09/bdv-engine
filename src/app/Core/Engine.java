@@ -1,6 +1,6 @@
 package app.Core;
 
-import Prefabs.Prefab;
+import prefabs.Prefab;
 import app.API.EntityAPI;
 import app.Entities.Camera;
 import app.Entities.Camera2D;

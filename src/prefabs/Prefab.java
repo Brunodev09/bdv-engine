@@ -1,4 +1,4 @@
-package Prefabs;
+package prefabs;
 
 public class Prefab {
 

@@ -67,8 +67,8 @@ public class Bdv {
 
                 this.bdvWin.start();
                 this.bdvWin.setTemplate(pureInstanceConversion);
-            } else {
-                if (instanceConversionGL.FPS == 0) instanceConversionGL.FPS = 60;
+            } else if (instanceConversionGL != null) {
+                instanceConversionGL.FPS = instanceConversionGL.FPS == 0 ? 60 : instanceConversionGL.FPS;
                 Configuration config = new Configuration(instanceConversionGL.resolution.width,
                         instanceConversionGL.resolution.height,
                         instanceConversionGL.FPS,
