@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 
 // @TODO - Make a logger manager
 // @TODO - Implement texture reading and spritesheet abstraction
-
+// @TODO - Make the scale of each tile proportinal to a grid
 public class Bdv {
     private String title;
     private Dimension dimension;

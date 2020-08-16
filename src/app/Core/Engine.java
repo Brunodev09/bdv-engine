@@ -20,8 +20,7 @@ import java.util.*;
 public class Engine {
 
     Pipeline pipe = new Pipeline();
-    Map<Integer, Entity> toRender2D = new HashMap<>();
-    Map<Integer, Entity> toRender3D = new HashMap<>();
+    Map<Integer, Entity> toRender = new HashMap<>();
     Map<Integer, Lightsource> lights = new HashMap<>();
     Map<String, Integer> textures = new HashMap<>();
     List<Model> models = new ArrayList<>();
@@ -55,7 +54,7 @@ public class Engine {
                         entity.getRotationZ(),
                         entity.getScale());
                 entity.setLink(formerEntity.getId());
-                toRender2D.put(formerEntity.getId(), formerEntity);
+                toRender.put(formerEntity.getId(), formerEntity);
             }
 
             while (!RenderManager.shouldExit()) {
@@ -63,7 +62,7 @@ public class Engine {
                 config.script.update();
                 cam2d.move();
 
-                toRender2D.forEach((key, val) -> RenderManager.processEntity(val));
+                toRender.forEach((key, val) -> RenderManager.processEntity(val));
 
                 RenderManager.renderBatch(cam2d);
                 RenderManager.updateRender(config.FPS);
@@ -88,7 +87,7 @@ public class Engine {
                         entity.getRotationZ(),
                         entity.getScale());
                 entity.setLink(formerEntity.getId());
-                toRender3D.put(formerEntity.getId(), formerEntity);
+                toRender.put(formerEntity.getId(), formerEntity);
             }
 
             while (!RenderManager.shouldExit()) {
@@ -96,7 +95,7 @@ public class Engine {
                 createAndUpdateFormerEntity();
                 cam.move();
 
-                toRender3D.forEach((key, val) -> RenderManager.processEntity(val));
+                toRender.forEach((key, val) -> RenderManager.processEntity(val));
 
                 RenderManager.renderBatch(light, cam);
                 RenderManager.updateRender(config.FPS);
@@ -112,7 +111,7 @@ public class Engine {
         // @TODO - Reflect 2-ways the changes made Entity <-> EntityAPI
 
         for (EntityAPI entity : scriptEntities) {
-            Entity former = toRender2D.get(entity.getLink());
+            Entity former = toRender.get(entity.getLink());
 
             if (former.getPosition().x != entity.getPosition().x ||
                     former.getPosition().y != entity.getPosition().y ||
@@ -131,6 +130,7 @@ public class Engine {
                 ModelTexture texture2D = new ModelTexture(textureId);
                 TexturedModel tmdl2 = new TexturedModel(models.get(0), texture2D);
                 former.setModel(tmdl2);
+                entity.setEditModel(false);
             }
         }
     }
