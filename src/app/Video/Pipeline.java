@@ -2,6 +2,7 @@ package app.Video;
 
 import app.Math.BufferOperations;
 import app.Models.Model;
+import app.Texture.SpriteSheet;
 import app.Texture.Texture;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
@@ -53,6 +54,14 @@ public class Pipeline {
 
     public int loadTexture(String name) {
         Texture texture = new Texture("src/res/" + name + ".png");
+        int id = texture.getTextureID();
+        TEXTURES.add(id);
+
+        return id;
+    }
+
+    public int loadTextureFromSpritesheet(SpriteSheet spriteSheet) {
+        Texture texture = new Texture("src/res/" + spriteSheet.getFile() + ".png", spriteSheet);
         int id = texture.getTextureID();
         TEXTURES.add(id);
 

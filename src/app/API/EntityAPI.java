@@ -1,6 +1,7 @@
 package app.API;
 
 
+import app.Texture.SpriteSheet;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -17,6 +18,7 @@ public class EntityAPI {
     private float[] vertexes;
     private float[] textureCoords;
     private boolean switchModel = false;
+    private SpriteSheet spriteSheet;
 
     private int _API_LINK;
 
@@ -123,4 +125,12 @@ public class EntityAPI {
         this.switchModel = edit;
     }
 
+    public void setSpriteSheet(SpriteSheet spriteSheet) {
+        this.spriteSheet = spriteSheet;
+        this.switchModel = true;
+    }
+
+    public SpriteSheet getSpriteSheet() {
+        return spriteSheet;
+    }
 }

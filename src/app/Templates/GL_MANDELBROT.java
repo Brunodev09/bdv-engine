@@ -6,9 +6,11 @@ import app.Entities.Camera2D;
 import app.Math.Complex;
 import app.Math.Dimension;
 import app.Math.RGBAf;
+import app.Texture.SpriteSheet;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,6 +28,10 @@ public class GL_MANDELBROT extends ScriptGL {
     final double xCenter = 0;
     final double yCenter = 0;
     double size = 30;
+
+    final SpriteSheet red = new SpriteSheet("spritesheetrgb", new Rectangle(256, 256), 0, 0);
+    final SpriteSheet green = new SpriteSheet("spritesheetrgb", new Rectangle(256, 256), 1, 0);
+    final SpriteSheet blue = new SpriteSheet("spritesheetrgb", new Rectangle(256, 256), 2, 0);
 
     public GL_MANDELBROT() {
         this.camera2d = new Camera2D();
@@ -58,15 +64,18 @@ public class GL_MANDELBROT extends ScriptGL {
             ptrJ = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
                 if (matrix[ptrI][ptrJ] == 255) {
-                    EntityAPI entitAPI = new EntityAPI("white", new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                    entitAPI.setSpriteSheet(red);
                     entitAPI.setScale(0.09f);
                     entities.add(entitAPI);
                 } else if (matrix[ptrI][ptrJ] == 0) {
-                    EntityAPI entitAPI = new EntityAPI("red", new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                    entitAPI.setSpriteSheet(green);
                     entitAPI.setScale(0.09f);
                     entities.add(entitAPI);
                 } else {
-                    EntityAPI entitAPI = new EntityAPI("black", new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                    entitAPI.setSpriteSheet(blue);
                     entitAPI.setScale(0.09f);
                     entities.add(entitAPI);
                 }
@@ -96,11 +105,11 @@ public class GL_MANDELBROT extends ScriptGL {
             for (int j = -cols / 2; j < cols / 2; j++) {
                 EntityAPI entityAPI = entities.get(ptr);
                 if (matrix[ptrI][ptrJ] == 255) {
-                    entityAPI.setFile("white");
+                    entityAPI.setSpriteSheet(red);
                 } else if (matrix[ptrI][ptrJ] == 0) {
-                    entityAPI.setFile("red");
+                    entityAPI.setSpriteSheet(green);
                 } else {
-                    entityAPI.setFile("black");
+                    entityAPI.setSpriteSheet(blue);
                 }
                 ptrJ++;
                 ptr++;

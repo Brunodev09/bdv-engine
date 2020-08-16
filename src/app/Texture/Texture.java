@@ -20,6 +20,10 @@ public class Texture {
         texture = load(path);
     }
 
+    public Texture(String path, SpriteSheet spriteSheet) {
+        texture = loadSpritesheet(path, spriteSheet);
+    }
+
     private int load(String path) {
         int[] pixels = null;
         try {
@@ -28,6 +32,45 @@ public class Texture {
             height = image.getHeight();
             pixels = new int[width * height];
             image.getRGB(0, 0, width, height, pixels, 0, width);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        int[] data = new int[width * height];
+        for (int i = 0; i < width * height; i++) {
+            int a = (pixels[i] & 0xff000000) >> 24;
+            int r = (pixels[i] & 0xff0000) >> 16;
+            int g = (pixels[i] & 0xff00) >> 8;
+            int b = (pixels[i] & 0xff);
+
+            data[i] = a << 24 | b << 16 | g << 8 | r;
+        }
+
+        int result = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, result);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        IntBuffer buffer = ByteBuffer.allocateDirect(data.length << 2)
+                .order(ByteOrder.nativeOrder()).asIntBuffer();
+        buffer.put(data).flip();
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        return result;
+    }
+
+    private int loadSpritesheet(String path, SpriteSheet spriteSheet) {
+        int[] pixels = null;
+        try {
+            BufferedImage image = ImageIO.read(new FileInputStream(path));
+            width = spriteSheet.getTile().width;
+            height = spriteSheet.getTile().height;
+            int startX = spriteSheet.getTileX() * spriteSheet.getTile().width;
+            int startY = spriteSheet.getTileY() * spriteSheet.getTile().height;
+            pixels = new int[width * height];
+            image.getRGB(startX, startY, width, height, pixels, 0, width);
         } catch (IOException e) {
             e.printStackTrace();
         }

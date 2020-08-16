@@ -1,5 +1,6 @@
 package app.Core;
 
+import app.Texture.SpriteSheet;
 import prefabs.Prefab;
 import app.API.EntityAPI;
 import app.Entities.Camera;
@@ -23,6 +24,7 @@ public class Engine {
     Map<Integer, Entity> toRender = new HashMap<>();
     Map<Integer, Lightsource> lights = new HashMap<>();
     Map<String, Integer> textures = new HashMap<>();
+    Map<SpriteSheet, Integer> sprites = new HashMap<>();
     List<Model> models = new ArrayList<>();
     List<EntityAPI> scriptEntities;
 
@@ -138,9 +140,19 @@ public class Engine {
 
     private int getTextureId(EntityAPI entity) {
         int id = 0;
-        if (textures.get(entity.getFile()) == null) {
-            id = pipe.loadTexture(entity.getFile());
-            textures.put(entity.getFile(), id);
+        if (textures.get(entity.getFile()) == null || entity.getSpriteSheet() != null) {
+            if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) == null) {
+                id = pipe.loadTextureFromSpritesheet(entity.getSpriteSheet());
+                sprites.put(entity.getSpriteSheet(), id);
+                return id;
+            }
+            else if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) != null) {
+                return sprites.get(entity.getSpriteSheet());
+            }
+            else if (entity.getSpriteSheet() == null && entity.getFile() == null) {
+                id = pipe.loadTexture(entity.getFile());
+                textures.put(entity.getSpriteSheet().getFile(), id);
+            }
         }
         else {
             id = textures.get(entity.getFile());
