@@ -23,6 +23,7 @@ public class Bdv {
     private int scale;
     private int backgroundColor = 0x892D6F;
     private BdvRuntime bdvWin;
+    private final Engine engine = new Engine();
 
     public Bdv(String script) throws Exception {
         try {
@@ -67,11 +68,12 @@ public class Bdv {
                 this.bdvWin.start();
                 this.bdvWin.setTemplate(pureInstanceConversion);
             } else {
+                if (instanceConversionGL.FPS == 0) instanceConversionGL.FPS = 60;
                 Configuration config = new Configuration(instanceConversionGL.resolution.width,
                         instanceConversionGL.resolution.height,
-                        60,
+                        instanceConversionGL.FPS,
                         instanceConversionGL.windowTitle, instanceConversionGL);
-                Engine.loop(config);
+                engine.loop(config);
             }
 
         } catch (ClassNotFoundException | FileNotFoundException | IndexOutOfBoundsException e) {

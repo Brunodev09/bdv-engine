@@ -5,17 +5,18 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class EntityAPI {
-    private final String file;
+    private String file;
     private String model;
     private Vector3f position;
     private Vector2f speed;
     private float rotX;
     private float rotY;
     private float rotZ;
-    private int scale;
+    private float scale;
     private int[] indexes;
     private float[] vertexes;
     private float[] textureCoords;
+    private boolean switchModel = false;
 
     private int _API_LINK;
 
@@ -81,11 +82,11 @@ public class EntityAPI {
         rotZ += z;
     }
 
-    public int getScale() {
+    public float getScale() {
         return scale;
     }
 
-    public void setScale(int scale) {
+    public void setScale(float scale) {
         this.scale = scale;
     }
 
@@ -95,6 +96,11 @@ public class EntityAPI {
 
     public String getFile() {
         return file;
+    }
+
+    public void setFile(String file) {
+        this.file = file;
+        this.switchModel = true;
     }
 
     public int getLink() {
@@ -108,4 +114,13 @@ public class EntityAPI {
     public void setModel(String model) {
         this.model = model;
     }
+
+    public boolean getEditModel() {
+        return switchModel;
+    }
+
+    public void setEditModel(boolean edit) {
+        this.switchModel = edit;
+    }
+
 }

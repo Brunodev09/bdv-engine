@@ -23,8 +23,8 @@ public class GL_TEST_GRID extends ScriptGL {
     @Override
     public void init(List<EntityAPI> entities, Dimension resolution, RGBAf background) {
         // In OpenGL, the default viewport sets the origin (0,0,0) at the center of the screen
-        int rows = 82;
-        int cols = 82;
+        int rows = 12;
+        int cols = 12;
         Dimension tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
         for (int i = -rows / 2; i < rows / 2; i++) {
             for (int j = -cols / 2; j < cols / 2; j++) {

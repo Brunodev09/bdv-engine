@@ -18,15 +18,21 @@ import org.lwjgl.util.vector.Vector3f;
 import java.util.*;
 
 public class Engine {
-    public static void loop(Configuration config) {
+
+    Pipeline pipe = new Pipeline();
+    Map<Integer, Entity> toRender2D = new HashMap<>();
+    Map<Integer, Entity> toRender3D = new HashMap<>();
+    Map<Integer, Lightsource> lights = new HashMap<>();
+    Map<String, Integer> textures = new HashMap<>();
+    List<Model> models = new ArrayList<>();
+    List<EntityAPI> scriptEntities;
+
+    public void loop(Configuration config) {
+
+        if (config.script == null) return;
 
         RenderManager.createRender(config.WIDTH, config.HEIGHT, config.TITLE, config.script.background);
-        Pipeline pipe = new Pipeline();
-        List<EntityAPI> scriptEntities = config.script.entities;
-        Map<Integer, Entity> toRender2D = new HashMap<>();
-        Map<Integer, Entity> toRender3D = new HashMap<>();
-        Map<Integer, Lightsource> lights = new HashMap<>();
-        Map<String, Integer> textures = new HashMap<>();
+        scriptEntities = config.script.entities;
 
         if (config.script.camera == null) {
 
@@ -34,17 +40,12 @@ public class Engine {
 
             BufferedModel defaultData2D = new BufferedModel(Prefab.Square, Prefab.SquareTextureCoordinates, Prefab.SquareIndexes);
             Model mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
+            models.add(mdl);
 
             for (EntityAPI entity : scriptEntities) {
-                int textureId = 0;
 
-                if (textures.get(entity.getFile()) == null) {
-                    textureId = pipe.loadTexture(entity.getFile());
-                    textures.put(entity.getFile(), textureId);
-                }
-                else {
-                    textureId = textures.get(entity.getFile());
-                }
+                int textureId = getTextureId(entity);
+
                 ModelTexture texture2D = new ModelTexture(textureId);
                 TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
                 Entity formerEntity = new Entity(tmdl2,
@@ -58,13 +59,11 @@ public class Engine {
             }
 
             while (!RenderManager.shouldExit()) {
+                createAndUpdateFormerEntity();
                 config.script.update();
-                _updateFormerEntities(config.script.entities, toRender2D);
                 cam2d.move();
 
-                toRender2D.forEach((key, val) -> {
-                    RenderManager.processEntity(val);
-                });
+                toRender2D.forEach((key, val) -> RenderManager.processEntity(val));
 
                 RenderManager.renderBatch(cam2d);
                 RenderManager.updateRender(config.FPS);
@@ -94,12 +93,10 @@ public class Engine {
 
             while (!RenderManager.shouldExit()) {
                 config.script.update();
-                _updateFormerEntities(config.script.entities, toRender3D);
+                createAndUpdateFormerEntity();
                 cam.move();
 
-                toRender3D.forEach((key, val) -> {
-                    RenderManager.processEntity(val);
-                });
+                toRender3D.forEach((key, val) -> RenderManager.processEntity(val));
 
                 RenderManager.renderBatch(light, cam);
                 RenderManager.updateRender(config.FPS);
@@ -111,9 +108,11 @@ public class Engine {
         RenderManager.closeRender();
     }
 
-    private static void _updateFormerEntities(List<EntityAPI> entities, Map<Integer, Entity> formerEntities) {
-        for (EntityAPI entity : entities) {
-            Entity former = formerEntities.get(entity.getLink());
+    private void createAndUpdateFormerEntity() {
+        // @TODO - Reflect 2-ways the changes made Entity <-> EntityAPI
+
+        for (EntityAPI entity : scriptEntities) {
+            Entity former = toRender2D.get(entity.getLink());
 
             if (former.getPosition().x != entity.getPosition().x ||
                     former.getPosition().y != entity.getPosition().y ||
@@ -127,6 +126,24 @@ public class Engine {
                 former.setRotY(entity.getRotationY());
                 former.setRotZ(entity.getRotationZ());
             }
+            if (entity.getEditModel()) {
+                int textureId = getTextureId(entity);
+                ModelTexture texture2D = new ModelTexture(textureId);
+                TexturedModel tmdl2 = new TexturedModel(models.get(0), texture2D);
+                former.setModel(tmdl2);
+            }
         }
+    }
+
+    private int getTextureId(EntityAPI entity) {
+        int id = 0;
+        if (textures.get(entity.getFile()) == null) {
+            id = pipe.loadTexture(entity.getFile());
+            textures.put(entity.getFile(), id);
+        }
+        else {
+            id = textures.get(entity.getFile());
+        }
+        return id;
     }
 }

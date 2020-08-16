@@ -43,6 +43,10 @@ public class RenderManager {
 
     private static RGBAf _cleanColor;
 
+    private RenderManager() {
+
+    }
+
     public static void createRender(int WIDTH, int HEIGHT, String TITLE, RGBAf cleanColor) {
 
         ContextAttribs contextAttribs = new ContextAttribs(3, 2)
@@ -145,7 +149,7 @@ public class RenderManager {
         Display.destroy();
     }
 
-    public static Boolean shouldExit() {
+    public static boolean shouldExit() {
         return Display.isCloseRequested();
     }
 }
