@@ -128,6 +128,7 @@ public class Engine {
             if (entity.getEditModel()) {
                 int textureId = getTextureId(entity);
                 ModelTexture texture2D = new ModelTexture(textureId);
+                // @TODO - Please please, do something about this...
                 TexturedModel tmdl2 = new TexturedModel(models.get(0), texture2D);
                 former.setModel(tmdl2);
                 entity.setEditModel(false);
