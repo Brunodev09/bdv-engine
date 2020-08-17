@@ -197,7 +197,7 @@ public class GL_ASTAR extends ScriptGL {
         while (next != null) {
             if (next.isStartNode()) break;
             next = next.getParent();
-            if (!this.currentNode.isStartNode()) findEntity(next.getEntityId()).setSpriteSheet(lightBlue);
+            if (!next.isStartNode()) findEntity(next.getEntityId()).setSpriteSheet(lightBlue);
             this.bestPathList.add(next);
         }
     }
