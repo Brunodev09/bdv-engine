@@ -160,11 +160,11 @@ public class Entity {
     }
 
     public void setSpeedX(float sx) {
-        this.speed.x = sx;
+        this.speed.setX(sx);
     }
 
     public void setSpeedY(float sy) {
-        this.speed.y = sy;
+        this.speed.setY(sy);
     }
 
     public void setTexture(Texture texture) {

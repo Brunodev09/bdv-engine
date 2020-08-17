@@ -6,6 +6,8 @@ import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class EntityAPI {
+    public static int globalId = 0;
+    private int id;
     private String file;
     private String model;
     private Vector3f position;
@@ -23,6 +25,8 @@ public class EntityAPI {
     private int _API_LINK;
 
     public EntityAPI(String file) {
+        globalId++;
+        this.id = globalId;
         this.file = file;
         position = new Vector3f(0, 0, 0);
         speed = new Vector2f(0, 0);
@@ -32,6 +36,8 @@ public class EntityAPI {
     }
 
     public EntityAPI(String file, Vector3f position, Vector2f speed) {
+        globalId++;
+        this.id = globalId;
         this.file = file;
         this.position = position;
         this.speed = speed;
@@ -41,6 +47,8 @@ public class EntityAPI {
     }
 
     public EntityAPI(String file, int[] indexes, float[] vertexes, float[] textureCoords) {
+        globalId++;
+        this.id = globalId;
         this.file = file;
         this.indexes = indexes;
         this.vertexes = vertexes;
@@ -132,5 +140,9 @@ public class EntityAPI {
 
     public SpriteSheet getSpriteSheet() {
         return spriteSheet;
+    }
+
+    public int getId() {
+        return id;
     }
 }

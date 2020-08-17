@@ -31,13 +31,13 @@ public class SHAPES_TEMPLATE extends Script {
     @Override
     public void update() {
         for (Entity entity : this.entities) {
-            entity.setPosition(new Vector3f(entity.getPosition().x + ((Number) entity.getSpeed().x).intValue(), entity.getPosition().y + ((Number) entity.getSpeed().y).intValue()));
+            entity.setPosition(new Vector3f(entity.getPosition().x + ((Number) entity.getSpeed().getX()).intValue(), entity.getPosition().y + ((Number) entity.getSpeed().getY()).intValue()));
 
             if (entity.getPosition().x > this.resolution.width || entity.getPosition().x < 0) {
-                entity.setSpeedX(entity.getSpeed().x * -1.0f);
+                entity.setSpeedX(entity.getSpeed().getX() * -1.0f);
             }
             if (entity.getPosition().y > this.resolution.height || entity.getPosition().y < 0) {
-                entity.setSpeedY(entity.getSpeed().y * -1.0f);
+                entity.setSpeedY(entity.getSpeed().getY() * -1.0f);
             }
         }
     }
