@@ -149,9 +149,9 @@ public class Engine {
             else if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) != null) {
                 return sprites.get(entity.getSpriteSheet());
             }
-            else if (entity.getSpriteSheet() == null && entity.getFile() == null) {
+            else if (entity.getSpriteSheet() == null && textures.get(entity.getFile()) == null) {
                 id = pipe.loadTexture(entity.getFile(), entity.getRgb());
-                textures.put(entity.getSpriteSheet().getFile(), id);
+                textures.put(entity.getFile(), id);
             }
         }
         else {

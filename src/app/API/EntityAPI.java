@@ -154,5 +154,6 @@ public class EntityAPI {
 
     public void setRgb(app.Math.Vector3f rgb) {
         this.rgb = rgb;
+        this.setEditModel(true);
     }
 }

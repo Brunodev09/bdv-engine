@@ -4,11 +4,13 @@ import app.API.EntityAPI;
 import app.API.ScriptGL;
 import app.Entities.Camera2D;
 import app.Math.Dimension;
+import app.Math.PerlinNoise;
 import app.Math.RGBAf;
+import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class GL_PERLIN extends ScriptGL {
 
@@ -30,7 +32,24 @@ public class GL_PERLIN extends ScriptGL {
 
     @Override
     public void init(List<EntityAPI> entities, Dimension resolution, RGBAf background) {
-
+        int ptrI = 0;
+        int ptrJ = 0;
+        double yOffset = 0;
+        for (int i = -rows / 2; i < rows / 2; i++) {
+            ptrJ = 0;
+            double xOffset = 0;
+            for (int j = -cols / 2; j < cols / 2; j++) {
+                EntityAPI entityAPI = new EntityAPI("grey", new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                entityAPI.setScale(1.0f);
+                double noise = PerlinNoise.noise(xOffset, yOffset);
+                entityAPI.setRgb(new app.Math.Vector3f((float) noise, (float) noise, (float) noise));
+                this.entities.add(entityAPI);
+                ptrJ++;
+                xOffset += 0.01;
+            }
+            yOffset += 0.01;
+            ptrI++;
+        }
     }
 
     @Override

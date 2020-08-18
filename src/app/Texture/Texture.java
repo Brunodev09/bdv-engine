@@ -134,7 +134,9 @@ public class Texture {
             for (int i = 0; i < width; i++) {
                 for (int j = 0; j < height; j++) {
                     rgb[i] = new Color(image.getRGB(i, j));
-                    Color newColor = new Color(colorOffset.x, colorOffset.y, colorOffset.z);
+                    Color newColor = new Color((rgb[i].getRed() * colorOffset.x) / 255,
+                            (rgb[i].getGreen() * colorOffset.y) / 255,
+                            (rgb[i].getBlue() * colorOffset.z) / 255);
                     image.setRGB(i, j, newColor.getRGB());
                 }
             }
@@ -152,7 +154,9 @@ public class Texture {
                     int xTarget = i + spriteSheet.getTileX() * spriteSheet.getTile().width;
                     int yTarget = j + spriteSheet.getTileY() * spriteSheet.getTile().height;
                     rgb[i] = new Color(image.getRGB(xTarget, yTarget));
-                    Color newColor = new Color(colorOffset.x, colorOffset.y, colorOffset.z);
+                    Color newColor = new Color((rgb[i].getRed() * colorOffset.x) / 255,
+                            (rgb[i].getGreen() * colorOffset.y) / 255,
+                            (rgb[i].getBlue() * colorOffset.z) / 255);
                     image.setRGB(xTarget, yTarget, newColor.getRGB());
                 }
             }
