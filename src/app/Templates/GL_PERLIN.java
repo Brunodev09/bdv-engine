@@ -6,9 +6,11 @@ import app.Entities.Camera2D;
 import app.Math.Dimension;
 import app.Math.PerlinNoise;
 import app.Math.RGBAf;
+import app.Texture.SpriteSheet;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public class GL_PERLIN extends ScriptGL {
     private final int cols = 100;
     private final int[][] matrix = new int[rows][cols];
     private final Dimension tileSize;
+    final SpriteSheet red = new SpriteSheet("spritesheet2", new Rectangle(256, 256), 0, 0);
 
     public GL_PERLIN() {
         this.camera2d = new Camera2D();
@@ -39,15 +42,16 @@ public class GL_PERLIN extends ScriptGL {
             ptrJ = 0;
             double xOffset = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
-                EntityAPI entityAPI = new EntityAPI("grey", new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
-                entityAPI.setScale(1.0f);
-                double noise = PerlinNoise.noise(xOffset, yOffset);
-                entityAPI.setRgb(new app.Math.Vector3f((float) noise, (float) noise, (float) noise));
+                EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                entityAPI.setSpriteSheet(red);
+                entityAPI.setScale(0.1f);
+                double noise = PerlinNoise.noise(xOffset, yOffset) * 255;
+                entityAPI.setRgb(new RGBAf((float) noise, (float) noise, (float) noise, 255.0f));
                 this.entities.add(entityAPI);
                 ptrJ++;
-                xOffset += 0.01;
+                xOffset += 0.1;
             }
-            yOffset += 0.01;
+            yOffset += 0.1;
             ptrI++;
         }
     }

@@ -50,5 +50,6 @@ public class GeometryShader extends Shader {
         Matrix4f view = MatrixUtils.createViewMatrix(camera);
         super.loadMatrixInUniformVariable(_variableLocation3, view);
     }
+
 }
 

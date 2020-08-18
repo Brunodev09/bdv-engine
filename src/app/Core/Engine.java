@@ -1,6 +1,7 @@
 package app.Core;
 
-import app.Texture.SpriteSheet;
+import app.Math.RGBAf;
+import app.Texture.*;
 import prefabs.Prefab;
 import app.API.EntityAPI;
 import app.Entities.Camera;
@@ -10,12 +11,12 @@ import app.Entities.Lightsource;
 import app.Models.BufferedModel;
 import app.Models.Model;
 import app.Models.TexturedModel;
-import app.Texture.ModelTexture;
 import app.Video.ModelParser;
 import app.Video.Pipeline;
 import app.Video.RenderManager;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.awt.image.BufferedImage;
 import java.util.*;
 
 public class Engine {
@@ -27,6 +28,7 @@ public class Engine {
     Map<SpriteSheet, Integer> sprites = new HashMap<>();
     List<Model> models = new ArrayList<>();
     List<EntityAPI> scriptEntities;
+    Map<String, ProcessedBufferedImage> processedImages = new HashMap<>();
 
     public void loop(Configuration config) {
 
@@ -40,12 +42,19 @@ public class Engine {
             Camera2D cam2d = config.script.camera2d;
 
             BufferedModel defaultData2D = new BufferedModel(Prefab.Square, Prefab.SquareTextureCoordinates, Prefab.SquareIndexes);
-            Model mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
-            models.add(mdl);
+            Model mdl = null;
 
             for (EntityAPI entity : scriptEntities) {
 
+                if (mdl == null) {
+                    mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
+                    models.add(mdl);
+                }
+
                 int textureId = getTextureId(entity);
+                int newTexure = checkForImageProcessing(entity, textureId);
+
+                if (newTexure != 0) textureId = newTexure;
 
                 ModelTexture texture2D = new ModelTexture(textureId);
                 TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
@@ -138,19 +147,19 @@ public class Engine {
         }
     }
 
+    // TODO - Make a test with a controlled number of sprites and assert that the texture map is holding that exact controlled number
     private int getTextureId(EntityAPI entity) {
         int id = 0;
         if (textures.get(entity.getFile()) == null || entity.getSpriteSheet() != null) {
             if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) == null) {
-                id = pipe.loadTextureFromSpritesheet(entity.getSpriteSheet(), entity.getRgb());
+                id = pipe.loadTextureFromSpritesheet(entity.getSpriteSheet());
                 sprites.put(entity.getSpriteSheet(), id);
-                return id;
             }
             else if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) != null) {
-                return sprites.get(entity.getSpriteSheet());
+                id = sprites.get(entity.getSpriteSheet());
             }
             else if (entity.getSpriteSheet() == null && textures.get(entity.getFile()) == null) {
-                id = pipe.loadTexture(entity.getFile(), entity.getRgb());
+                id = pipe.loadTexture(entity.getFile());
                 textures.put(entity.getFile(), id);
             }
         }
@@ -159,4 +168,42 @@ public class Engine {
         }
         return id;
     }
+
+    private int checkForImageProcessing(EntityAPI entityAPI, int textureId) {
+        // TODO - Setting this to 0 is dangerous
+        int resultingTextureId = 0;
+        if (entityAPI.getRgb() != null && entityAPI.getEditModel()) {
+
+            entityAPI.setEditModel(false);
+            BufferedImage image = TextureCache.getImage(textureId);
+
+            if (image != null) {
+                String key = entityAPI.getRgb().toString();
+                ProcessedBufferedImage sameProcessed = processedImages.get(key);
+                if (sameProcessed != null) {
+                    // there is already a texture associated with this image processing work
+                    resultingTextureId = sameProcessed.getTextureId();
+                }
+                else {
+                    // new texture must be generated
+                    if (entityAPI.getSpriteSheet() != null) {
+                        ImageProcessor.filterImage(image, entityAPI.getRgb(), entityAPI.getSpriteSheet());
+                        resultingTextureId = pipe.generateTexture(image, entityAPI.getSpriteSheet());
+                    } else {
+                        ImageProcessor.filterImage(image, entityAPI.getRgb());
+                        resultingTextureId = pipe.generateTexture(image);
+                    }
+                    ProcessedBufferedImage processed = new ProcessedBufferedImage(image,
+                            resultingTextureId,
+                            entityAPI.getFile(),
+                            entityAPI.getRgb());
+
+                    processedImages.putIfAbsent(entityAPI.getRgb().toString(), processed);
+                }
+            }
+
+        }
+        return resultingTextureId;
+    }
+
 }

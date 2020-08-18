@@ -1,7 +1,6 @@
 package app.Video;
 
 import app.Math.BufferOperations;
-import app.Math.Vector3f;
 import app.Models.Model;
 import app.Texture.SpriteSheet;
 import app.Texture.Texture;
@@ -10,6 +9,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -61,14 +61,6 @@ public class Pipeline {
         return id;
     }
 
-    public int loadTexture(String name, Vector3f colorOffset) {
-        Texture texture = new Texture("src/res/" + name + ".png", colorOffset);
-        int id = texture.getTextureID();
-        TEXTURES.add(id);
-
-        return id;
-    }
-
     public int loadTextureFromSpritesheet(SpriteSheet spriteSheet) {
         Texture texture = new Texture("src/res/" + spriteSheet.getFile() + ".png", spriteSheet);
         int id = texture.getTextureID();
@@ -77,13 +69,22 @@ public class Pipeline {
         return id;
     }
 
-    public int loadTextureFromSpritesheet(SpriteSheet spriteSheet, Vector3f colorOffset) {
-        Texture texture = new Texture("src/res/" + spriteSheet.getFile() + ".png", spriteSheet, colorOffset);
-        int id = texture.getTextureID();
+    public int generateTexture(BufferedImage image) {
+        Texture texture = new Texture();
+        int id = texture.loadTextureWithImage(image);
         TEXTURES.add(id);
 
         return id;
     }
+
+    public int generateTexture(BufferedImage image, SpriteSheet spriteSheet) {
+        Texture texture = new Texture();
+        int id = texture.loadTextureWithImage(image, spriteSheet);
+        TEXTURES.add(id);
+
+        return id;
+    }
+
 
     public int loadTextureOnLWJGL3(String name) {
 //        int textureID;

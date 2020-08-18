@@ -38,4 +38,9 @@ public class RGBAf {
         return new float[] { this.R, this.G, this.B, this.A };
     }
 
+    @Override
+    public String toString() {
+        return this.R + " " + this.G + " " + this.B;
+    }
+
 }
