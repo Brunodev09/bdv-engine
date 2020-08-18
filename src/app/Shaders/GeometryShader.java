@@ -5,6 +5,7 @@ import app.Entities.Camera;
 import app.Entities.Camera2D;
 import app.Math.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
 
 public class GeometryShader extends Shader {
 

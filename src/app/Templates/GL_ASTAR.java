@@ -3,10 +3,8 @@ package app.Templates;
 import app.API.EntityAPI;
 import app.API.ScriptGL;
 import app.Entities.Camera2D;
+import app.Math.*;
 import app.Math.Dimension;
-import app.Math.Geometry;
-import app.Math.RGBAf;
-import app.Math.Vector2i;
 import app.Texture.SpriteSheet;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -47,7 +45,6 @@ public class GL_ASTAR extends ScriptGL {
     final SpriteSheet darkRed = new SpriteSheet("spritesheet2", new Rectangle(256, 256), 0, 2);
     final SpriteSheet darkGreen = new SpriteSheet("spritesheet2", new Rectangle(256, 256), 1, 2);
     final SpriteSheet lightBlue = new SpriteSheet("spritesheet2", new Rectangle(256, 256), 2, 2);
-
 
     public GL_ASTAR() {
         this.camera2d = new Camera2D();
@@ -112,11 +109,7 @@ public class GL_ASTAR extends ScriptGL {
 
     @Override
     public void update() {
-        try {
-            this.run();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (!this.stuck && !this.currentNode.isEndNode()) this.currentNode = this.computeNext(this.currentNode);
     }
 
     public void renderFirst() {
@@ -299,12 +292,6 @@ public class GL_ASTAR extends ScriptGL {
         this.openList.remove(0);
 
         return nextNode;
-    }
-
-    public void run() throws InterruptedException {
-        while (!this.stuck && !this.currentNode.isEndNode()) {
-            this.currentNode = this.computeNext(this.currentNode);
-        }
     }
 
 }

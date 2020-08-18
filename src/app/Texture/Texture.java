@@ -1,5 +1,9 @@
 package app.Texture;
 
+import app.Math.Vector3f;
+import app.Math.Vector3i;
+
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,12 +19,23 @@ public class Texture {
 
     private int width, height;
     private int texture;
+    private Vector3f colorOffset;
 
     public Texture(String path) {
         texture = load(path);
     }
 
+    public Texture(String path, Vector3f colorOffset) {
+        this.colorOffset = colorOffset;
+        texture = load(path);
+    }
+
     public Texture(String path, SpriteSheet spriteSheet) {
+        texture = loadSpritesheet(path, spriteSheet);
+    }
+
+    public Texture(String path, SpriteSheet spriteSheet, Vector3f colorOffset) {
+        this.colorOffset = colorOffset;
         texture = loadSpritesheet(path, spriteSheet);
     }
 
@@ -31,6 +46,7 @@ public class Texture {
             width = image.getWidth();
             height = image.getHeight();
             pixels = new int[width * height];
+            offsetPixels(image);
             image.getRGB(0, 0, width, height, pixels, 0, width);
         } catch (IOException e) {
             e.printStackTrace();
@@ -70,6 +86,7 @@ public class Texture {
             int startX = spriteSheet.getTileX() * spriteSheet.getTile().width;
             int startY = spriteSheet.getTileY() * spriteSheet.getTile().height;
             pixels = new int[width * height];
+            offsetPixels(image, spriteSheet);
             image.getRGB(startX, startY, width, height, pixels, 0, width);
         } catch (IOException e) {
             e.printStackTrace();
@@ -108,6 +125,39 @@ public class Texture {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
+    public void offsetPixels(BufferedImage image) {
+        if (colorOffset != null) {
+            if (colorOffset.x > 1.0f || colorOffset.x < 0.0f) colorOffset.x = 1.0f;
+            if (colorOffset.y > 1.0f || colorOffset.y < 0.0f) colorOffset.y = 1.0f;
+            if (colorOffset.z > 1.0f || colorOffset.z < 0.0f) colorOffset.z = 1.0f;
+            Color[] rgb = new Color[width * height];
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    rgb[i] = new Color(image.getRGB(i, j));
+                    Color newColor = new Color(colorOffset.x, colorOffset.y, colorOffset.z);
+                    image.setRGB(i, j, newColor.getRGB());
+                }
+            }
+        }
+    }
+
+    public void offsetPixels(BufferedImage image, SpriteSheet spriteSheet) {
+        if (colorOffset != null) {
+            if (colorOffset.x > 1.0f || colorOffset.x < 0.0f) colorOffset.x = 1.0f;
+            if (colorOffset.y > 1.0f || colorOffset.y < 0.0f) colorOffset.y = 1.0f;
+            if (colorOffset.z > 1.0f || colorOffset.z < 0.0f) colorOffset.z = 1.0f;
+            Color[] rgb = new Color[width * height];
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    int xTarget = i + spriteSheet.getTileX() * spriteSheet.getTile().width;
+                    int yTarget = j + spriteSheet.getTileY() * spriteSheet.getTile().height;
+                    rgb[i] = new Color(image.getRGB(xTarget, yTarget));
+                    Color newColor = new Color(colorOffset.x, colorOffset.y, colorOffset.z);
+                    image.setRGB(xTarget, yTarget, newColor.getRGB());
+                }
+            }
+        }
+    }
     public int getTextureID() {
         return texture;
     }

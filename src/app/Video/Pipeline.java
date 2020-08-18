@@ -1,6 +1,7 @@
 package app.Video;
 
 import app.Math.BufferOperations;
+import app.Math.Vector3f;
 import app.Models.Model;
 import app.Texture.SpriteSheet;
 import app.Texture.Texture;
@@ -60,8 +61,24 @@ public class Pipeline {
         return id;
     }
 
+    public int loadTexture(String name, Vector3f colorOffset) {
+        Texture texture = new Texture("src/res/" + name + ".png", colorOffset);
+        int id = texture.getTextureID();
+        TEXTURES.add(id);
+
+        return id;
+    }
+
     public int loadTextureFromSpritesheet(SpriteSheet spriteSheet) {
         Texture texture = new Texture("src/res/" + spriteSheet.getFile() + ".png", spriteSheet);
+        int id = texture.getTextureID();
+        TEXTURES.add(id);
+
+        return id;
+    }
+
+    public int loadTextureFromSpritesheet(SpriteSheet spriteSheet, Vector3f colorOffset) {
+        Texture texture = new Texture("src/res/" + spriteSheet.getFile() + ".png", spriteSheet, colorOffset);
         int id = texture.getTextureID();
         TEXTURES.add(id);
 

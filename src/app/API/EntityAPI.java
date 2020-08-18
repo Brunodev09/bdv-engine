@@ -1,6 +1,7 @@
 package app.API;
 
 
+import app.Math.Vector3i;
 import app.Texture.SpriteSheet;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -21,6 +22,7 @@ public class EntityAPI {
     private float[] textureCoords;
     private boolean switchModel = false;
     private SpriteSheet spriteSheet;
+    private app.Math.Vector3f rgb;
 
     private int _API_LINK;
 
@@ -144,5 +146,13 @@ public class EntityAPI {
 
     public int getId() {
         return id;
+    }
+
+    public app.Math.Vector3f getRgb() {
+        return rgb;
+    }
+
+    public void setRgb(app.Math.Vector3f rgb) {
+        this.rgb = rgb;
     }
 }

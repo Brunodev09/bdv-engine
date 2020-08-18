@@ -142,7 +142,7 @@ public class Engine {
         int id = 0;
         if (textures.get(entity.getFile()) == null || entity.getSpriteSheet() != null) {
             if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) == null) {
-                id = pipe.loadTextureFromSpritesheet(entity.getSpriteSheet());
+                id = pipe.loadTextureFromSpritesheet(entity.getSpriteSheet(), entity.getRgb());
                 sprites.put(entity.getSpriteSheet(), id);
                 return id;
             }
@@ -150,7 +150,7 @@ public class Engine {
                 return sprites.get(entity.getSpriteSheet());
             }
             else if (entity.getSpriteSheet() == null && entity.getFile() == null) {
-                id = pipe.loadTexture(entity.getFile());
+                id = pipe.loadTexture(entity.getFile(), entity.getRgb());
                 textures.put(entity.getSpriteSheet().getFile(), id);
             }
         }

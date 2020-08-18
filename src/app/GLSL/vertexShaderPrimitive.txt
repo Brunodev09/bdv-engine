@@ -11,8 +11,9 @@ uniform mat4 transformationPrimitive;
 uniform mat4 projectionPrimitive;
 uniform mat4 viewPrimitive;
 
+
 void main(void) {
-    gl_Position =  projectionPrimitive * viewPrimitive * transformationPrimitive * vec4(positionPrimitive.xy, 0.0, 1.0);
+    gl_Position = projectionPrimitive * viewPrimitive * transformationPrimitive * vec4(positionPrimitive.xy, 0.0, 1.0);
     passTextureCoordinatesPrimitive = textureCoordinatesPrimitive;
     colorPrimitive = vec3(positionPrimitive.x - 0.5, (positionPrimitive.x / positionPrimitive.y) + 1.0, positionPrimitive.y + 0.5);
 }
