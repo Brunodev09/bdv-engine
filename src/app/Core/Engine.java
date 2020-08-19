@@ -57,6 +57,7 @@ public class Engine {
                 if (newTexure != 0) textureId = newTexure;
 
                 ModelTexture texture2D = new ModelTexture(textureId);
+                if (entity.getRgbVector() != null) texture2D.setColorOffset(entity.getRgbVector());
                 TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
                 Entity formerEntity = new Entity(tmdl2,
                         entity.getPosition(),
@@ -139,6 +140,7 @@ public class Engine {
             if (entity.getEditModel()) {
                 int textureId = getTextureId(entity);
                 ModelTexture texture2D = new ModelTexture(textureId);
+                if (entity.getRgbVector() != null) texture2D.setColorOffset(entity.getRgbVector());
                 // @TODO - Please please, do something about this...
                 TexturedModel tmdl2 = new TexturedModel(models.get(0), texture2D);
                 former.setModel(tmdl2);

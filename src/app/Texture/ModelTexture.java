@@ -1,10 +1,13 @@
 package app.Texture;
 
+import org.lwjgl.util.vector.Vector3f;
+
 public class ModelTexture {
 
     private final int _textureId;
     private float shineDamper = 1;
     private float reflectivity = 0;
+    private Vector3f colorOffset = new Vector3f(1.0f, 1.0f, 1.0f);
 
     public ModelTexture(int id) {
         this._textureId = id;
@@ -28,6 +31,14 @@ public class ModelTexture {
 
     public void setShineDamper(float shineDamper) {
         this.shineDamper = shineDamper;
+    }
+
+    public Vector3f getColorOffset() {
+        return colorOffset;
+    }
+
+    public void setColorOffset(Vector3f colorOffset) {
+        this.colorOffset = colorOffset;
     }
 }
 

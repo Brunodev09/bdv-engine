@@ -120,6 +120,10 @@ public class Renderer {
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
 
+        if (tmdl.getModelTexture().getColorOffset() != null) {
+            _geoShader.loadColorOffset(tmdl.getModelTexture().getColorOffset());
+        }
+
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, tmdl.getModelTexture().getId());
     }

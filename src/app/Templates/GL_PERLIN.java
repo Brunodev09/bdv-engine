@@ -46,7 +46,8 @@ public class GL_PERLIN extends ScriptGL {
                 entityAPI.setSpriteSheet(red);
                 entityAPI.setScale(0.1f);
                 double noise = PerlinNoise.noise(xOffset, yOffset) * 255;
-                entityAPI.setRgb(new RGBAf((float) noise, (float) noise, (float) noise, 255.0f));
+                entityAPI.setRgbVector(new Vector3f((float) noise, (float) noise, (float) noise));
+//                entityAPI.setRgb(new RGBAf((float) noise, (float) noise, (float) noise, 255.0f));
                 this.entities.add(entityAPI);
                 ptrJ++;
                 xOffset += 0.1;

@@ -23,6 +23,7 @@ public class EntityAPI {
     private boolean switchModel = false;
     private SpriteSheet spriteSheet;
     private RGBAf rgb;
+    private Vector3f rgbVector;
 
     private int _API_LINK;
 
@@ -155,5 +156,13 @@ public class EntityAPI {
     public void setRgb(RGBAf rgb) {
         this.rgb = rgb;
         this.switchModel = true;
+    }
+
+    public Vector3f getRgbVector() {
+        return rgbVector;
+    }
+
+    public void setRgbVector(Vector3f rgbVector) {
+        this.rgbVector = rgbVector;
     }
 }

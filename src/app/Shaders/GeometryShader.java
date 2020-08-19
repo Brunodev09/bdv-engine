@@ -15,6 +15,7 @@ public class GeometryShader extends Shader {
     private int _variableLocation1;
     private int _variableLocation2;
     private int _variableLocation3;
+    private int _variableLocation4;
 
     public GeometryShader() {
         super(V_FILE, F_FILE);
@@ -25,6 +26,7 @@ public class GeometryShader extends Shader {
         _variableLocation1 = super.getUniformVariable("transformationPrimitive");
         _variableLocation2 = super.getUniformVariable("projectionPrimitive");
         _variableLocation3 = super.getUniformVariable("viewPrimitive");
+        _variableLocation4 = super.getUniformVariable("colorOffset");
     }
 
     @Override
@@ -49,6 +51,10 @@ public class GeometryShader extends Shader {
     public void loadViewMatrix(Camera2D camera) {
         Matrix4f view = MatrixUtils.createViewMatrix(camera);
         super.loadMatrixInUniformVariable(_variableLocation3, view);
+    }
+
+    public void loadColorOffset(Vector3f color) {
+        super.loadVectorInUniformVariable(_variableLocation4, color);
     }
 
 }
