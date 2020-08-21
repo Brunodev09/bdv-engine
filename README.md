@@ -1,4 +1,4 @@
-#bdv-engine-java
+# bdv-engine-java
 
 ## Table of contents
 * [Information](#general-info)
@@ -90,41 +90,42 @@ public class GL_TEST_GRID extends ScriptGL {
 ```
 package app.Templates;
 
-import app.API.EntityAPI;
-import app.API.ScriptGL;
-import app.Entities.Camera2D;
-import app.Math.*;
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.vector.Vector3f;
+import app.API.Script;
+import app.Core.Interfaces.Entity;
+import app.Math.Dimension;
+import app.Math.RGBA;
+import app.Math.Vector2f;
+import app.Math.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class GL_TEST_GRID extends ScriptGL {
+public class GRID_TEMPLATE extends Script {
 
-    public GL_TEST_GRID() {
-        this.camera2d = new Camera2D();
+    public GRID_TEMPLATE() {
         this.entities = new ArrayList<>();
-        this.resolution = new Dimension(1024, 768);
-        this.background = new RGBAf(0,0,0,255);
-        this.init(this.entities, this.resolution, this.background);
+        this.resolution = new Dimension(800, 600);
+        this.background = new RGBA(255, 20, 147, 255);
+        this.windowTitle = "GRID";
+        this.init(entities, resolution, background);
     }
 
     @Override
-    public void init(List<EntityAPI> entities, Dimension resolution, RGBAf background) {
-        // In OpenGL, the default viewport sets the origin (0,0,0) at the center of the screen
-        int rows = 12;
-        int cols = 12;
+    public void init(List<Entity> entities, Dimension resolution, RGBA background) {
+        int rows = 10;
+        int cols = 10;
         Dimension tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
-        for (int i = -rows / 2; i < rows / 2; i++) {
-            for (int j = -cols / 2; j < cols / 2; j++) {
-                this.entities.add(new EntityAPI("grass2", new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0)));
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                this.entities.add(new Entity(new Vector3f(tileSize.width * i + i, tileSize.height * j + j),
+                        new Vector2f(0f, 0f), tileSize, new RGBA(133, 133, 133, 255)));
             }
         }
     }
 
     @Override
     public void update() {
+
     }
 }
 
