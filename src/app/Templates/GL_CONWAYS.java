@@ -21,6 +21,22 @@ public class GL_CONWAYS extends ScriptGL {
     private final Dimension tileSize;
     private final Random random = new Random();
 
+    float r = 0;
+    float g = 0;
+    float b = 0;
+
+    float r2 = 0;
+    float g2 = 0;
+    float b2 = 0;
+
+    float r3 = 0;
+    float g3 = 0;
+    float b3 = 0;
+
+    float r4 = 0;
+    float g4 = 0;
+    float b4 = 0;
+
     public GL_CONWAYS() {
         this.camera2d = new Camera2D();
         this.entities = new ArrayList<>();
@@ -34,6 +50,9 @@ public class GL_CONWAYS extends ScriptGL {
 
     @Override
     public void init(List<EntityAPI> entities, Dimension resolution, RGBAf background) {
+
+        randomizeColors();
+
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (random.nextInt(9) == 1) {
@@ -80,12 +99,7 @@ public class GL_CONWAYS extends ScriptGL {
         int ptrJ = 0;
         int ptr = 0;
 
-        float r = 0;
-        float g = 0;
-        float b = 0;
-        r = random.nextFloat();
-        g = random.nextFloat();
-        b = random.nextFloat();
+
         for (int i = -rows / 2; i < rows / 2; i++) {
             ptrJ = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
@@ -99,16 +113,22 @@ public class GL_CONWAYS extends ScriptGL {
                 }
                 // color customization
                 if (i < 0 && j > 0) {
-                    entityAPI.setRgbVector(new Vector3f(1, 0, 0));
+                    entityAPI.setRgbVector(new Vector3f(r, g, b));
                 }
                 else if (i > 0 && j > 0) {
-                    entityAPI.setRgbVector(new Vector3f(0, 1, 0));
+                    entityAPI.setRgbVector(new Vector3f(r2, g2, b2));
                 }
                 else if (i > 0 && j < 0) {
-                    entityAPI.setRgbVector(new Vector3f(0, 0, 1));
+                    entityAPI.setRgbVector(new Vector3f(r3, g3, b3));
                 }
                 else if (i < 0 && j < 0) {
-                    entityAPI.setRgbVector(new Vector3f(r, g, b));
+                    entityAPI.setRgbVector(new Vector3f(r4, g4, b4));
+                }
+                else if (i == 0) {
+                    entityAPI.setRgbVector(new Vector3f(0, 0, 0));
+                }
+                else {
+                    entityAPI.setRgbVector(new Vector3f(0, 0, 0));
                 }
                 ptrJ++;
                 ptr++;
@@ -121,6 +141,24 @@ public class GL_CONWAYS extends ScriptGL {
                 matrix[i][j] = bufferedMatrix[i][j];
             }
         }
+    }
+
+    public void randomizeColors() {
+        r = random.nextFloat();
+        g = random.nextFloat();
+        b = random.nextFloat();
+
+        r2 = random.nextFloat();
+        g2 = random.nextFloat();
+        b2 = random.nextFloat();
+
+        r3 = random.nextFloat();
+        g3 = random.nextFloat();
+        b3 = random.nextFloat();
+
+        r4 = random.nextFloat();
+        g4 = random.nextFloat();
+        b4 = random.nextFloat();
     }
 
     public boolean shouldDie(int x, int y) {

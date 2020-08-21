@@ -21,8 +21,8 @@ public class GL_TEST_3D extends ScriptGL {
 
     @Override
     public void init(List<EntityAPI> entities, Dimension resolution, RGBAf background) {
-        EntityAPI entity = new EntityAPI("tex1");
-        entity.setModel("testModel");
+        EntityAPI entity = new EntityAPI("tex2");
+        entity.setModel("sphere");
         entities.add(entity);
     }
 
