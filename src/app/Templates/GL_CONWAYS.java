@@ -79,6 +79,13 @@ public class GL_CONWAYS extends ScriptGL {
         int ptrI = 0;
         int ptrJ = 0;
         int ptr = 0;
+
+        float r = 0;
+        float g = 0;
+        float b = 0;
+        r = random.nextFloat();
+        g = random.nextFloat();
+        b = random.nextFloat();
         for (int i = -rows / 2; i < rows / 2; i++) {
             ptrJ = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
@@ -89,6 +96,19 @@ public class GL_CONWAYS extends ScriptGL {
                 }
                 else {
                     entityAPI.setFile("black");
+                }
+                // color customization
+                if (i < 0 && j > 0) {
+                    entityAPI.setRgbVector(new Vector3f(1, 0, 0));
+                }
+                else if (i > 0 && j > 0) {
+                    entityAPI.setRgbVector(new Vector3f(0, 1, 0));
+                }
+                else if (i > 0 && j < 0) {
+                    entityAPI.setRgbVector(new Vector3f(0, 0, 1));
+                }
+                else if (i < 0 && j < 0) {
+                    entityAPI.setRgbVector(new Vector3f(r, g, b));
                 }
                 ptrJ++;
                 ptr++;
