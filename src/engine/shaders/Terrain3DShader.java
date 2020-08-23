@@ -6,10 +6,12 @@ import engine.entities.Lightsource;
 import engine.math.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
+import java.io.File;
+
 public class Terrain3DShader extends Shader {
 
-    private static final String V_FILE = "src/engine/glsl/terrain3DVertexShader.txt";
-    private static final String F_FILE = "src/engine/glsl/terrain3DFragmentShader.txt";
+    private static final String V_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/terrain3DVertexShader.txt");
+    private static final String F_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/terrain3DFragmentShader.txt");
 
     private int _variableLocation1;
     private int _variableLocation2;

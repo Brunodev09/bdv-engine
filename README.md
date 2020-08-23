@@ -39,23 +39,31 @@ Project is created with:
 * lwjgl-2.9.3
 	
 ## Setup
-There is currently no installation setup, you can download it  and create your own scripts inside  ``./src/engine/Templates`` and there you can choose either of the rendering options: native or OpenGL. And you do that by extending either the abstract class `Script` or `ScriptGL`. Below there is a quick example of a simple texture grid (2D) being loaded into the screen using both approaches. Textures and OBJ files must be placed inside `./src/examples.res` folder. Entrypoint is in `./src/engine/App.java`
+Simply import the .jar contained in `out/artifacts/bdv_engine_java_jar` and add the lwjgl dll's as native libraries. (The dll's can be found on LWJGL's site or inside `lib/natives`)
+Below there is a quick example of a simple texture grid (2D) being loaded into the screen using OpenGL and Swing. You can find many more examples of usage in `src/examples`
 
 ## OpenGL rendering API
 ```
-package engine.Templates;
+package examples;
 
 import engine.api.EntityAPI;
 import engine.api.ScriptGL;
+import engine.Bdv;
 import engine.entities.Camera2D;
 import engine.math.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GL_TEST_GRID extends ScriptGL {
+
+    private static final Logger LOGGER = Logger.getLogger(GL_TEST_GRID.class.getName());
+    private static final String GRASS_TEXTURE_FILE_PATH = new File("src/examples/res/grass2").getAbsolutePath();
 
     public GL_TEST_GRID() {
         this.camera2d = new Camera2D();
@@ -73,13 +81,21 @@ public class GL_TEST_GRID extends ScriptGL {
         Dimension tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
         for (int i = -rows / 2; i < rows / 2; i++) {
             for (int j = -cols / 2; j < cols / 2; j++) {
-                this.entities.add(new EntityAPI("grass2", new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0)));
+                this.entities.add(new EntityAPI(GRASS_TEXTURE_FILE_PATH, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0)));
             }
         }
     }
 
     @Override
     public void update() {
+    }
+
+    public static void main(String[] args) {
+        try {
+            new Bdv(GL_TEST_GRID.class);
+        } catch (Exception exception) {
+            LOGGER.log(Level.SEVERE, exception.toString(), exception);
+        }
     }
 }
 
@@ -88,9 +104,10 @@ public class GL_TEST_GRID extends ScriptGL {
 ## Java Swing rendering API
 
 ```
-package engine.Templates;
+package examples;
 
 import engine.api.Script;
+import engine.Bdv;
 import engine.core.interfaces.Entity;
 import engine.math.Dimension;
 import engine.math.RGBA;
@@ -99,8 +116,12 @@ import engine.math.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GRID_TEMPLATE extends Script {
+
+    private static final Logger LOGGER = Logger.getLogger(GRID_TEMPLATE.class.getName());
 
     public GRID_TEMPLATE() {
         this.entities = new ArrayList<>();
@@ -127,6 +148,13 @@ public class GRID_TEMPLATE extends Script {
     public void update() {
 
     }
-}
 
+    public static void main(String[] args) {
+        try {
+            new Bdv(GRID_TEMPLATE.class);
+        } catch (Exception exception) {
+            LOGGER.log(Level.SEVERE, exception.toString(), exception);
+        }
+    }
+}
 ```

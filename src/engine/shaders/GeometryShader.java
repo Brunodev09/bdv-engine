@@ -7,10 +7,12 @@ import engine.math.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.io.File;
+
 public class GeometryShader extends Shader {
 
-    private static final String V_FILE = "src/engine/glsl/vertexShaderPrimitive.txt";
-    private static final String F_FILE = "src/engine/glsl/fragmentShaderPrimitive.txt";
+    private static final String V_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/vertexShaderPrimitive.txt");
+    private static final String F_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/fragmentShaderPrimitive.txt");
 
     private int _variableLocation1;
     private int _variableLocation2;

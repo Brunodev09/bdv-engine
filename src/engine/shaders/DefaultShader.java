@@ -6,10 +6,12 @@ import engine.entities.Lightsource;
 import engine.math.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
+import java.io.File;
+
 public class DefaultShader extends Shader {
 
-    private static final String V_FILE = "src/engine/glsl/vertexShader.txt";
-    private static final String F_FILE = "src/engine/glsl/fragmentShader.txt";
+    private static final String V_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/vertexShader.txt");
+    private static final String F_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/fragmentShader.txt");
 
     private int _variableLocation1;
     private int _variableLocation2;
