@@ -39,16 +39,16 @@ Project is created with:
 * lwjgl-2.9.3
 	
 ## Setup
-There is currently no installation setup, you can download it  and create your own scripts inside  ``./src/app/Templates`` and there you can choose either of the rendering options: native or OpenGL. And you do that by extending either the abstract class `Script` or `ScriptGL`. Below there is a quick example of a simple texture grid (2D) being loaded into the screen using both approaches. Textures and OBJ files must be placed inside `./src/res` folder. Entrypoint is in `./src/app/App.java`
+There is currently no installation setup, you can download it  and create your own scripts inside  ``./src/engine/Templates`` and there you can choose either of the rendering options: native or OpenGL. And you do that by extending either the abstract class `Script` or `ScriptGL`. Below there is a quick example of a simple texture grid (2D) being loaded into the screen using both approaches. Textures and OBJ files must be placed inside `./src/examples.res` folder. Entrypoint is in `./src/engine/App.java`
 
 ## OpenGL rendering API
 ```
-package app.Templates;
+package engine.Templates;
 
-import app.API.EntityAPI;
-import app.API.ScriptGL;
-import app.Entities.Camera2D;
-import app.Math.*;
+import engine.api.EntityAPI;
+import engine.api.ScriptGL;
+import engine.entities.Camera2D;
+import engine.math.*;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -88,14 +88,14 @@ public class GL_TEST_GRID extends ScriptGL {
 ## Java Swing rendering API
 
 ```
-package app.Templates;
+package engine.Templates;
 
-import app.API.Script;
-import app.Core.Interfaces.Entity;
-import app.Math.Dimension;
-import app.Math.RGBA;
-import app.Math.Vector2f;
-import app.Math.Vector3f;
+import engine.api.Script;
+import engine.core.interfaces.Entity;
+import engine.math.Dimension;
+import engine.math.RGBA;
+import engine.math.Vector2f;
+import engine.math.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
