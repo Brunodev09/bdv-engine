@@ -7,7 +7,7 @@ import engine.math.RGBA;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Script {
+public abstract class BdvScript {
     public List<Entity> entities = new ArrayList<Entity>();
     public Dimension resolution;
     public RGBA background;

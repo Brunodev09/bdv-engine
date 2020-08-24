@@ -10,8 +10,8 @@ import java.io.File;
 
 public class Terrain3DShader extends Shader {
 
-    private static final String V_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/terrain3DVertexShader.txt");
-    private static final String F_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/terrain3DFragmentShader.txt");
+    private static final File vertex = new File(DefaultShader.class.getClassLoader().getResource("terrain3DVertexShader.txt").getFile());
+    private static final File fragment = new File(DefaultShader.class.getClassLoader().getResource("terrain3DFragmentShader.txt").getFile());
 
     private int _variableLocation1;
     private int _variableLocation2;
@@ -22,7 +22,7 @@ public class Terrain3DShader extends Shader {
     private int _variableLocation7;
 
     public Terrain3DShader() {
-        super(V_FILE, F_FILE);
+        super(vertex, fragment);
     }
 
     @Override

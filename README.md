@@ -47,7 +47,7 @@ Below there is a quick example of a simple texture grid (2D) being loaded into t
 package examples;
 
 import engine.api.EntityAPI;
-import engine.api.ScriptGL;
+import engine.api.BdvScriptGL;
 import engine.Bdv;
 import engine.entities.Camera2D;
 import engine.math.*;
@@ -106,7 +106,7 @@ public class GL_TEST_GRID extends ScriptGL {
 ```
 package examples;
 
-import engine.api.Script;
+import engine.api.BdvScript;
 import engine.Bdv;
 import engine.core.interfaces.Entity;
 import engine.math.Dimension;

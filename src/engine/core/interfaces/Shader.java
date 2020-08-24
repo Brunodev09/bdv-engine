@@ -8,6 +8,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -16,7 +17,7 @@ import java.util.logging.Logger;
 
 public abstract class Shader {
 
-    private static final Logger LOGGER = Logger.getLogger(GL_ASTAR.class.getName());
+    private static final Logger LOG = Logger.getLogger(Shader.class.getName());
 
     private final int _id;
     private final int _vertexShaderId;
@@ -25,7 +26,7 @@ public abstract class Shader {
     // 4x4 matrixes
     private static final FloatBuffer _floatBuffer = BufferOperations.createFloatBuffer(16);
 
-    public Shader(String vertexShaderFile, String fragmentShaderFile) {
+    public Shader(File vertexShaderFile, File fragmentShaderFile) {
         _vertexShaderId = _load(vertexShaderFile, GL20.GL_VERTEX_SHADER);
         _fragmentShaderId = _load(fragmentShaderFile, GL20.GL_FRAGMENT_SHADER);
         _id = GL20.glCreateProgram();
@@ -106,8 +107,36 @@ public abstract class Shader {
         GL20.glCompileShader(shaderID);
 
         if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            LOGGER.log(Level.SEVERE, GL20.glGetShaderInfoLog(shaderID, 500));
-            LOGGER.severe("Could not compile shader program!");
+            LOG.log(Level.SEVERE, GL20.glGetShaderInfoLog(shaderID, 500));
+            LOG.severe("Could not compile shader program!");
+            System.exit(-1);
+        }
+
+        return shaderID;
+    }
+
+    private static int _load(File file, int type) {
+        StringBuilder shaderSource = new StringBuilder();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                shaderSource.append(line).append("//\n");
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(-1);
+        }
+
+        int shaderID = GL20.glCreateShader(type);
+
+        GL20.glShaderSource(shaderID, shaderSource);
+        GL20.glCompileShader(shaderID);
+
+        if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
+            LOG.log(Level.SEVERE, GL20.glGetShaderInfoLog(shaderID, 500));
+            LOG.severe("Could not compile shader program!");
             System.exit(-1);
         }
 

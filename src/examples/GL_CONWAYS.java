@@ -1,7 +1,7 @@
 package examples;
 
 import engine.api.EntityAPI;
-import engine.api.ScriptGL;
+import engine.api.BdvScriptGL;
 import engine.Bdv;
 import engine.entities.Camera2D;
 import engine.math.Dimension;
@@ -16,11 +16,9 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// @TODO - Implement a logger
 // @TODO - Implement custom exceptions
-// @TODO - Make Script interface implement the Engine and not the Engine implement the Script inner workings
-
-public class GL_CONWAYS extends ScriptGL {
+// @TODO - Make sprites scale proportional
+public class GL_CONWAYS extends BdvScriptGL {
 
     private static final Logger LOGGER = Logger.getLogger(GL_CONWAYS.class.getName());
 

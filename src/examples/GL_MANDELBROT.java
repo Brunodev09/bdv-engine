@@ -1,7 +1,7 @@
 package examples;
 
 import engine.api.EntityAPI;
-import engine.api.ScriptGL;
+import engine.api.BdvScriptGL;
 import engine.Bdv;
 import engine.entities.Camera2D;
 import engine.math.Complex;
@@ -19,7 +19,7 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GL_MANDELBROT extends ScriptGL {
+public class GL_MANDELBROT extends BdvScriptGL {
 
     private static final Logger LOGGER = Logger.getLogger(GL_MANDELBROT.class.getName());
 

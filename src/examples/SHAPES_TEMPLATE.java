@@ -1,6 +1,6 @@
 package examples;
 
-import engine.api.Script;
+import engine.api.BdvScript;
 import engine.Bdv;
 import engine.core.interfaces.Entity;
 import engine.math.Dimension;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class SHAPES_TEMPLATE extends Script {
+public class SHAPES_TEMPLATE extends BdvScript {
 
     private static final Logger LOGGER = Logger.getLogger(SHAPES_TEMPLATE.class.getName());
 

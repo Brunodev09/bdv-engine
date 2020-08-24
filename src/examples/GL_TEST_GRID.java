@@ -1,7 +1,7 @@
 package examples;
 
+import engine.api.BdvScriptGL;
 import engine.api.EntityAPI;
-import engine.api.ScriptGL;
 import engine.Bdv;
 import engine.entities.Camera2D;
 import engine.math.*;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GL_TEST_GRID extends ScriptGL {
+public class GL_TEST_GRID extends BdvScriptGL {
 
     private static final Logger LOGGER = Logger.getLogger(GL_TEST_GRID.class.getName());
     private static final String GRASS_TEXTURE_FILE_PATH = new File("src/examples/res/grass2").getAbsolutePath();

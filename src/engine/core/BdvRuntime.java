@@ -1,6 +1,6 @@
 package engine.core;
 
-import engine.api.Script;
+import engine.api.BdvScript;
 import engine.core.interfaces.Entity;
 import engine.video.Render;
 import engine.video.RenderQueue;
@@ -34,7 +34,7 @@ public class BdvRuntime extends Canvas implements Runnable {
     private final RenderQueue queue;
     private final Render render;
 
-    private Script script;
+    private BdvScript script;
 
     private int fps = 60;
 
@@ -62,7 +62,7 @@ public class BdvRuntime extends Canvas implements Runnable {
         BdvRuntime.scale = scale;
     }
 
-    public void setTemplate(Script script) {
+    public void setTemplate(BdvScript script) {
         this.script = script;
         this.resizeFrame(script.resolution.width, script.resolution.height);
         this.setupRenderQueue();

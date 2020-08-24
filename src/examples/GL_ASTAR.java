@@ -1,7 +1,7 @@
 package examples;
 
 import engine.api.EntityAPI;
-import engine.api.ScriptGL;
+import engine.api.BdvScriptGL;
 import engine.Bdv;
 import engine.entities.Camera2D;
 import engine.math.*;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GL_ASTAR extends ScriptGL {
+public class GL_ASTAR extends BdvScriptGL {
 
     private static final Logger LOGGER = Logger.getLogger(GL_ASTAR.class.getName());
 

@@ -10,8 +10,8 @@ import java.io.File;
 
 public class DefaultShader extends Shader {
 
-    private static final String V_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/vertexShader.txt");
-    private static final String F_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/fragmentShader.txt");
+    private static final File vertex = new File(DefaultShader.class.getClassLoader().getResource("vertexShader.txt").getFile());
+    private static final File fragment = new File(DefaultShader.class.getClassLoader().getResource("fragmentShader.txt").getFile());
 
     private int _variableLocation1;
     private int _variableLocation2;
@@ -22,11 +22,12 @@ public class DefaultShader extends Shader {
     private int _variableLocation7;
 
     public DefaultShader() {
-        super(V_FILE, F_FILE);
+        super(vertex, fragment);
     }
 
     @Override
     protected void getAllUniformsVariables() {
+
         _variableLocation1 = super.getUniformVariable("transformation");
         _variableLocation2 = super.getUniformVariable("projection");
         _variableLocation3 = super.getUniformVariable("view");

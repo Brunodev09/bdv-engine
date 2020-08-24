@@ -8,7 +8,7 @@ import engine.math.RGBAf;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class ScriptGL {
+public abstract class BdvScriptGL {
     public List<EntityAPI> entities = new ArrayList<>();
     public Dimension resolution;
     public RGBAf background;

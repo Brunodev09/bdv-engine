@@ -1,7 +1,7 @@
 package engine;
 
-import engine.api.Script;
-import engine.api.ScriptGL;
+import engine.api.BdvScript;
+import engine.api.BdvScriptGL;
 import engine.core.BdvRuntime;
 import engine.core.Configuration;
 import engine.core.Engine;
@@ -26,14 +26,14 @@ public class Bdv {
             InstantiationException {
 
         Constructor<?> constructor = yourScriptClass.getConstructor();
-        Script pureInstanceConversion = null;
-        ScriptGL instanceConversionGL = null;
+        BdvScript pureInstanceConversion = null;
+        BdvScriptGL instanceConversionGL = null;
         Object instance = constructor.newInstance();
 
         try {
-            pureInstanceConversion = (Script) instance;
+            pureInstanceConversion = (BdvScript) instance;
         } catch (Exception e) {
-            instanceConversionGL = (ScriptGL) instance;
+            instanceConversionGL = (BdvScriptGL) instance;
         }
 
         if (pureInstanceConversion != null) {

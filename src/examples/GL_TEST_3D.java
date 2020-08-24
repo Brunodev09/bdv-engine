@@ -1,7 +1,7 @@
 package examples;
 
+import engine.api.BdvScriptGL;
 import engine.api.EntityAPI;
-import engine.api.ScriptGL;
 import engine.Bdv;
 import engine.entities.Camera;
 import engine.math.Dimension;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GL_TEST_3D extends ScriptGL {
+public class GL_TEST_3D extends BdvScriptGL {
 
     private static final Logger LOGGER = Logger.getLogger(GL_TEST_3D.class.getName());
     private static final String TEXTURE_FILE_PATH = new File("src/examples/res/tex2").getAbsolutePath();

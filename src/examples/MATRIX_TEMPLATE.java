@@ -1,6 +1,6 @@
 package examples;
 
-import engine.api.Script;
+import engine.api.BdvScript;
 import engine.Bdv;
 import engine.core.interfaces.Entity;
 import engine.core.interfaces.Model;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class MATRIX_TEMPLATE extends Script {
+public class MATRIX_TEMPLATE extends BdvScript {
 
     private static final Logger LOGGER = Logger.getLogger(MATRIX_TEMPLATE.class.getName());
     private double angle = 0;

@@ -11,8 +11,8 @@ import java.io.File;
 
 public class GeometryShader extends Shader {
 
-    private static final String V_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/vertexShaderPrimitive.txt");
-    private static final String F_FILE = new File("").getAbsolutePath().concat("/src/engine/glsl/fragmentShaderPrimitive.txt");
+    private static final File vertex = new File(DefaultShader.class.getClassLoader().getResource("vertexShaderPrimitive.txt").getFile());
+    private static final File fragment = new File(DefaultShader.class.getClassLoader().getResource("fragmentShaderPrimitive.txt").getFile());
 
     private int _variableLocation1;
     private int _variableLocation2;
@@ -20,7 +20,7 @@ public class GeometryShader extends Shader {
     private int _variableLocation4;
 
     public GeometryShader() {
-        super(V_FILE, F_FILE);
+        super(vertex, fragment);
     }
 
     @Override
