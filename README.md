@@ -7,7 +7,7 @@
 * [Demo](#setup)
 
 ## General info
-This is a project where I migrate most of the graphical stuff that I've been working on with Javascript and CANVAS to an actual attempt to create a game engine layer that implements the OpenGL 3.1 API (2D and 3D) bindings through LWJGL. In such, the user would not be required to actually write shaders but instead interact with my API to actually load data into the rendering pipeline. While this is surely slower than actually buffering the GPU directly, it surely is easier to prototype. It also contains an optional rendering option through Java Swing.
+This is a project where I migrate most of the graphical stuff that I've been working on with Javascript and WebGL to an actual attempt to create a game engine layer that implements the OpenGL 3.1 API (2D and 3D) bindings through LWJGL. In such, the user would not be required to actually write shaders but instead interact with my API to actually load data into the rendering pipeline. While this is surely slower than actually buffering the GPU directly, it surely is easier to prototype. It also contains an optional rendering option through Java Swing.
 
 ## Samples
 Samples I made with this engine includes:
@@ -46,8 +46,8 @@ Below there is a quick example of a simple texture grid (2D) being loaded into t
 ```
 package examples;
 
-import engine.api.EntityAPI;
 import engine.api.BdvScriptGL;
+import engine.api.EntityAPI;
 import engine.Bdv;
 import engine.entities.Camera2D;
 import engine.math.*;
@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GL_TEST_GRID extends ScriptGL {
+public class GL_TEST_GRID extends BdvScriptGL {
 
     private static final Logger LOGGER = Logger.getLogger(GL_TEST_GRID.class.getName());
     private static final String GRASS_TEXTURE_FILE_PATH = new File("src/examples/res/grass2").getAbsolutePath();
@@ -98,7 +98,6 @@ public class GL_TEST_GRID extends ScriptGL {
         }
     }
 }
-
 ```
 
 ## Java Swing rendering API
@@ -119,7 +118,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class GRID_TEMPLATE extends Script {
+public class GRID_TEMPLATE extends BdvScript {
 
     private static final Logger LOGGER = Logger.getLogger(GRID_TEMPLATE.class.getName());
 
