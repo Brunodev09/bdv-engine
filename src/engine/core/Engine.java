@@ -17,9 +17,11 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.logging.Logger;
+
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 // @TODO - Set this up as a gradle project and remove dependencies from commits
-// @TODO - Migrate it to LWJGL3 to apporach the C API
 
 public class Engine {
 
@@ -31,6 +33,9 @@ public class Engine {
     List<Model> models = new ArrayList<>();
     List<EntityAPI> scriptEntities;
     Map<String, ProcessedBufferedImage> processedImages = new HashMap<>();
+    double lastTime;
+
+    Logger LOG = Logger.getLogger(Engine.class.getName());
 
     public void loop(Configuration config) {
 
@@ -72,9 +77,13 @@ public class Engine {
             }
 
             while (!RenderManager.shouldExit()) {
+                double thisTime = currentTimeMillis();
+                double delta = thisTime - lastTime;
+                lastTime = thisTime;
+
                 createAndUpdateFormerEntity();
                 config.script.update();
-                cam2d.move();
+                cam2d.move(delta);
 
                 toRender.forEach((key, val) -> RenderManager.processEntity(val));
 
@@ -105,9 +114,13 @@ public class Engine {
             }
 
             while (!RenderManager.shouldExit()) {
+                double thisTime = currentTimeMillis();
+                double delta = thisTime - lastTime;
+                lastTime = thisTime;
+
                 config.script.update();
                 createAndUpdateFormerEntity();
-                cam.move();
+                cam.move(delta);
 
                 toRender.forEach((key, val) -> RenderManager.processEntity(val));
 
@@ -208,6 +221,10 @@ public class Engine {
 
         }
         return resultingTextureId;
+    }
+
+    public static double currentTimeMillis() {
+        return glfwGetTime() * 1000;
     }
 
 }

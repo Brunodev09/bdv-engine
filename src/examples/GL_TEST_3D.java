@@ -17,7 +17,7 @@ public class GL_TEST_3D extends BdvScriptGL {
 
     private static final Logger LOGGER = Logger.getLogger(GL_TEST_3D.class.getName());
     private static final String TEXTURE_FILE_PATH = new File("src/examples/res/tex2").getAbsolutePath();
-    private static final String SPHERE_OBJ_FILE_PATH = new File("src/examples/res/sphere").getAbsolutePath();
+    private static final String SPHERE_OBJ_FILE_PATH = new File("src/examples/res/testModel").getAbsolutePath();
 
     public GL_TEST_3D() {
         this.camera = new Camera();

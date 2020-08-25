@@ -1,7 +1,9 @@
 package engine.entities;
 
-import org.lwjgl.input.Keyboard;
+import engine.video.RenderManager;
 import org.lwjgl.util.vector.Vector3f;
+
+import static org.lwjgl.glfw.GLFW.*;
 
 public class Camera2D {
     private Vector3f _position = new Vector3f(0, 0, 0);
@@ -15,18 +17,24 @@ public class Camera2D {
 
     }
 
-    public void move() {
-        if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+    public void move(double delta) {
+        long windowContext = RenderManager.getWindow();
+
+        if (glfwGetKey(windowContext, GLFW_KEY_W) == GLFW_PRESS) {
             _position.y -= _speed;
+
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
-            _position.x += _speed;
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
-            _position.x -= _speed;
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+        if (glfwGetKey(windowContext, GLFW_KEY_S) == GLFW_PRESS) {
             _position.y += _speed;
+
+        }
+        if (glfwGetKey(windowContext, GLFW_KEY_D) == GLFW_PRESS) {
+            _position.x += _speed;
+
+        }
+        if (glfwGetKey(windowContext, GLFW_KEY_A) == GLFW_PRESS) {
+            _position.x -= _speed;
+
         }
     }
 

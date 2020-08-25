@@ -2,7 +2,7 @@ package engine.math;
 
 import engine.entities.Camera;
 import engine.entities.Camera2D;
-import org.lwjgl.opengl.Display;
+import engine.video.RenderManager;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -61,7 +61,7 @@ public class MatrixUtils {
     public static Matrix4f createProjectionMatrix(float fov, float np, float fp) {
         Matrix4f matrix = new Matrix4f();;
 
-        float ratio = (float) Display.getWidth() / (float) Display.getHeight();
+        float ratio = (float) RenderManager.getWindowWidth() / (float) RenderManager.getWindowHeight();
         float scaleY = (1f / (float) Math.tan(Math.toRadians(fov / 2f))) * ratio;
         float scaleX = scaleY / ratio;
         float frustumLength = fp - np;
@@ -83,8 +83,8 @@ public class MatrixUtils {
         float zNear = 0.01f;
         float zFar = 100f;
 
-        ortho.m00 = 2 / (float) Display.getWidth();
-        ortho.m11 = 2 / -(float) Display.getHeight();
+        ortho.m00 = 2 / (float) RenderManager.getWindowWidth();
+        ortho.m11 = 2 / -(float) RenderManager.getWindowHeight();
         ortho.m22 = -2 / (zFar - zNear);
 
         return ortho;

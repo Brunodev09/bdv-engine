@@ -1,7 +1,10 @@
 package engine.entities;
 
-import org.lwjgl.input.Keyboard;
+import engine.video.RenderManager;
 import org.lwjgl.util.vector.Vector3f;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
 public class Camera {
     private Vector3f _position = new Vector3f(0, 4, 0);
@@ -15,29 +18,36 @@ public class Camera {
 
     }
 
-    public void move() {
-        if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+    public void move(double delta) {
+        long windowContext = RenderManager.getWindow();
+
+        if (glfwGetKey(windowContext, GLFW_KEY_W) == GLFW_PRESS) {
             _position.z -= _speed;
+
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_D)) {
+        if (glfwGetKey(windowContext, GLFW_KEY_S) == GLFW_PRESS) {
+            _position.z += _speed;
+
+        }
+        if (glfwGetKey(windowContext, GLFW_KEY_D) == GLFW_PRESS) {
             _position.x += _speed;
+
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_A)) {
+        if (glfwGetKey(windowContext, GLFW_KEY_A) == GLFW_PRESS) {
             _position.x -= _speed;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
-            _position.z += _speed;
-        }
-        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+
+        if (glfwGetKey(windowContext, GLFW_KEY_UP) == GLFW_PRESS) {
             _position.y -= _speed;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+        if (glfwGetKey(windowContext, GLFW_KEY_DOWN) == GLFW_PRESS) {
             _position.y += _speed;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+
+        if (glfwGetKey(windowContext, GLFW_KEY_LEFT) == GLFW_PRESS) {
             _yaw -= _speed;
         }
-        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+        if (glfwGetKey(windowContext, GLFW_KEY_RIGHT) == GLFW_PRESS) {
             _yaw += _speed;
         }
     }
