@@ -19,7 +19,6 @@ import org.lwjgl.opengl.PixelFormat;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.opengl.*;
 
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

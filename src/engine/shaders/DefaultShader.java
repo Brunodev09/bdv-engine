@@ -6,13 +6,9 @@ import engine.entities.Lightsource;
 import engine.math.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
-import java.io.File;
+import java.io.InputStream;
 
 public class DefaultShader extends Shader {
-
-    private static final File vertex = new File(DefaultShader.class.getClassLoader().getResource("vertexShader.txt").getFile());
-    private static final File fragment = new File(DefaultShader.class.getClassLoader().getResource("fragmentShader.txt").getFile());
-
     private int _variableLocation1;
     private int _variableLocation2;
     private int _variableLocation3;
@@ -22,12 +18,19 @@ public class DefaultShader extends Shader {
     private int _variableLocation7;
 
     public DefaultShader() {
-        super(vertex, fragment);
+        super(readVertexData(), readFragmentData());
+    }
+
+    private static InputStream readVertexData() {
+        return DefaultShader.class.getResourceAsStream("/src/engine/shaders/vertexShader.txt");
+    }
+
+    private static InputStream readFragmentData() {
+        return DefaultShader.class.getResourceAsStream("/src/engine/shaders/fragmentShader.txt");
     }
 
     @Override
     protected void getAllUniformsVariables() {
-
         _variableLocation1 = super.getUniformVariable("transformation");
         _variableLocation2 = super.getUniformVariable("projection");
         _variableLocation3 = super.getUniformVariable("view");

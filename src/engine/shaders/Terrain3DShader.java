@@ -6,12 +6,9 @@ import engine.entities.Lightsource;
 import engine.math.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
-import java.io.File;
+import java.io.InputStream;
 
 public class Terrain3DShader extends Shader {
-
-    private static final File vertex = new File(DefaultShader.class.getClassLoader().getResource("terrain3DVertexShader.txt").getFile());
-    private static final File fragment = new File(DefaultShader.class.getClassLoader().getResource("terrain3DFragmentShader.txt").getFile());
 
     private int _variableLocation1;
     private int _variableLocation2;
@@ -22,7 +19,15 @@ public class Terrain3DShader extends Shader {
     private int _variableLocation7;
 
     public Terrain3DShader() {
-        super(vertex, fragment);
+        super(readVertexData(), readFragmentData());
+    }
+
+    private static InputStream readVertexData() {
+        return DefaultShader.class.getResourceAsStream("/src/engine/shaders/terrain3DVertexShader.txt");
+    }
+
+    private static InputStream readFragmentData() {
+        return DefaultShader.class.getResourceAsStream("/src/engine/shaders/terrain3DFragmentShader.txt");
     }
 
     @Override

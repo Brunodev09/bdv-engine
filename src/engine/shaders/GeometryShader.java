@@ -7,12 +7,9 @@ import engine.math.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.io.File;
+import java.io.InputStream;
 
 public class GeometryShader extends Shader {
-
-    private static final File vertex = new File(DefaultShader.class.getClassLoader().getResource("vertexShaderPrimitive.txt").getFile());
-    private static final File fragment = new File(DefaultShader.class.getClassLoader().getResource("fragmentShaderPrimitive.txt").getFile());
 
     private int _variableLocation1;
     private int _variableLocation2;
@@ -20,7 +17,15 @@ public class GeometryShader extends Shader {
     private int _variableLocation4;
 
     public GeometryShader() {
-        super(vertex, fragment);
+        super(readVertexData(), readFragmentData());
+    }
+
+    private static InputStream readVertexData() {
+        return DefaultShader.class.getResourceAsStream("/src/engine/shaders/vertexShaderPrimitive.txt");
+    }
+
+    private static InputStream readFragmentData() {
+        return DefaultShader.class.getResourceAsStream("/src/engine/shaders/fragmentShaderPrimitive.txt");
     }
 
     @Override

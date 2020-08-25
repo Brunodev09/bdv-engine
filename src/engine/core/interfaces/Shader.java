@@ -7,10 +7,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.FloatBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,9 +23,9 @@ public abstract class Shader {
     // 4x4 matrixes
     private static final FloatBuffer _floatBuffer = BufferOperations.createFloatBuffer(16);
 
-    public Shader(File vertexShaderFile, File fragmentShaderFile) {
-        _vertexShaderId = _load(vertexShaderFile, GL20.GL_VERTEX_SHADER);
-        _fragmentShaderId = _load(fragmentShaderFile, GL20.GL_FRAGMENT_SHADER);
+    public Shader(InputStream vertexShaderStream, InputStream fragmentShaderStream) {
+        _vertexShaderId = _load(vertexShaderStream, GL20.GL_VERTEX_SHADER);
+        _fragmentShaderId = _load(fragmentShaderStream, GL20.GL_FRAGMENT_SHADER);
         _id = GL20.glCreateProgram();
         GL20.glAttachShader(_id, _vertexShaderId);
         GL20.glAttachShader(_id, _fragmentShaderId);
@@ -115,10 +112,10 @@ public abstract class Shader {
         return shaderID;
     }
 
-    private static int _load(File file, int type) {
+    private static int _load(InputStream stream, int type) {
         StringBuilder shaderSource = new StringBuilder();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             String line;
             while ((line = reader.readLine()) != null) {
                 shaderSource.append(line).append("//\n");
