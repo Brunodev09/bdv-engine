@@ -18,6 +18,9 @@ import org.lwjgl.util.vector.Vector3f;
 import java.awt.image.BufferedImage;
 import java.util.*;
 
+// @TODO - Set this up as a gradle project and remove dependencies from commits
+// @TODO - Migrate it to LWJGL3 to apporach the C API
+
 public class Engine {
 
     Pipeline pipe = new Pipeline();
