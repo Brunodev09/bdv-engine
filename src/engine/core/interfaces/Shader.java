@@ -4,6 +4,7 @@ import engine.math.BufferOperations;
 import examples.GL_ASTAR;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL20C;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -65,7 +66,7 @@ public abstract class Shader {
     protected void loadMatrixInUniformVariable(int location, Matrix4f m4x4) {
         m4x4.store(_floatBuffer);
         _floatBuffer.flip();
-        GL20.glUniformMatrix4(location, false, _floatBuffer);
+        GL20.glUniformMatrix4fv(location, false, _floatBuffer);
     }
 
     public void runCollector() {

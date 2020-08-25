@@ -11,11 +11,7 @@ import engine.models.TexturedModel;
 import engine.shaders.DefaultShader;
 import engine.shaders.GeometryShader;
 import engine.shaders.Terrain3DShader;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.opengl.ContextAttribs;
-import org.lwjgl.opengl.Display;
-import org.lwjgl.opengl.DisplayMode;
-import org.lwjgl.opengl.PixelFormat;
+import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.opengl.*;
 
@@ -23,6 +19,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.GL_TRUE;
 
 
 public class RenderManager {
@@ -40,33 +40,62 @@ public class RenderManager {
     private static Renderer mainRenderer;
     private static TerrainRenderer terrainRenderer;
 
-    private static RGBAf _cleanColor;
+    private static RGBAf _cleanColor = new RGBAf(255, 255, 255, 255);
+
+    private static long window;
+    private static int windowWidth;
+    private static int windowHeight;
+    private static GLFWErrorCallback errorCallback;
+
+    private static Logger LOG = Logger.getLogger(RenderManager.class.getName());
 
     private RenderManager() {
 
     }
 
+    public static long getWindow() {
+        return window;
+    }
+
+    public static int getWindowWidth() {
+        return windowWidth;
+    }
+
+    public static int getWindowHeight() {
+        return windowHeight;
+    }
+
     public static void createRender(int WIDTH, int HEIGHT, String TITLE, RGBAf cleanColor) {
+        glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
-        ContextAttribs contextAttribs = new ContextAttribs(3, 2)
-                .withForwardCompatible(true)
-                .withProfileCore(true);
+        windowWidth = WIDTH;
+        windowHeight = HEIGHT;
 
-        try {
-            Display.setDisplayMode(new DisplayMode(WIDTH, HEIGHT));
-            Display.create(new PixelFormat(), contextAttribs);
-            Display.setTitle(TITLE);
-
-            _shader = new DefaultShader();
-            _shaderTerrain = new Terrain3DShader();
-            _geoShader = new GeometryShader();
-            _cleanColor = cleanColor;
-
-        } catch (LWJGLException e) {
-            e.printStackTrace();
+        if(!glfwInit()) {
+            throw new RuntimeException("Cannot initialize OpenGL");
         }
 
+        glfwWindowHint(GLFW_RESIZABLE, GL_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+        window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, 0, 0);
+
+        if (window == 0) {
+            throw new RuntimeException("Failed to create window");
+        }
+
+        glfwMakeContextCurrent(window);
+        GL.createCapabilities();
+        glfwShowWindow(window);
+
+        _shader = new DefaultShader();
+        _shaderTerrain = new Terrain3DShader();
+        _geoShader = new GeometryShader();
+
         GL11.glViewport(0, 0, WIDTH, HEIGHT);
+
     }
 
     public static void initAllRenders() {
@@ -130,25 +159,22 @@ public class RenderManager {
         }
     }
 
-    public static void processTerrain(Terrain tile) {
-        _terrains.add(tile);
-    }
-
     public static void runCollector() {
         _shader.runCollector();
         _shaderTerrain.runCollector();
     }
 
     public static void updateRender(int fps) {
-        Display.sync(fps);
-        Display.update();
+        Sync.sync(fps);
+        glfwPollEvents();
+        glfwSwapBuffers(window);
     }
 
     public static void closeRender() {
-        Display.destroy();
+        glfwDestroyWindow(window);
     }
 
     public static boolean shouldExit() {
-        return Display.isCloseRequested();
+        return glfwWindowShouldClose(window);
     }
 }
