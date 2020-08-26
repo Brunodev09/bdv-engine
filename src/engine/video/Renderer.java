@@ -6,6 +6,7 @@ import engine.models.Model;
 import engine.models.TexturedModel;
 import engine.shaders.DefaultShader;
 import engine.shaders.GeometryShader;
+import engine.shaders.RectangleShader;
 import engine.texture.ModelTexture;
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;
@@ -17,7 +18,8 @@ public class Renderer {
 
     private Matrix4f _projection;
     private DefaultShader _shader;
-    private GeometryShader _geoShader;
+//    private GeometryShader _geoShader;
+    private RectangleShader _geoShader;
 
     public Renderer() {
 
@@ -33,7 +35,7 @@ public class Renderer {
         shader.stop();
     }
 
-    public Renderer(GeometryShader shader) {
+    public Renderer(RectangleShader shader) {
         // Culling back faces
         GL11.glEnable(GL11.GL_CULL_FACE);
         GL11.glCullFace(GL11.GL_BACK);
@@ -42,7 +44,7 @@ public class Renderer {
         shader.stop();
     }
 
-    public Renderer(GeometryShader shader, Matrix4f orthographicMatrix) {
+    public Renderer(RectangleShader shader, Matrix4f orthographicMatrix) {
         this._projection = orthographicMatrix;
         _geoShader = shader;
         shader.init();

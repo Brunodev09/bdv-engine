@@ -10,6 +10,7 @@ import engine.models.Terrain;
 import engine.models.TexturedModel;
 import engine.shaders.DefaultShader;
 import engine.shaders.GeometryShader;
+import engine.shaders.RectangleShader;
 import engine.shaders.Terrain3DShader;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.util.vector.Matrix4f;
@@ -26,7 +27,8 @@ import static org.lwjgl.opengl.GL11.GL_TRUE;
 
 
 public class RenderManager {
-    private static GeometryShader _geoShader;
+    // private static GeometryShader _geoShader;
+    private static RectangleShader _geoShader;
     private static DefaultShader _shader;
     private static Terrain3DShader _shaderTerrain;
     private static Matrix4f _projection;
@@ -92,7 +94,7 @@ public class RenderManager {
 
         _shader = new DefaultShader();
         _shaderTerrain = new Terrain3DShader();
-        _geoShader = new GeometryShader();
+        _geoShader = new RectangleShader();
 
         GL11.glViewport(0, 0, WIDTH, HEIGHT);
 

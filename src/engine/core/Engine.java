@@ -64,6 +64,7 @@ public class Engine {
                 if (newTexure != 0) textureId = newTexure;
 
                 ModelTexture texture2D = new ModelTexture(textureId);
+                texture2D.setAmbientLight(entity.getAmbientLight());
                 if (entity.getRgbVector() != null) texture2D.setColorOffset(entity.getRgbVector());
                 TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
                 Entity formerEntity = new Entity(tmdl2,

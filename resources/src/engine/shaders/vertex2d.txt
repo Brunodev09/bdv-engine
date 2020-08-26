@@ -1,0 +1,18 @@
+#version 400 core
+
+layout(location = 0) in vec3 position;
+
+in vec2 textureCoordinates;
+
+out vec2 passTextureCoordinates;
+out vec4 vertexPosition;
+
+uniform mat4 transformation;
+uniform mat4 projection;
+uniform mat4 view;
+
+void main(void) {
+    gl_Position = projection * view * transformation * vec4(position.xy, 0.0, 1.0);
+    passTextureCoordinates = textureCoordinates;
+    vertexPosition = projection * view * transformation * vec4(position.xy, 0.0, 1.0);;
+}

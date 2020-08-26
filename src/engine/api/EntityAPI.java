@@ -24,6 +24,7 @@ public class EntityAPI {
     private SpriteSheet spriteSheet;
     private RGBAf rgb;
     private Vector3f rgbVector;
+    private Vector3f ambientLight = new Vector3f(1.0f, 1.0f, 1.0f);
 
     private int _API_LINK;
 
@@ -164,5 +165,13 @@ public class EntityAPI {
 
     public void setRgbVector(Vector3f rgbVector) {
         this.rgbVector = rgbVector;
+    }
+
+    public Vector3f getAmbientLight() {
+        return ambientLight;
+    }
+
+    public void setAmbientLight(Vector3f ambientLight) {
+        this.ambientLight = ambientLight;
     }
 }

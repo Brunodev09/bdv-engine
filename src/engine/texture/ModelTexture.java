@@ -8,6 +8,7 @@ public class ModelTexture {
     private float shineDamper = 1;
     private float reflectivity = 0;
     private Vector3f colorOffset = new Vector3f(1.0f, 1.0f, 1.0f);
+    private Vector3f ambientLight = new Vector3f(1.0f, 1.0f, 1.0f);
 
     public ModelTexture(int id) {
         this._textureId = id;
@@ -39,6 +40,14 @@ public class ModelTexture {
 
     public void setColorOffset(Vector3f colorOffset) {
         this.colorOffset = colorOffset;
+    }
+
+    public Vector3f getAmbientLight() {
+        return ambientLight;
+    }
+
+    public void setAmbientLight(Vector3f ambientLight) {
+        this.ambientLight = ambientLight;
     }
 }
 

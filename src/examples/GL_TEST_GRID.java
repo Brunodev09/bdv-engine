@@ -35,7 +35,9 @@ public class GL_TEST_GRID extends BdvScriptGL {
         Dimension tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
         for (int i = -rows / 2; i < rows / 2; i++) {
             for (int j = -cols / 2; j < cols / 2; j++) {
-                this.entities.add(new EntityAPI(GRASS_TEXTURE_FILE_PATH, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0)));
+                EntityAPI entityAPI = new EntityAPI(GRASS_TEXTURE_FILE_PATH, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                entityAPI.setAmbientLight(new Vector3f(0.3f, 0.3f, 0.3f));
+                this.entities.add(entityAPI);
             }
         }
     }
