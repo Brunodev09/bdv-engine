@@ -7,7 +7,7 @@
 * [Demo](#setup)
 
 ## General info
-This is a project where I migrate most of the graphical stuff that I've been working on with Javascript and WebGL to an actual game engine layer that implements the OpenGL 3.2 API (2D and 3D) bindings through LWJGL3. In such, the user would not be required to actually write shaders but instead interact with my API to actually load data into the rendering pipeline. While this is surely slower than actually buffering the GPU directly, it surely is easier to prototype. It also contains an optional rendering option through Java Swing.
+This is a project where I migrate most of the graphical stuff that I've been working on with Javascript and WebGL to an actual game engine layer that implements the OpenGL 3.2 API (2D and 3D) bindings through LWJGL3 and GLFW. In such, the user would not be required to actually write shaders but instead interact with my API to actually load data into the rendering pipeline. While this is surely slower than actually buffering the GPU directly, it surely is easier to prototype. It also contains an optional rendering option through Java Swing.
 
 ## Samples
 Samples I made with this engine includes:
