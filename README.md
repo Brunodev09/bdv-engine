@@ -1,4 +1,4 @@
-# bdv-engine-java
+# bdv-engine
 
 ## Table of contents
 * [Information](#general-info)
