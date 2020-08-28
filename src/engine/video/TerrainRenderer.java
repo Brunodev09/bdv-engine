@@ -70,7 +70,7 @@ public class TerrainRenderer {
                 0,
                 0,
                 0,
-                1);
+                1,1, 1);
         _shader.loadTransformationMatrix(transformationMatrix);
     }
 

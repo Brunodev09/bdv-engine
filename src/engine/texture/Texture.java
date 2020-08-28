@@ -1,15 +1,20 @@
 package engine.texture;
 
+import org.lwjgl.system.MemoryStack;
+
 import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
 
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.stb.STBImage.stbi_failure_reason;
+import static org.lwjgl.stb.STBImage.stbi_load;
 
 public class Texture {
 
@@ -28,6 +33,8 @@ public class Texture {
         texture = loadSpritesheet(path, spriteSheet);
     }
 
+    private static Logger LOG = Logger.getLogger(Texture.class.getName());
+
     private int load(String path) {
         int[] pixels = null;
         BufferedImage image = null;
@@ -45,6 +52,7 @@ public class Texture {
         // TODO - Returning zero here is dangerous
         return 0;
     }
+
 
     private int loadSpritesheet(String path, SpriteSheet spriteSheet) {
         int[] pixels = null;
@@ -87,6 +95,7 @@ public class Texture {
         buffer.put(data).flip();
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
         glBindTexture(GL_TEXTURE_2D, 0);
 
         TextureCache.addImage(result, image);

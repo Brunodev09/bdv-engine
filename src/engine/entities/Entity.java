@@ -9,33 +9,38 @@ public class Entity {
     private TexturedModel _model;
     private Model _model_primitive;
     private Vector3f _position;
-    private Vector2f _position2d;
     private float _rotX, _rotY, _rotZ;
-    private float _scale;
+    private float _scaleX;
+    private float _scaleY;
+    private float _scaleZ;
 
     public static int _GLOBAL_ID_ = 0;
     private final int id;
 
     private Lightsource _light;
 
-    public Entity(TexturedModel texturedModel, Vector3f positionVector, float rotX, float rotY, float rotZ, float scale) {
+    public Entity(TexturedModel texturedModel, Vector3f positionVector, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ) {
         this._model = texturedModel;
         this._position = positionVector;
         this._rotX = rotX;
         this._rotY = rotY;
         this._rotZ = rotZ;
-        this._scale = scale;
+        this._scaleX = scaleX;
+        this._scaleY = scaleY;
+        this._scaleZ = scaleZ;
         _GLOBAL_ID_++;
         this.id = _GLOBAL_ID_;
     }
 
-    public Entity(Model mdl, Vector3f positionVector, float rotX, float rotY, float rotZ, float scale) {
+    public Entity(Model mdl, Vector3f positionVector, float rotX, float rotY, float rotZ, float scaleX, float scaleY, float scaleZ) {
         this._model_primitive = mdl;
         this._position = positionVector;
         this._rotX = rotX;
         this._rotY = rotY;
         this._rotZ = rotZ;
-        this._scale = scale;
+        this._scaleX = scaleX;
+        this._scaleY = scaleY;
+        this._scaleZ = scaleZ;
         _GLOBAL_ID_++;
         this.id = _GLOBAL_ID_;
     }
@@ -72,8 +77,6 @@ public class Entity {
         return _position;
     }
 
-    public Vector2f getPosition2D() { return _position2d; }
-
     public void setPosition(Vector3f _position) {
         this._position = _position;
     }
@@ -102,12 +105,22 @@ public class Entity {
         this._rotZ = _rotZ;
     }
 
-    public float getScale() {
-        return _scale;
+    public float getScaleX() {
+        return _scaleX;
     }
 
-    public void setScale(float _scale) {
-        this._scale = _scale;
+    public float getScaleY() {
+        return _scaleY;
+    }
+
+    public float getScaleZ() {
+        return _scaleZ;
+    }
+
+    public void setScale(float scaleX, float scaleY, float scaleZ) {
+        this._scaleX = scaleX;
+        this._scaleY = scaleY;
+        this._scaleZ = scaleZ;
     }
 
     public void setLight(Lightsource light) {

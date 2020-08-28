@@ -48,10 +48,20 @@ public class Engine {
 
             Camera2D cam2d = config.script.camera2d;
 
-            BufferedModel defaultData2D = new BufferedModel(Prefab.Square, Prefab.SquareTextureCoordinates, Prefab.SquareIndexes);
             Model mdl = null;
 
             for (EntityAPI entity : scriptEntities) {
+
+                if (entity.getWidth() == 0) entity.setWidth(50.0f);
+                if (entity.getHeight() == 0) entity.setHeight(50.0f);
+
+                BufferedModel defaultData2D = new BufferedModel(
+                        Prefab.squareFactory(entity.getPosition().getX(),
+                                entity.getPosition().getY(),
+                                entity.getWidth(),
+                                entity.getHeight()),
+                        Prefab.SquareTextureCoordinates,
+                        Prefab.SquareIndexes);
 
                 if (mdl == null) {
                     mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
@@ -72,7 +82,9 @@ public class Engine {
                         entity.getRotationX(),
                         entity.getRotationY(),
                         entity.getRotationZ(),
-                        entity.getScale());
+                        entity.getScaleX(),
+                        entity.getScaleY(),
+                        entity.getScaleZ());
                 entity.setLink(formerEntity.getId());
                 toRender.put(formerEntity.getId(), formerEntity);
             }
@@ -92,8 +104,7 @@ public class Engine {
                 RenderManager.updateRender(config.FPS);
             }
 
-        }
-        else {
+        } else {
             Camera cam = config.script.camera;
             Lightsource light = new Lightsource(new Vector3f(300, 300, -30), new Vector3f(1, 1, 1));
 
@@ -109,7 +120,9 @@ public class Engine {
                         entity.getRotationX(),
                         entity.getRotationY(),
                         entity.getRotationZ(),
-                        entity.getScale());
+                        entity.getScaleX(),
+                        entity.getScaleY(),
+                        entity.getScaleZ());
                 entity.setLink(formerEntity.getId());
                 toRender.put(formerEntity.getId(), formerEntity);
             }
@@ -172,16 +185,13 @@ public class Engine {
             if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) == null) {
                 id = pipe.loadTextureFromSpritesheet(entity.getSpriteSheet());
                 sprites.put(entity.getSpriteSheet(), id);
-            }
-            else if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) != null) {
+            } else if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) != null) {
                 id = sprites.get(entity.getSpriteSheet());
-            }
-            else if (entity.getSpriteSheet() == null && textures.get(entity.getFile()) == null) {
+            } else if (entity.getSpriteSheet() == null && textures.get(entity.getFile()) == null) {
                 id = pipe.loadTexture(entity.getFile());
                 textures.put(entity.getFile(), id);
             }
-        }
-        else {
+        } else {
             id = textures.get(entity.getFile());
         }
         return id;
@@ -201,8 +211,7 @@ public class Engine {
                 if (sameProcessed != null) {
                     // there is already a texture associated with this image processing work
                     resultingTextureId = sameProcessed.getTextureId();
-                }
-                else {
+                } else {
                     // new texture must be generated
                     if (entityAPI.getSpriteSheet() != null) {
                         ImageProcessor.filterImage(image, entityAPI.getRgb(), entityAPI.getSpriteSheet());

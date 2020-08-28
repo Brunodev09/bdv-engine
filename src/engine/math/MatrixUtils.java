@@ -42,7 +42,8 @@ public class MatrixUtils {
         };
     }
 
-    public static Matrix4f createTransformationMatrix(org.lwjgl.util.vector.Vector3f translation, float rX, float rY, float rZ, float S) {
+    public static Matrix4f createTransformationMatrix(org.lwjgl.util.vector.Vector3f translation, float rX, float rY,
+                                                      float rZ, float sX, float sY, float sZ) {
         Matrix4f matrix = new Matrix4f();
 
         matrix.setIdentity();
@@ -53,13 +54,13 @@ public class MatrixUtils {
         Matrix4f.rotate((float) Math.toRadians(rY), new org.lwjgl.util.vector.Vector3f(0, 1, 0), matrix, matrix);
         Matrix4f.rotate((float) Math.toRadians(rZ), new org.lwjgl.util.vector.Vector3f(0, 0, 1), matrix, matrix);
 
-        Matrix4f.scale(new org.lwjgl.util.vector.Vector3f(S, S, S), matrix, matrix);
+        Matrix4f.scale(new org.lwjgl.util.vector.Vector3f(sX, sY, sZ), matrix, matrix);
 
         return matrix;
     }
 
     public static Matrix4f createProjectionMatrix(float fov, float np, float fp) {
-        Matrix4f matrix = new Matrix4f();;
+        Matrix4f matrix = new Matrix4f();
 
         float ratio = (float) RenderManager.getWindowWidth() / (float) RenderManager.getWindowHeight();
         float scaleY = (1f / (float) Math.tan(Math.toRadians(fov / 2f))) * ratio;

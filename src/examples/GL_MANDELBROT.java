@@ -31,8 +31,8 @@ public class GL_MANDELBROT extends BdvScriptGL {
 
     final double setDimensions = 100;
     final int maxIterations = 255;
-    final double xCenter = 0;
-    final double yCenter = 0;
+    final double xCenter = -2;
+    final double yCenter = 2;
     double size = 30;
 
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/res/spritesheet").getAbsolutePath();
@@ -71,19 +71,22 @@ public class GL_MANDELBROT extends BdvScriptGL {
             ptrJ = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
                 if (matrix[ptrI][ptrJ] == 255) {
-                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
                     entitAPI.setSpriteSheet(red);
-                    entitAPI.setScale(0.09f);
                     entities.add(entitAPI);
                 } else if (matrix[ptrI][ptrJ] == 0) {
-                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
                     entitAPI.setSpriteSheet(green);
-                    entitAPI.setScale(0.09f);
                     entities.add(entitAPI);
                 } else {
-                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
                     entitAPI.setSpriteSheet(blue);
-                    entitAPI.setScale(0.09f);
                     entities.add(entitAPI);
                 }
                 ptrJ++;

@@ -127,32 +127,28 @@ public class GL_ASTAR extends BdvScriptGL {
             ptrJ = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
                 if (matrix[ptrI][ptrJ] == 1) {
-                    EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
-                    entityAPI.setScale(0.1f);
+                    EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),  new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
                     entityAPI.setSpriteSheet(white);
                     entities.add(entityAPI);
 
                     AStarNode node = findNode(new Vector2i(ptrI, ptrJ));
                     node.setEntityId(entityAPI.getId());
                 } else if (matrix[ptrI][ptrJ] == 2) {
-                    EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
-                    entityAPI.setScale(0.1f);
+                    EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),  new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
                     entityAPI.setSpriteSheet(green);
                     entities.add(entityAPI);
 
                     AStarNode node = findNode(new Vector2i(ptrI, ptrJ));
                     node.setEntityId(entityAPI.getId());
                 } else if (matrix[ptrI][ptrJ] == 3) {
-                    EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
-                    entityAPI.setScale(0.1f);
+                    EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),  new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
                     entityAPI.setSpriteSheet(red);
                     entities.add(entityAPI);
 
                     AStarNode node = findNode(new Vector2i(ptrI, ptrJ));
                     node.setEntityId(entityAPI.getId());
                 } else {
-                    EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
-                    entityAPI.setScale(0.1f);
+                    EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),  new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
                     entityAPI.setSpriteSheet(black);
                     entities.add(entityAPI);
 

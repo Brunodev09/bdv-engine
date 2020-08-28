@@ -79,13 +79,10 @@ public class GL_CONWAYS extends BdvScriptGL {
             ptrJ = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
                 if (matrix[ptrI][ptrJ] == 1) {
-                    EntityAPI entityAPI = new EntityAPI(whiteTexturePath, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
-                    entityAPI.setScale(0.1f);
+                    EntityAPI entityAPI = new EntityAPI(whiteTexturePath, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
                     this.entities.add(entityAPI);
-                }
-                else {
-                    EntityAPI entityAPI = new EntityAPI(blackTexturePath, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
-                    entityAPI.setScale(0.1f);
+                } else {
+                    EntityAPI entityAPI = new EntityAPI(blackTexturePath, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
                     this.entities.add(entityAPI);
                 }
                 ptrJ++;
@@ -118,27 +115,21 @@ public class GL_CONWAYS extends BdvScriptGL {
 
                 if (matrix[ptrI][ptrJ] == 1) {
                     entityAPI.setFile(whiteTexturePath);
-                }
-                else {
+                } else {
                     entityAPI.setFile(blackTexturePath);
                 }
                 // color customization
                 if (i < 0 && j > 0) {
                     entityAPI.setRgbVector(new Vector3f(r, g, b));
-                }
-                else if (i > 0 && j > 0) {
+                } else if (i > 0 && j > 0) {
                     entityAPI.setRgbVector(new Vector3f(r2, g2, b2));
-                }
-                else if (i > 0 && j < 0) {
+                } else if (i > 0 && j < 0) {
                     entityAPI.setRgbVector(new Vector3f(r3, g3, b3));
-                }
-                else if (i < 0 && j < 0) {
+                } else if (i < 0 && j < 0) {
                     entityAPI.setRgbVector(new Vector3f(r4, g4, b4));
-                }
-                else if (i == 0) {
+                } else if (i == 0) {
                     entityAPI.setRgbVector(new Vector3f(0, 0, 0));
-                }
-                else {
+                } else {
                     entityAPI.setRgbVector(new Vector3f(0, 0, 0));
                 }
                 ptrJ++;
@@ -204,8 +195,7 @@ public class GL_CONWAYS extends BdvScriptGL {
         if (cellStatus) {
             if (neighbours < 2 || neighbours > 3) return true;
             return neighbours != 2 && neighbours != 3;
-        }
-        else if (!cellStatus && neighbours == 3) return false;
+        } else if (!cellStatus && neighbours == 3) return false;
         else return true;
     }
 

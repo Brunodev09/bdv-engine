@@ -60,9 +60,9 @@ public class GL_PERLIN extends BdvScriptGL {
         for (int i = -rows / 2; i < rows / 2; i++) {
             double xOffset = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
-                EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Vector2f(0, 0));
+                EntityAPI entityAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
+                        new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
                 entityAPI.setSpriteSheet(tile1);
-                entityAPI.setScale(0.1f);
                 double noise = PerlinNoise.noise(xOffset, yOffset);
                 entityAPI.setRgbVector(new Vector3f((float) noise, (float) noise, (float) noise));
                 this.entities.add(entityAPI);

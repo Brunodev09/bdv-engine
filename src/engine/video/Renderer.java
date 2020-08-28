@@ -151,7 +151,9 @@ public class Renderer {
                 entity.getRotX(),
                 entity.getRotY(),
                 entity.getRotZ(),
-                entity.getScale());
+                entity.getScaleX(),
+                entity.getScaleY(),
+                entity.getScaleZ());
         _shader.loadTransformationMatrix(transformationMatrix);
     }
 
@@ -161,7 +163,9 @@ public class Renderer {
                 entity.getRotX(),
                 entity.getRotY(),
                 entity.getRotZ(),
-                entity.getScale());
+                entity.getScaleX(),
+                entity.getScaleY(),
+                entity.getScaleZ());
         _geoShader.loadTransformationMatrix(transformationMatrix);
     }
 }

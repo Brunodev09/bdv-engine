@@ -1,6 +1,7 @@
 package engine.api;
 
 
+import engine.math.Dimension;
 import engine.math.RGBAf;
 import engine.texture.SpriteSheet;
 import org.lwjgl.util.vector.Vector2f;
@@ -16,7 +17,9 @@ public class EntityAPI {
     private float rotX;
     private float rotY;
     private float rotZ;
-    private float scale;
+    private float scaleX;
+    private float scaleY;
+    private float scaleZ;
     private int[] indexes;
     private float[] vertexes;
     private float[] textureCoords;
@@ -25,6 +28,8 @@ public class EntityAPI {
     private RGBAf rgb;
     private Vector3f rgbVector;
     private Vector3f ambientLight = new Vector3f(1.0f, 1.0f, 1.0f);
+    private float width;
+    private float height;
 
     private int _API_LINK;
 
@@ -35,7 +40,9 @@ public class EntityAPI {
         position = new Vector3f(0, 0, 0);
         speed = new Vector2f(0, 0);
         rotX = 0; rotY = 0; rotZ = 0;
-        scale = 1;
+        scaleX = 1;
+        scaleY = 1;
+        scaleZ = 1;
         model = null;
     }
 
@@ -46,7 +53,24 @@ public class EntityAPI {
         this.position = position;
         this.speed = speed;
         rotX = 0; rotY = 0; rotZ = 0;
-        scale = 1;
+        scaleX = 1;
+        scaleY = 1;
+        scaleZ = 1;
+        model = null;
+    }
+
+    public EntityAPI(String file, Vector3f position, Dimension dimension, Vector2f speed) {
+        globalId++;
+        this.id = globalId;
+        this.file = file;
+        this.position = position;
+        this.speed = speed;
+        this.width = dimension.width;
+        this.height = dimension.height;
+        rotX = 0; rotY = 0; rotZ = 0;
+        scaleX = 1;
+        scaleY = 1;
+        scaleZ = 1;
         model = null;
     }
 
@@ -60,7 +84,9 @@ public class EntityAPI {
         position = new Vector3f(0, 0, 0);
         speed = new Vector2f(0, 0);
         rotX = 0; rotY = 0; rotZ = 0;
-        scale = 1;
+        scaleX = 1;
+        scaleY = 1;
+        scaleZ = 1;
         model = null;
     }
 
@@ -96,12 +122,28 @@ public class EntityAPI {
         rotZ += z;
     }
 
-    public float getScale() {
-        return scale;
+    public void setScale(float scale) {
+        this.scaleX = scale;
+        this.scaleY = scale;
+        this.scaleZ = scale;
     }
 
-    public void setScale(float scale) {
-        this.scale = scale;
+    public void setScale(float scaleX, float scaleY, float scaleZ) {
+        this.scaleX = scaleX;
+        this.scaleY = scaleY;
+        this.scaleZ = scaleZ;
+    }
+
+    public float getScaleX() {
+        return scaleX;
+    }
+
+    public float getScaleY() {
+        return scaleY;
+    }
+
+    public float getScaleZ() {
+        return scaleZ;
     }
 
     public void setLink(int _API_LINK) {
@@ -173,5 +215,21 @@ public class EntityAPI {
 
     public void setAmbientLight(Vector3f ambientLight) {
         this.ambientLight = ambientLight;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public void setWidth(float width) {
+        this.width = width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
+
+    public void setHeight(float height) {
+        this.height = height;
     }
 }

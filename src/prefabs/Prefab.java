@@ -41,10 +41,41 @@ public class Prefab {
             3, 1, 2
     };
 
+//    public static final float[] SquareTextureCoordinates = {
+//            0, 0,
+//            0, 1,
+//            1, 1,
+//            1, 0
+//    };
+
     public static final float[] SquareTextureCoordinates = {
-            0, 0,
-            0, 1,
             1, 1,
             1, 0,
+            0, 0,
+            0, 1,
     };
+
+
+    public static float[] squareFactory(float spriteSize) {
+        return new float[] {
+                -spriteSize, spriteSize, 0,
+                -spriteSize, -spriteSize, 0,
+                spriteSize, -spriteSize, 0,
+                spriteSize, spriteSize, 0,
+        };
+    }
+
+    public static float[] squareFactory(float x, float y, float w, float h) {
+
+        float halfsideW = w / 2;
+        float halfsideH = h / 2;
+
+        return new float[] {
+                x + halfsideW, y + halfsideH, 0,
+                x + halfsideW, y - halfsideH, 0,
+                x - halfsideW, y - halfsideH, 0,
+                x - halfsideW, y + halfsideH, 0,
+        };
+    }
+
 }
