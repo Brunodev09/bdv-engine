@@ -25,7 +25,7 @@ Samples I made with this engine includes:
 ![glow2](./samples/glow.gif)
 
 ![life2](./samples/life2.gif)
-![life3](./samples/life2.gif)
+![life3](./samples/life3.gif)
 
 ![astar](./samples/astar.gif)
 
