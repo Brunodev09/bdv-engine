@@ -7,8 +7,11 @@ layout(location = 0) out vec4 out_Color;
 
 uniform sampler2D textureSampler;
 uniform vec3 colorOffset;
-uniform vec3 ambientLight;
+
 uniform float tick;
+
+uniform bool toggleAmbientLight;
+uniform vec3 ambientLight;
 
 uniform bool toggleGlow = false;
 uniform vec3 glowColor;
@@ -37,34 +40,50 @@ float applyGlow(vec4 uv, vec2 p, float r, float blur) {
     return smoothstep(r, r-blur, d);
 }
 
+vec3 shaderPlay(vec4 uv) {
+    vec3 originalMask = vec3(applyGlow(uv, vec2(-0.5 * sin(tick), 0.5 * cos(tick)), 0.3, 0.5));
+    vec3 mask2 = vec3(applyGlow(uv, vec2(-0.2 * sin(tick), -0.6 * cos(tick)), 0.3, 0.4));
+    vec3 mask3 = vec3(applyGlow(uv, vec2(-0.2 * -0.5*cos(tick), -0.0 * sin(tick * 2.0)), 0.3, 0.4));
+    vec3 mask4 = vec3(applyGlow(uv, vec2(-0.2 * sin(tick), -0.5 * sin(tick * 2.0)), 0.5 * cos(tick), 0.4));
+
+    vec3 colorBlend = vec3(0.0, 0.0, 1.0) * originalMask;
+    colorBlend += vec3(1.0, 0.0, -1.0) * mask2;
+    colorBlend += vec3(0.0, 1.0, 0.0) * mask3;
+    colorBlend += vec3(1.0, 1.0, 0.0) * mask4;
+
+    return colorBlend;
+}
 
 void main(void) {
-    bool ambientToggle;
+    bool debugMode = true;
 
-    if (ambientLight.x >= 0.5 || ambientLight.x <= 0.5) {
-        ambientToggle = true;
-    } else ambientToggle = false;
+    if (debugMode) {
+        out_Color = vec4(shaderPlay(vertexPosition), 1.0);
+        return;
+    }
 
     vec4 pixelColor = texture(textureSampler, passTextureCoordinates);
-    vec4 outputColor;
+        vec4 outputColor;
 
-    if (pixelColor.a < 1.0) discard;
+        if (pixelColor.a < 1.0) discard;
 
-    outputColor = vec4(colorOffset, 1.0) * pixelColor;
+        outputColor = vec4(colorOffset, 1.0) * pixelColor;
 
-    if (ambientToggle) {
-        outputColor = applyAmbientLighting(vertexPosition, pixelColor);
-    }
-
-    if (toggleGlow) {
-        float mask = applyGlow(vertexPosition, vec2(0.5), 0.3, 0.2);
-        outputColor = vec4(glowColor, 1.0) * mask;
-        outputColor += pixelColor;
-        if (ambientToggle) {
-            outputColor -= applyAmbientLighting(vertexPosition, pixelColor);
+        if (toggleAmbientLight) {
+            outputColor = applyAmbientLighting(vertexPosition, pixelColor);
         }
-    }
 
-    out_Color = outputColor;
+        if (toggleGlow) {
+            float mask = applyGlow(vertexPosition, vec2(0.5), 0.3, 0.2);
+            outputColor = vec4(glowColor, 1.0) * mask;
+            outputColor += pixelColor;
+            if (toggleAmbientLight) {
+                outputColor += applyAmbientLighting(vertexPosition, pixelColor);
+            }
+        }
+
+        out_Color = outputColor;
+
+
 }
 

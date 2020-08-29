@@ -27,10 +27,11 @@ public class EntityAPI {
     private SpriteSheet spriteSheet;
     private RGBAf rgb;
     private Vector3f rgbVector;
-    private Vector3f ambientLight = new Vector3f(1.0f, 1.0f, 1.0f);
+    private Vector3f ambientLight;
     private float width;
     private float height;
     private boolean isGlowing = false;
+    private boolean ambientLightToggle = false;
     private Vector3f colorGlow;
 
     private int _API_LINK;
@@ -249,5 +250,13 @@ public class EntityAPI {
 
     public void setGlowing(boolean glowing) {
         isGlowing = glowing;
+    }
+
+    public boolean isAmbientLightOn() {
+        return ambientLightToggle;
+    }
+
+    public void setAmbientLightOn(boolean ambientLightOn) {
+        ambientLightToggle = ambientLightOn;
     }
 }

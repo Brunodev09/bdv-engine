@@ -10,6 +10,7 @@ public class ModelTexture {
     private Vector3f colorOffset = new Vector3f(1.0f, 1.0f, 1.0f);
     private Vector3f ambientLight;
     private boolean toggleGlow = false;
+    private boolean ambientLightToggle = false;
     private Vector3f glowColor;
 
     public ModelTexture(int id) {
@@ -66,6 +67,14 @@ public class ModelTexture {
 
     public void setToggleGlow(boolean toggleGlow) {
         this.toggleGlow = toggleGlow;
+    }
+
+    public boolean isAmbientLightToggle() {
+        return ambientLightToggle;
+    }
+
+    public void setAmbientLightToggle(boolean ambientLightToggle) {
+        this.ambientLightToggle = ambientLightToggle;
     }
 }
 

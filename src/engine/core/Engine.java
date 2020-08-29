@@ -73,8 +73,13 @@ public class Engine {
                 if (newTexure != 0) textureId = newTexure;
 
                 ModelTexture texture2D = new ModelTexture(textureId);
-                if (entity.getAmbientLight() != null) texture2D.setAmbientLight(entity.getAmbientLight());
-                if (entity.getRgbVector() != null) texture2D.setColorOffset(entity.getRgbVector());
+                if (entity.getRgbVector() != null) {
+                    texture2D.setColorOffset(entity.getRgbVector());
+                }
+                if (entity.isAmbientLightOn()) {
+                    texture2D.setAmbientLightToggle(true);
+                    texture2D.setAmbientLight(entity.getAmbientLight());
+                }
                 if (entity.isGlowing()) {
                     texture2D.setToggleGlow(true);
                     texture2D.setGlowColor(entity.getColorGlow());
@@ -172,8 +177,13 @@ public class Engine {
             if (entity.getEditModel()) {
                 int textureId = getTextureId(entity);
                 ModelTexture texture2D = new ModelTexture(textureId);
-                if (entity.getRgbVector() != null) texture2D.setColorOffset(entity.getRgbVector());
-                if (entity.getAmbientLight() != null) texture2D.setAmbientLight(entity.getAmbientLight());
+                if (entity.getRgbVector() != null) {
+                    texture2D.setColorOffset(entity.getRgbVector());
+                }
+                if (entity.isAmbientLightOn()) {
+                    texture2D.setAmbientLightToggle(true);
+                    texture2D.setAmbientLight(entity.getAmbientLight());
+                }
                 if (entity.isGlowing()) {
                     texture2D.setToggleGlow(true);
                     texture2D.setGlowColor(entity.getColorGlow());
@@ -240,8 +250,8 @@ public class Engine {
         return resultingTextureId;
     }
 
-    public static double currentTimeMillis() {
-        return glfwGetTime() * 1000;
+    public static float currentTimeMillis() {
+        return (float) glfwGetTime() * 1000;
     }
 
 }

@@ -124,15 +124,16 @@ public class Renderer {
         if (tmdl.getModelTexture().getColorOffset() != null) {
             _geoShader.loadColorOffset(tmdl.getModelTexture().getColorOffset());
         }
-        if (tmdl.getModelTexture().getAmbientLight() != null) {
+        if (tmdl.getModelTexture().isAmbientLightToggle()) {
+            _geoShader.loadToggleAmbientLight(tmdl.getModelTexture().isAmbientLightToggle());
             _geoShader.loadAmbientLight(tmdl.getModelTexture().getAmbientLight());
         }
         if (tmdl.getModelTexture().isToggleGlow()) {
             _geoShader.loadToggleGlow(tmdl.getModelTexture().isToggleGlow());
-        }
-        if (tmdl.getModelTexture().getGlowColor() != null) {
             _geoShader.loadGlowColor(tmdl.getModelTexture().getGlowColor());
         }
+
+        _geoShader.loadCurrentTimeFlow();
 
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, tmdl.getModelTexture().getId());

@@ -9,6 +9,8 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.io.InputStream;
 
+import static org.lwjgl.glfw.GLFW.glfwGetTime;
+
 public class RectangleShader extends Shader {
 
     private int _variableLocation1;
@@ -18,6 +20,8 @@ public class RectangleShader extends Shader {
     private int _variableLocation5;
     private int _variableLocation6;
     private int _variableLocation7;
+    private int _variableLocation8;
+    private int _variableLocation9;
 
     public RectangleShader() {
         super(readVertexData(), readFragmentData());
@@ -40,6 +44,8 @@ public class RectangleShader extends Shader {
         _variableLocation5 = super.getUniformVariable("ambientLight");
         _variableLocation6 = super.getUniformVariable("toggleGlow");
         _variableLocation7 = super.getUniformVariable("glowColor");
+        _variableLocation8 = super.getUniformVariable("toggleAmbientLight");
+        _variableLocation9 = super.getUniformVariable("tick");
     }
 
     @Override
@@ -80,5 +86,13 @@ public class RectangleShader extends Shader {
 
     public void loadGlowColor(Vector3f color) {
         super.loadVectorInUniformVariable(_variableLocation7, color);
+    }
+
+    public void loadToggleAmbientLight(boolean toggle) {
+        super.loadBinaryInUniformVariable(_variableLocation8, toggle);
+    }
+
+    public void loadCurrentTimeFlow() {
+        super.loadFloatInUniformVariable(_variableLocation9, (float) glfwGetTime());
     }
 }

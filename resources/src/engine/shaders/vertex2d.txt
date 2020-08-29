@@ -14,5 +14,5 @@ uniform mat4 view;
 void main(void) {
     gl_Position = projection * view * transformation * vec4(position.xy, 0.0, 1.0);
     passTextureCoordinates = textureCoordinates;
-    vertexPosition = projection * view * transformation * vec4(position.xy, 0.0, 1.0);;
+    vertexPosition = projection * view * transformation * vec4(position.xy, 0.0, 1.0);
 }

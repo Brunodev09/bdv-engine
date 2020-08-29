@@ -4,7 +4,6 @@ import engine.api.BdvScriptGL;
 import engine.api.EntityAPI;
 import engine.Bdv;
 import engine.entities.Camera2D;
-import engine.entities.Entity;
 import engine.math.*;
 import engine.math.Dimension;
 import engine.texture.SpriteSheet;
@@ -15,6 +14,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -23,6 +23,7 @@ public class GL_TEST_GRID extends BdvScriptGL {
     private static final Logger LOGGER = Logger.getLogger(GL_TEST_GRID.class.getName());
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/res/basic").getAbsolutePath();
     SpriteSheet tile1 = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 4);
+    Random random = new Random();
 
     public GL_TEST_GRID() {
         this.camera2d = new Camera2D();
@@ -47,7 +48,8 @@ public class GL_TEST_GRID extends BdvScriptGL {
                         new Dimension(tileSize.width, tileSize.height),
                         new Vector2f(0, 0));
                 entityAPI.setSpriteSheet(tile1);
-                entityAPI.setAmbientLight(new Vector3f(0.3f, 0.3f, 0.3f));
+//                entityAPI.setAmbientLightOn(true);
+//                entityAPI.setAmbientLight(new Vector3f(random.nextFloat(), random.nextFloat(), random.nextFloat()));
                 this.entities.add(entityAPI);
             }
         }
