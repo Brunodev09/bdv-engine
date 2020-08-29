@@ -22,6 +22,7 @@ public class RectangleShader extends Shader {
     private int _variableLocation7;
     private int _variableLocation8;
     private int _variableLocation9;
+    private int _variableLocation10;
 
     public RectangleShader() {
         super(readVertexData(), readFragmentData());
@@ -46,6 +47,7 @@ public class RectangleShader extends Shader {
         _variableLocation7 = super.getUniformVariable("glowColor");
         _variableLocation8 = super.getUniformVariable("toggleAmbientLight");
         _variableLocation9 = super.getUniformVariable("tick");
+        _variableLocation10 = super.getUniformVariable("debugShader");
     }
 
     @Override
@@ -94,5 +96,9 @@ public class RectangleShader extends Shader {
 
     public void loadCurrentTimeFlow() {
         super.loadFloatInUniformVariable(_variableLocation9, (float) glfwGetTime());
+    }
+
+    public void loadDebugToggle(boolean toggle) {
+        super.loadBinaryInUniformVariable(_variableLocation10, toggle);
     }
 }

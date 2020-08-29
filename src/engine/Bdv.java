@@ -38,7 +38,7 @@ public class Bdv {
 
         if (pureInstanceConversion != null) {
             this.scale = 1;
-            this.title = "Default Window";
+            this.title = "Default Bdv Window";
             this.dimension = new Dimension(pureInstanceConversion.resolution.width, pureInstanceConversion.resolution.height);
             this.bdvWin = new BdvRuntime(this.dimension.width, this.dimension.height, this.scale, this.title);
             this.bdvWin.frame.setResizable(false);
@@ -53,7 +53,7 @@ public class Bdv {
             this.bdvWin.setTemplate(pureInstanceConversion);
         } else if (instanceConversionGL != null) {
             instanceConversionGL.FPS = instanceConversionGL.FPS == 0 ? 60 : instanceConversionGL.FPS;
-            instanceConversionGL.windowTitle = instanceConversionGL.windowTitle == null ? "Default Window" : instanceConversionGL.windowTitle;
+            instanceConversionGL.windowTitle = instanceConversionGL.windowTitle == null ? "Default Bdv Window" : instanceConversionGL.windowTitle;
             Configuration config = new Configuration(instanceConversionGL.resolution.width,
                     instanceConversionGL.resolution.height,
                     instanceConversionGL.FPS,

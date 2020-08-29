@@ -75,7 +75,7 @@ public class GL_PERLIN extends BdvScriptGL {
     @Override
     public void update() {
         counter++;
-        if (counter < 100) return;
+        if (counter < 50) return;
 
         int r = random.nextInt(2);
         int r2 = random.nextInt(2);

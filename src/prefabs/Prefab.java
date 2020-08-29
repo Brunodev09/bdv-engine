@@ -49,10 +49,10 @@ public class Prefab {
 //    };
 
     public static final float[] SquareTextureCoordinates = {
-            1, 1,
             1, 0,
             0, 0,
             0, 1,
+            1, 1,
     };
 
 
@@ -67,14 +67,11 @@ public class Prefab {
 
     public static float[] squareFactory(float x, float y, float w, float h) {
 
-        float halfsideW = w / 2;
-        float halfsideH = h / 2;
-
         return new float[] {
-                x + halfsideW, y + halfsideH, 0,
-                x + halfsideW, y - halfsideH, 0,
-                x - halfsideW, y - halfsideH, 0,
-                x - halfsideW, y + halfsideH, 0,
+                x, y, 0,
+                x + w, y, 0,
+                x + w, y + h, 0,
+                x, y + h, 0,
         };
     }
 

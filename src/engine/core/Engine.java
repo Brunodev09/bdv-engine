@@ -21,7 +21,12 @@ import java.util.logging.Logger;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
-// @TODO - Set this up as a gradle project and remove dependencies from commits
+// @TODO - Set this up as a gradle project and remove dependencies from source code
+// @TODO - Add fps counter
+// @TODO - Font rendering
+// @TODO - Imgui binding
+// @TODO - Implement custom exceptions
+// @TODO - Fix class structure of Entity and EntityAPI to be more flexible towards spritesheets
 
 public class Engine {
 
@@ -30,9 +35,10 @@ public class Engine {
     Map<Integer, Lightsource> lights = new HashMap<>();
     Map<String, Integer> textures = new HashMap<>();
     Map<SpriteSheet, Integer> sprites = new HashMap<>();
-    List<Model> models = new ArrayList<>();
     List<EntityAPI> scriptEntities;
     Map<String, ProcessedBufferedImage> processedImages = new HashMap<>();
+    Map<String, Model> models = new HashMap<>();
+    Model rectangleModel;
     double lastTime;
 
     Logger LOG = Logger.getLogger(Engine.class.getName());
@@ -42,30 +48,26 @@ public class Engine {
         if (config.script == null) return;
 
         RenderManager.createRender(config.WIDTH, config.HEIGHT, config.TITLE, config.script.background);
+
         scriptEntities = config.script.entities;
 
         if (config.script.camera == null) {
 
             Camera2D cam2d = config.script.camera2d;
 
-
             for (EntityAPI entity : scriptEntities) {
-
                 Model mdl = null;
-
-                if (entity.getWidth() == 0) entity.setWidth(50.0f);
-                if (entity.getHeight() == 0) entity.setHeight(50.0f);
-
-                BufferedModel defaultData2D = new BufferedModel(
-                        Prefab.squareFactory(entity.getPosition().getX(),
-                                entity.getPosition().getY(),
-                                entity.getWidth(),
-                                entity.getHeight()),
-                        Prefab.SquareTextureCoordinates,
-                        Prefab.SquareIndexes);
-
-                mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
-                models.add(mdl);
+                // Checks if the current model needs a new setup (only if it has a different w/h config than previously stored models)
+                // This allows me to only load into the VAO the minimum. While same w/h rectangles get the same model
+                // This aids tiling when scripting.
+                if (models.get(entity.getWidth() + "," + entity.getHeight()) == null) {
+                    BufferedModel defaultData2D = new BufferedModel(
+                            Prefab.squareFactory(0,0,entity.getWidth(), entity.getHeight()),
+                            Prefab.SquareTextureCoordinates,
+                            Prefab.SquareIndexes);
+                    mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
+                    models.put(entity.getWidth() + "," + entity.getHeight(), mdl);
+                } else mdl = models.get(entity.getWidth() + "," + entity.getHeight());
 
                 int textureId = getTextureId(entity);
                 int newTexure = checkForImageProcessing(entity, textureId);
@@ -102,6 +104,7 @@ public class Engine {
                 double delta = thisTime - lastTime;
                 lastTime = thisTime;
 
+                RenderManager.toggleDebugShaderMode(config.script.debugShader);
                 createAndUpdateFormerEntity();
                 config.script.update();
                 cam2d.move(delta);
@@ -188,7 +191,7 @@ public class Engine {
                     texture2D.setToggleGlow(true);
                     texture2D.setGlowColor(entity.getColorGlow());
                 }
-                TexturedModel tmdl2 = new TexturedModel(models.get(entity.getId() - 1), texture2D);
+                TexturedModel tmdl2 = new TexturedModel(models.get(entity.getWidth() + "," + entity.getHeight()), texture2D);
                 former.setModel(tmdl2);
                 entity.setEditModel(false);
             }

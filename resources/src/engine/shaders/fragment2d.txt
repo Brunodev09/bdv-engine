@@ -13,8 +13,10 @@ uniform float tick;
 uniform bool toggleAmbientLight;
 uniform vec3 ambientLight;
 
-uniform bool toggleGlow = false;
+uniform bool toggleGlow;
 uniform vec3 glowColor;
+
+uniform bool debugShader;
 
 vec4 applyAmbientLighting(vec4 uv, vec4 pixelColor) {
     vec4 outputFragment;
@@ -55,9 +57,8 @@ vec3 shaderPlay(vec4 uv) {
 }
 
 void main(void) {
-    bool debugMode = true;
 
-    if (debugMode) {
+    if (debugShader) {
         out_Color = vec4(shaderPlay(vertexPosition), 1.0);
         return;
     }

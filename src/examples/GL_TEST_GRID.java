@@ -39,16 +39,16 @@ public class GL_TEST_GRID extends BdvScriptGL {
         int rows = 12;
         int cols = 12;
         Dimension tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < cols; j++) {
+        for (int i = -rows / 2; i < rows / 2; i++) {
+            for (int j = -cols / 2; j < cols / 2; j++) {
                 EntityAPI entityAPI = new EntityAPI(null,
                         new Vector3f(
-                                (tileSize.width / 2) * i,
-                                (tileSize.height / 2) * j, 0),
+                                (float) tileSize.width * i,
+                                (float) tileSize.height * j, 0),
                         new Dimension(tileSize.width, tileSize.height),
                         new Vector2f(0, 0));
                 entityAPI.setSpriteSheet(tile1);
-//                entityAPI.setAmbientLightOn(true);
+//                entityAPI.setAmbientLightOn(true);w
 //                entityAPI.setAmbientLight(new Vector3f(random.nextFloat(), random.nextFloat(), random.nextFloat()));
                 this.entities.add(entityAPI);
             }

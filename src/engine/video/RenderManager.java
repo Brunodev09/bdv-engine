@@ -1,5 +1,6 @@
 package engine.video;
 
+import engine.api.BdvScriptGL;
 import engine.entities.Camera;
 import engine.entities.Camera2D;
 import engine.entities.Entity;
@@ -48,6 +49,8 @@ public class RenderManager {
     private static int windowWidth;
     private static int windowHeight;
     private static GLFWErrorCallback errorCallback;
+
+    private static boolean debugShader;
 
     private static Logger LOG = Logger.getLogger(RenderManager.class.getName());
 
@@ -141,7 +144,7 @@ public class RenderManager {
 
     public static void renderBatch(Camera2D camera) {
         init2DRender();
-
+        mainRenderer.setDebugShaderMode(debugShader);
         _geoShader.init();
         _geoShader.loadViewMatrix(camera);
         mainRenderer.renderEntities2D(_entities);
@@ -178,5 +181,9 @@ public class RenderManager {
 
     public static boolean shouldExit() {
         return glfwWindowShouldClose(window);
+    }
+
+    public static void toggleDebugShaderMode(boolean toggle) {
+        debugShader = toggle;
     }
 }

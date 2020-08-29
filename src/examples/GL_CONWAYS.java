@@ -16,14 +16,12 @@ import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// @TODO - Implement custom exceptions
-// @TODO - Make sprites scale proportional
 public class GL_CONWAYS extends BdvScriptGL {
 
     private static final Logger LOGGER = Logger.getLogger(GL_CONWAYS.class.getName());
 
-    private final int rows = 100;
-    private final int cols = 100;
+    private final int rows = 300;
+    private final int cols = 300;
     private final int[][] matrix = new int[rows][cols];
     private final int[][] bufferedMatrix = new int[rows][cols];
     private final Dimension tileSize;
@@ -79,10 +77,10 @@ public class GL_CONWAYS extends BdvScriptGL {
             ptrJ = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
                 if (matrix[ptrI][ptrJ] == 1) {
-                    EntityAPI entityAPI = new EntityAPI(whiteTexturePath, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
+                    EntityAPI entityAPI = new EntityAPI(whiteTexturePath, new Vector3f((float) tileSize.width * i, (float) tileSize.height * j, 0), new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
                     this.entities.add(entityAPI);
                 } else {
-                    EntityAPI entityAPI = new EntityAPI(blackTexturePath, new Vector3f(tileSize.width * i, tileSize.height * j, 0), new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
+                    EntityAPI entityAPI = new EntityAPI(blackTexturePath, new Vector3f((float) tileSize.width * i, (float)tileSize.height * j, 0), new Dimension(tileSize.width, tileSize.height), new Vector2f(0, 0));
                     this.entities.add(entityAPI);
                 }
                 ptrJ++;

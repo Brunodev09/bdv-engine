@@ -31,8 +31,8 @@ public class GL_MANDELBROT extends BdvScriptGL {
 
     final double setDimensions = 100;
     final int maxIterations = 255;
-    final double xCenter = -2;
-    final double yCenter = 2;
+    final double xCenter = 0;
+    final double yCenter = 0;
     double size = 30;
 
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/res/spritesheet").getAbsolutePath();

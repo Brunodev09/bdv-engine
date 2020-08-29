@@ -1,5 +1,6 @@
 package engine.video;
 
+import engine.api.BdvScriptGL;
 import engine.entities.Entity;
 import engine.math.MatrixUtils;
 import engine.models.Model;
@@ -18,8 +19,9 @@ public class Renderer {
 
     private Matrix4f _projection;
     private DefaultShader _shader;
-//    private GeometryShader _geoShader;
     private RectangleShader _geoShader;
+
+    private boolean debugShader;
 
     public Renderer() {
 
@@ -133,7 +135,9 @@ public class Renderer {
             _geoShader.loadGlowColor(tmdl.getModelTexture().getGlowColor());
         }
 
+        // Entities independent uniform variables
         _geoShader.loadCurrentTimeFlow();
+        _geoShader.loadDebugToggle(debugShader);
 
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, tmdl.getModelTexture().getId());
@@ -178,4 +182,9 @@ public class Renderer {
                 entity.getScaleZ());
         _geoShader.loadTransformationMatrix(transformationMatrix);
     }
+
+    public void setDebugShaderMode(boolean debugShader) {
+        this.debugShader = debugShader;
+    }
+
 }

@@ -67,7 +67,7 @@ public class GL_ASTAR extends BdvScriptGL {
         end.setX(random.nextInt(this.rows));
         end.setY(random.nextInt(this.cols));
 
-        this.tileSize = new Dimension(resolution.width / rows, resolution.height / cols);
+        this.tileSize = new Dimension((resolution.width / rows), (resolution.height / cols));
         this.init(this.entities, this.resolution, this.background);
     }
 

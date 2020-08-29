@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-// @TODO - Remove the need to set null a spite that will be set to a spritesheet
-
 public class GL_SHADER_PLAY extends BdvScriptGL {
 
     private static final Logger LOGGER = Logger.getLogger(GL_SHADER_PLAY.class.getName());
@@ -28,12 +26,14 @@ public class GL_SHADER_PLAY extends BdvScriptGL {
         this.entities = new ArrayList<>();
         this.resolution = new Dimension(1024, 768);
         this.background = new RGBAf(0, 0, 0, 255);
+        this.debugShader = false;
         this.init(this.entities, this.resolution, this.background);
     }
 
     @Override
     public void init(List<EntityAPI> entities, Dimension resolution, RGBAf background) {
-        EntityAPI entity = new EntityAPI(SPRITESHEET_FILE_PATH, new Vector3f(0, 0, 0), this.resolution, new Vector2f(0,0));
+        // 0, 0 -> (w/2, h/2)
+        EntityAPI entity = new EntityAPI(SPRITESHEET_FILE_PATH, new Vector3f(-resolution.width / 2, -resolution.height / 2, 0), this.resolution, new Vector2f(0,0));
         this.entities.add(entity);
     }
 

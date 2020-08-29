@@ -2,7 +2,7 @@
 
 ## Table of contents
 * [Information](#general-info)
-* [Samples](#samples)
+* [Cool stuff made using this](#samples)
 * [Technologies](#technologies)
 * [Demo](#setup)
 
@@ -19,18 +19,20 @@ Samples I made with this engine includes:
 - I still intend to implment ray-casting, 2D lighting and raycasting, 2D ray marching, fluid simulation and a game maybe? :D
 
 ![Basic 3D rendering with specular lighting](./samples/basic.gif)
+![Basic 3D rendering with specular lighting2](./samples/plane.gif)
 
-![Conways Game of Life](./samples/conways.gif)
-![Conways Game of Life](./samples/conways2.gif)
+![glow1](./samples/light.gif)
+![glow2](./samples/glow.gif)
+
+![life2](./samples/life2.gif)
+![life3](./samples/life2.gif)
 
 ![astar](./samples/astar.gif)
 
-![mandelbrot](./samples/mandelbrot.gif)
-
 ![perlin](./samples/perlin.PNG)
-![perlin2](./samples/perlin2.gif)
+![perlin2](./samples/perlin.gif)
 
-
+![mandelbrot](./samples/frac.gif)
 
 	
 ## Technologies
