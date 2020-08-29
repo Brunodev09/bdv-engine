@@ -38,7 +38,7 @@ Samples I made with this engine includes:
 ## Technologies
 Project is created with:
 * Java (>=1.8)
-* lwjgl-2.9.3
+* lwjgl-3.2.3
 	
 ## Setup
 Simply import the .jar contained in `out/artifacts/bdv_engine_java_jar` and add the lwjgl dll's as native libraries. (The dll's can be found on LWJGL's site or inside `lib/natives`)
