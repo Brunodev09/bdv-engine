@@ -30,6 +30,8 @@ public class EntityAPI {
     private Vector3f ambientLight = new Vector3f(1.0f, 1.0f, 1.0f);
     private float width;
     private float height;
+    private boolean isGlowing = false;
+    private Vector3f colorGlow;
 
     private int _API_LINK;
 
@@ -231,5 +233,21 @@ public class EntityAPI {
 
     public void setHeight(float height) {
         this.height = height;
+    }
+
+    public Vector3f getColorGlow() {
+        return colorGlow;
+    }
+
+    public void setColorGlow(Vector3f colorGlow) {
+        this.colorGlow = colorGlow;
+    }
+
+    public boolean isGlowing() {
+        return isGlowing;
+    }
+
+    public void setGlowing(boolean glowing) {
+        isGlowing = glowing;
     }
 }

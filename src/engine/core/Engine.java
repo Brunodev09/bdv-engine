@@ -48,9 +48,10 @@ public class Engine {
 
             Camera2D cam2d = config.script.camera2d;
 
-            Model mdl = null;
 
             for (EntityAPI entity : scriptEntities) {
+
+                Model mdl = null;
 
                 if (entity.getWidth() == 0) entity.setWidth(50.0f);
                 if (entity.getHeight() == 0) entity.setHeight(50.0f);
@@ -63,10 +64,8 @@ public class Engine {
                         Prefab.SquareTextureCoordinates,
                         Prefab.SquareIndexes);
 
-                if (mdl == null) {
-                    mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
-                    models.add(mdl);
-                }
+                mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
+                models.add(mdl);
 
                 int textureId = getTextureId(entity);
                 int newTexure = checkForImageProcessing(entity, textureId);
@@ -74,8 +73,12 @@ public class Engine {
                 if (newTexure != 0) textureId = newTexure;
 
                 ModelTexture texture2D = new ModelTexture(textureId);
-                texture2D.setAmbientLight(entity.getAmbientLight());
+                if (entity.getAmbientLight() != null) texture2D.setAmbientLight(entity.getAmbientLight());
                 if (entity.getRgbVector() != null) texture2D.setColorOffset(entity.getRgbVector());
+                if (entity.isGlowing()) {
+                    texture2D.setToggleGlow(true);
+                    texture2D.setGlowColor(entity.getColorGlow());
+                }
                 TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
                 Entity formerEntity = new Entity(tmdl2,
                         entity.getPosition(),
@@ -170,8 +173,12 @@ public class Engine {
                 int textureId = getTextureId(entity);
                 ModelTexture texture2D = new ModelTexture(textureId);
                 if (entity.getRgbVector() != null) texture2D.setColorOffset(entity.getRgbVector());
-                // @TODO - Please please, do something about this...
-                TexturedModel tmdl2 = new TexturedModel(models.get(0), texture2D);
+                if (entity.getAmbientLight() != null) texture2D.setAmbientLight(entity.getAmbientLight());
+                if (entity.isGlowing()) {
+                    texture2D.setToggleGlow(true);
+                    texture2D.setGlowColor(entity.getColorGlow());
+                }
+                TexturedModel tmdl2 = new TexturedModel(models.get(entity.getId() - 1), texture2D);
                 former.setModel(tmdl2);
                 entity.setEditModel(false);
             }

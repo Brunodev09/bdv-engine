@@ -8,7 +8,9 @@ public class ModelTexture {
     private float shineDamper = 1;
     private float reflectivity = 0;
     private Vector3f colorOffset = new Vector3f(1.0f, 1.0f, 1.0f);
-    private Vector3f ambientLight = new Vector3f(1.0f, 1.0f, 1.0f);
+    private Vector3f ambientLight;
+    private boolean toggleGlow = false;
+    private Vector3f glowColor;
 
     public ModelTexture(int id) {
         this._textureId = id;
@@ -48,6 +50,22 @@ public class ModelTexture {
 
     public void setAmbientLight(Vector3f ambientLight) {
         this.ambientLight = ambientLight;
+    }
+
+    public Vector3f getGlowColor() {
+        return glowColor;
+    }
+
+    public boolean isToggleGlow() {
+        return toggleGlow;
+    }
+
+    public void setGlowColor(Vector3f glowColor) {
+        this.glowColor = glowColor;
+    }
+
+    public void setToggleGlow(boolean toggleGlow) {
+        this.toggleGlow = toggleGlow;
     }
 }
 

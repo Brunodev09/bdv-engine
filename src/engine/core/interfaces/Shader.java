@@ -84,35 +84,6 @@ public abstract class Shader {
         GL20.glBindAttribLocation(_id, attr, varName);
     }
 
-
-    private static int _load(String file, int type) {
-        StringBuilder shaderSource = new StringBuilder();
-        try {
-            BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                shaderSource.append(line).append("//\n");
-            }
-            reader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-
-        int shaderID = GL20.glCreateShader(type);
-
-        GL20.glShaderSource(shaderID, shaderSource);
-        GL20.glCompileShader(shaderID);
-
-        if (GL20.glGetShaderi(shaderID, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE) {
-            LOG.log(Level.SEVERE, GL20.glGetShaderInfoLog(shaderID, 500));
-            LOG.severe("Could not compile shader program!");
-            System.exit(-1);
-        }
-
-        return shaderID;
-    }
-
     private static int _load(InputStream stream, int type) {
         StringBuilder shaderSource = new StringBuilder();
         try {
