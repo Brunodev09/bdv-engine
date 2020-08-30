@@ -120,8 +120,10 @@ public class Game extends BdvScriptGL {
 
                 List<int[]> room = createRoom(sequenceToSearchHorizontally, sequenceToSearchVertically, randomFreePoint);
 
-                if (!room.isEmpty()) roomCreated = true;
-                rooms.add(room);
+                if (!room.isEmpty()) {
+                    roomCreated = true;
+                    rooms.add(room);
+                }
             }
 
             numberOfRoomsGenerated--;
