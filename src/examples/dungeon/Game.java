@@ -24,6 +24,15 @@ public class Game extends BdvScriptGL {
 
     private int[][] world;
 
+    // this will turn into a enum
+    final int FREE = 0;
+    final int WALL = 1;
+    final int DOOR = 2;
+    final int PICKUP = 3;
+    final int MOB = 4;
+    final int ENTRANCE = 9;
+    final int EXIT = 10;
+
     public Game() {
         this.camera2d = new Camera2D();
         this.entities = new ArrayList<>();
@@ -66,23 +75,13 @@ public class Game extends BdvScriptGL {
 
     public void generateDungeon(int[][] world, int playerLevel, int numberOfRooms, int roomMaxWidth, int roomMaxHeight) {
 
-        int numberOfRoomsGenerated = numberOfRooms;
+        int numberOfRoomsToBeGenerated = numberOfRooms;
         // list storing each room's tiles
         List<List<int[]>> rooms = new ArrayList<>();
 
-        while (numberOfRoomsGenerated > 0) {
+        while (numberOfRoomsToBeGenerated > 0) {
             final int roomWidth = random.nextInt(roomMaxWidth - 1) + 1;
             final int roomHeight = random.nextInt(roomMaxHeight - 1) + 1;
-
-            // this will turn into a enum
-            final int FREE = 0;
-            final int OCCUPIED = 1;
-            final int DOOR = 2;
-            final int PICKUP = 3;
-            final int MOB = 4;
-
-            final int ENTRANCE = 9;
-            final int EXIT = 10;
 
             int[] randomFreePoint;
 
@@ -100,8 +99,6 @@ public class Game extends BdvScriptGL {
                 freeTilesByLine.add(freeTilesOnThisLine);
             }
 
-            int sequenceToSearchHorizontally = roomWidth;
-            int sequenceToSearchVertically = roomHeight;
             boolean obstructed = false;
             boolean roomCreated = false;
 
@@ -111,29 +108,25 @@ public class Game extends BdvScriptGL {
                 randomFreePoint = findRandomFreeTileOnWorld(world, freeTilesByLine.size());
 
                 // checking for the edges of the dungeon
-                if (randomFreePoint[0] + sequenceToSearchHorizontally > ROWS) obstructed = true;
-                if (randomFreePoint[1] + sequenceToSearchVertically > COLS) obstructed = true;
-                if (randomFreePoint[0] - sequenceToSearchHorizontally < 0) obstructed = true;
-                if (randomFreePoint[1] - sequenceToSearchVertically < 0) obstructed = true;
+                if (randomFreePoint[0] + roomWidth > ROWS) obstructed = true;
+                if (randomFreePoint[1] + roomHeight > COLS) obstructed = true;
+                if (randomFreePoint[0] - roomWidth < 0) obstructed = true;
+                if (randomFreePoint[1] - roomHeight < 0) obstructed = true;
 
                 if (obstructed) continue;
 
-                List<int[]> room = createRoom(sequenceToSearchHorizontally, sequenceToSearchVertically, randomFreePoint);
+                List<int[]> room = createRoom(roomWidth, roomHeight, randomFreePoint);
 
                 if (!room.isEmpty()) {
                     roomCreated = true;
                     rooms.add(room);
+                    numberOfRoomsToBeGenerated--;
                 }
             }
-
-            numberOfRoomsGenerated--;
         }
-
-
     }
 
     public int[] findRandomFreeTileOnWorld(int[][] world, int numberOfFreeTiles) {
-        final int FREE = 0;
         int randomPointOnWorldX = 0;
         int randomPointOnWorldY = 0;
         while (world[randomPointOnWorldX][randomPointOnWorldY] != FREE) {
@@ -147,7 +140,6 @@ public class Game extends BdvScriptGL {
     }
 
     public List<int[]> createRoom(int cellsToSearchX, int cellsToSearchY, int[] start) {
-        int FREE = 0;
         boolean canCreateRoom = true;
         List<int[]> room = new ArrayList<>();
         int xSearch = 0;
@@ -158,12 +150,18 @@ public class Game extends BdvScriptGL {
                     canCreateRoom = false;
                     break;
                 }
-                else room.add(new int[] {start[0] + xSearch, start[1] + ySearch});
+                else {
+                    room.add(new int[] {start[0] + xSearch, start[1] + ySearch});
+                }
                 ySearch++;
             }
             if (!canCreateRoom) break;
             xSearch++;
         }
         return room;
+    }
+
+    public void populateWorldWithRooms(int[][] world, List<List<int[]>> rooms) {
+
     }
 }
