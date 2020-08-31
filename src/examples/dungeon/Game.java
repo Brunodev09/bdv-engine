@@ -6,7 +6,12 @@ import engine.api.EntityAPI;
 import engine.entities.Camera2D;
 import engine.math.Dimension;
 import engine.math.RGBAf;
+import engine.texture.SpriteSheet;
+import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
+import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -15,7 +20,11 @@ import java.util.logging.Logger;
 
 public class Game extends BdvScriptGL {
 
-    private static final Logger LOGGER = Logger.getLogger(Game.class.getName());
+    private static final Logger LOG = Logger.getLogger(Game.class.getName());
+
+    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/res/basic").getAbsolutePath();
+    SpriteSheet wall = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 5, 3);
+    SpriteSheet dirt = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 3);
 
     private static final int ROWS = 100;
     private static final int COLS = 100;
@@ -53,7 +62,7 @@ public class Game extends BdvScriptGL {
 
         world = generateWorld(ROWS, COLS);
         generateDungeon(world, 1, 10, 12, 12);
-
+        render();
     }
 
     @Override
@@ -61,11 +70,43 @@ public class Game extends BdvScriptGL {
 
     }
 
+    public void render() {
+        int xIterator = 0;
+        for (int i = -ROWS / 2; i < ROWS / 2; i++) {
+            int yIterator = 0;
+            for (int j = -COLS / 2; j < COLS / 2; j++) {
+                EntityAPI entityAPI = null;
+                if (world[yIterator][xIterator] == FREE) {
+                    entityAPI = new EntityAPI(null,
+                            new Vector3f(
+                                    (float) tileSize.width * i,
+                                    (float) tileSize.height * j, 0),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
+                    entityAPI.setSpriteSheet(dirt);
+                }
+                else if (world[yIterator][xIterator] == WALL) {
+                    entityAPI = new EntityAPI(null,
+                            new Vector3f(
+                                    (float) tileSize.width * i,
+                                    (float) tileSize.height * j, 0),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
+                    entityAPI.setSpriteSheet(wall);
+                }
+                if (entityAPI == null) continue;
+                this.entities.add(entityAPI);
+                yIterator++;
+            }
+            xIterator++;
+        }
+    }
+
     public static void main(String[] args) {
         try {
             new Bdv(Game.class);
         } catch (Exception exception) {
-            LOGGER.log(Level.SEVERE, exception.toString(), exception);
+            LOG.log(Level.SEVERE, exception.toString(), exception);
         }
     }
 
@@ -106,29 +147,51 @@ public class Game extends BdvScriptGL {
                 // attempting to carve the room
 
                 randomFreePoint = findRandomFreeTileOnWorld(world, freeTilesByLine.size());
+                int[][] searchFactors = new int[][]{
+                        {
+                                1, 1
+                        },
+                        {
+                                -1, 1
+                        },
+                        {
+                                1, -1
+                        },
+                        {
+                                -1, -1
+                        },
+                };
+                int carvingAttempts = 4;
 
                 // checking for the edges of the dungeon
-                if (randomFreePoint[0] + roomWidth > ROWS) obstructed = true;
-                if (randomFreePoint[1] + roomHeight > COLS) obstructed = true;
-                if (randomFreePoint[0] - roomWidth < 0) obstructed = true;
-                if (randomFreePoint[1] - roomHeight < 0) obstructed = true;
+                if ((randomFreePoint[0] + roomWidth > ROWS || randomFreePoint[1] + roomHeight > COLS) &&
+                        (randomFreePoint[0] - roomWidth < 0 || randomFreePoint[1] - roomHeight < 0)) {
+                    obstructed = true;
+                }
 
                 if (obstructed) continue;
 
-                List<int[]> room = createRoom(roomWidth, roomHeight, randomFreePoint);
-
-                if (!room.isEmpty()) {
-                    roomCreated = true;
-                    rooms.add(room);
-                    numberOfRoomsToBeGenerated--;
+                int iterator = 0;
+                while (carvingAttempts > 0) {
+                    List<int[]> room = createRoom(roomWidth, roomHeight, randomFreePoint,
+                            searchFactors[iterator][iterator], searchFactors[iterator][iterator]);
+                    if (!room.isEmpty()) {
+                        roomCreated = true;
+                        rooms.add(room);
+                        numberOfRoomsToBeGenerated--;
+                        break;
+                    }
+                    carvingAttempts--;
+                    iterator++;
                 }
             }
         }
+        populateWorldWithRooms(world, rooms);
     }
 
     public int[] findRandomFreeTileOnWorld(int[][] world, int numberOfFreeTiles) {
-        int randomPointOnWorldX = 0;
-        int randomPointOnWorldY = 0;
+        int randomPointOnWorldX = random.nextInt(numberOfFreeTiles);
+        int randomPointOnWorldY = random.nextInt(numberOfFreeTiles);
         while (world[randomPointOnWorldX][randomPointOnWorldY] != FREE) {
             randomPointOnWorldX = random.nextInt(numberOfFreeTiles);
             randomPointOnWorldY = random.nextInt(numberOfFreeTiles);
@@ -139,29 +202,35 @@ public class Game extends BdvScriptGL {
         };
     }
 
-    public List<int[]> createRoom(int cellsToSearchX, int cellsToSearchY, int[] start) {
+    public List<int[]> createRoom(int cellsToSearchX, int cellsToSearchY, int[] start, int xSearchFactor, int ySearchFactor) {
         boolean canCreateRoom = true;
         List<int[]> room = new ArrayList<>();
         int xSearch = 0;
         for (int i = 0; i < cellsToSearchX; i++) {
             int ySearch = 0;
             for (int j = 0; j < cellsToSearchY; j++) {
-                if (world[start[0] + xSearch][start[1] + ySearch] != FREE) {
+                if (world[start[0] + (xSearch * xSearchFactor)][start[1] + (ySearch * ySearchFactor)] != FREE) {
                     canCreateRoom = false;
                     break;
-                }
-                else {
-                    room.add(new int[] {start[0] + xSearch, start[1] + ySearch});
+                } else {
+                    room.add(new int[]{start[0] + (xSearch * xSearchFactor), start[1] + (ySearch * ySearchFactor)});
                 }
                 ySearch++;
             }
             if (!canCreateRoom) break;
             xSearch++;
         }
+
+        if (!canCreateRoom) room.clear();
+
         return room;
     }
 
     public void populateWorldWithRooms(int[][] world, List<List<int[]>> rooms) {
-
+        for (List<int[]> room : rooms) {
+            for (int[] coordinates : room) {
+                world[coordinates[0]][coordinates[1]] = WALL;
+            }
+        }
     }
 }
