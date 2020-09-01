@@ -7,8 +7,10 @@ import engine.entities.Camera2D;
 import engine.math.Dimension;
 import engine.math.RGBAf;
 import engine.texture.SpriteSheet;
+import examples.dungeon.generation.Location;
 import examples.dungeon.generation.WorldManager;
 import examples.dungeon.system.TileMapping;
+import examples.dungeon.tiles.Tile;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -27,6 +29,8 @@ public class Game extends BdvScriptGL {
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/res/basic").getAbsolutePath();
     SpriteSheet wall = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 5, 3);
     SpriteSheet dirt = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 3);
+    SpriteSheet stone = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 3, 2);
+
 
     private static final int ROWS = 100;
     private static final int COLS = 100;
@@ -53,8 +57,8 @@ public class Game extends BdvScriptGL {
         final int roomMinWidth = 3;
         final int roomMinHeight = 3;
 
-        WorldManager.newInstance(ROWS, COLS);
-        WorldManager.addNewDungeon(1, numberOfRooms, roomMaxWidth, roomMaxHeight, roomMinWidth, roomMinHeight);
+        WorldManager.newDungeonLocation(0, 0, -1, 100, 100);
+        WorldManager.generateDungeonLocationLayout(0, 0, -1, 0, numberOfRooms, roomMaxWidth, roomMaxHeight, roomMinWidth, roomMinHeight);
         render();
     }
 
@@ -64,13 +68,14 @@ public class Game extends BdvScriptGL {
     }
 
     public void render() {
-        int[][] world = WorldManager.getWorld();
+        List<List<Tile>> world = WorldManager.getMapFromLocation(0, 0, -1);
+        Location location = WorldManager.getLocationAtIndex(0, 0, -1);
         int xIterator = 0;
-        for (int i = -WorldManager.getROWS() / 2; i < WorldManager.getROWS() / 2; i++) {
+        for (int i = -location.getMapWidth() / 2; i < location.getMapWidth() / 2; i++) {
             int yIterator = 0;
-            for (int j = -WorldManager.getCOLS() / 2; j < WorldManager.getCOLS() / 2; j++) {
+            for (int j = -location.getMapHeight() / 2; j < location.getMapHeight() / 2; j++) {
                 EntityAPI entityAPI = null;
-                if (world[yIterator][xIterator] == TileMapping.FREE.getTile()) {
+                if (world.get(yIterator).get(xIterator).getType() == TileMapping.FREE.getTile()) {
                     entityAPI = new EntityAPI(null,
                             new Vector3f(
                                     (float) tileSize.width * i,
@@ -79,7 +84,7 @@ public class Game extends BdvScriptGL {
                             new Vector2f(0, 0));
                     entityAPI.setSpriteSheet(dirt);
                 }
-                else if (world[yIterator][xIterator] == TileMapping.WALL.getTile()) {
+                else if (world.get(yIterator).get(xIterator).getType() == TileMapping.WALL.getTile()) {
                     entityAPI = new EntityAPI(null,
                             new Vector3f(
                                     (float) tileSize.width * i,
@@ -87,6 +92,15 @@ public class Game extends BdvScriptGL {
                             new Dimension(tileSize.width, tileSize.height),
                             new Vector2f(0, 0));
                     entityAPI.setSpriteSheet(wall);
+                }
+                else if (world.get(yIterator).get(xIterator).getType() == TileMapping.STONE.getTile()) {
+                    entityAPI = new EntityAPI(null,
+                            new Vector3f(
+                                    (float) tileSize.width * i,
+                                    (float) tileSize.height * j, 0),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
+                    entityAPI.setSpriteSheet(stone);
                 }
                 if (entityAPI == null) continue;
                 this.entities.add(entityAPI);
