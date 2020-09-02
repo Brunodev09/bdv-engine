@@ -3,12 +3,16 @@ package examples.dungeon.tiles;
 import engine.api.EntityAPI;
 import examples.dungeon.system.TileMapping;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class Tile {
     protected int type = TileMapping.FREE.getTile();
     protected int positionX;
     protected int positionY;
     protected boolean solid = false;
     protected EntityAPI entityObject;
+    protected Map<Object, Object> scriptProperties = new HashMap<>();
 
     public Tile() {
     }
@@ -60,4 +64,7 @@ public abstract class Tile {
         return entityObject;
     }
 
+    public Map<Object, Object> getScriptProperties() {
+        return scriptProperties;
+    }
 }

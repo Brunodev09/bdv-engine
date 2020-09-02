@@ -5,10 +5,7 @@ import examples.dungeon.tiles.Stone;
 import examples.dungeon.tiles.Tile;
 import examples.dungeon.tiles.Wall;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Stack;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class Dungeon extends Location {
@@ -174,13 +171,20 @@ public class Dungeon extends Location {
 //        Remove the wall between the current cell and the chosen cell
 //        Mark the chosen cell as visited and push it to the stack
 
+//        Adapting algorithm to suit tiled map: will only search C (cell) tiles and not B (blocks)
+//        by making every odd pair of coordinates a "block" and searching through even cells.
+//          C C C
+//          C B C
+//          C C C
         List<List<Tile>> map = WorldManager.getMapFromLocation(x, y, z);
         List<Tile> tilesToUpdate = new ArrayList<>();
         List<Tile> visitedTiles = new ArrayList<>();
         Stack<Tile> stack = new Stack<>();
+
         Tile initialTile = WorldManager.findRandomFreeTileOnMap(x, y, z, 100);
-        visitedTiles.add(initialTile);
-        stack.push(initialTile);
+        Tile evenTile = map.get((initialTile.getPositionX() / 2) * 2).get((initialTile.getPositionY() / 2) * 2);
+        visitedTiles.add(evenTile);
+        stack.push(evenTile);
 
         while (!stack.isEmpty()) {
             List<Tile> notVisitedThisIteration = new ArrayList<>();
@@ -196,29 +200,29 @@ public class Dungeon extends Location {
             Tile n7 = null;
             Tile n8 = null;
 
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() + 1, current.getPositionY())) {
-                n1 = map.get(current.getPositionX() + 1).get(current.getPositionY());
+            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() + 2, current.getPositionY())) {
+                n1 = map.get(current.getPositionX() + 2).get(current.getPositionY());
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() - 1, current.getPositionY())) {
-                n2 = map.get(current.getPositionX() - 1).get(current.getPositionY());
+            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() - 2, current.getPositionY())) {
+                n2 = map.get(current.getPositionX() - 2).get(current.getPositionY());
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() + 1, current.getPositionY() + 1)) {
-                n3 = map.get(current.getPositionX() + 1).get(current.getPositionY() + 1);
+            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() + 2, current.getPositionY() + 2)) {
+                n3 = map.get(current.getPositionX() + 2).get(current.getPositionY() + 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() - 1, current.getPositionY() - 1)) {
-                n4 = map.get(current.getPositionX() - 1).get(current.getPositionY() - 1);
+            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() - 2, current.getPositionY() - 2)) {
+                n4 = map.get(current.getPositionX() - 2).get(current.getPositionY() - 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() - 1, current.getPositionY() + 1)) {
-                n5 = map.get(current.getPositionX() - 1).get(current.getPositionY() + 1);
+            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() - 2, current.getPositionY() + 2)) {
+                n5 = map.get(current.getPositionX() - 2).get(current.getPositionY() + 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() + 1, current.getPositionY() - 1)) {
-                n6 = map.get(current.getPositionX() + 1).get(current.getPositionY() - 1);
+            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() + 2, current.getPositionY() - 2)) {
+                n6 = map.get(current.getPositionX() + 2).get(current.getPositionY() - 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX(), current.getPositionY() + 1)) {
-                n7 = map.get(current.getPositionX()).get(current.getPositionY() + 1);
+            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX(), current.getPositionY() + 2)) {
+                n7 = map.get(current.getPositionX()).get(current.getPositionY() + 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX(), current.getPositionY() - 1)) {
-                n8 = map.get(current.getPositionX()).get(current.getPositionY() - 1);
+            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX(), current.getPositionY() - 2)) {
+                n8 = map.get(current.getPositionX()).get(current.getPositionY() - 2);
             }
 
             if (n1 != null && !visitedTiles.contains(n1) && n1.getType() == TileMapping.FREE.getTile()) {
@@ -261,6 +265,35 @@ public class Dungeon extends Location {
             Tile randomN = notVisitedThisIteration.get(randInt);
             visitedTiles.add(randomN);
             stack.push(randomN);
+
+            // updating only the "block" tiles
+            Tile tileToUpdate = null;
+            if (randomN == n1) {
+                tileToUpdate = map.get(current.getPositionX() + 1).get(current.getPositionY());
+            }
+            if (randomN == n2) {
+                tileToUpdate = map.get(current.getPositionX() - 1).get(current.getPositionY());
+            }
+            if (randomN == n3) {
+                tileToUpdate = map.get(current.getPositionX() + 1).get(current.getPositionY() + 1);
+            }
+            if (randomN == n4) {
+                tileToUpdate = map.get(current.getPositionX() - 1).get(current.getPositionY() - 1);
+            }
+            if (randomN == n5) {
+                tileToUpdate = map.get(current.getPositionX() - 1).get(current.getPositionY() + 1);
+            }
+            if (randomN == n6) {
+                tileToUpdate = map.get(current.getPositionX() + 1).get(current.getPositionY() - 1);
+            }
+            if (randomN == n7) {
+                tileToUpdate = map.get(current.getPositionX()).get(current.getPositionY() + 1);
+            }
+            if (randomN == n8) {
+                tileToUpdate = map.get(current.getPositionX()).get(current.getPositionY() - 1);
+            }
+
+            if (tileToUpdate != null && tileToUpdate.getType() == TileMapping.FREE.getTile()) tilesToUpdate.add(tileToUpdate);
 
             tilesToUpdate.add(randomN);
             tilesToUpdate.add(current);
