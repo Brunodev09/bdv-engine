@@ -6,11 +6,13 @@ public class Stone extends Tile {
     public Stone() {
         super();
         this.type = TileMapping.STONE.getTile();
+        this.solid = false;
     }
 
     public Stone(int x, int y) {
         super(x, y);
         this.type = TileMapping.STONE.getTile();
+        this.solid = false;
     }
 
     public Stone(int x, int y, boolean solid) {

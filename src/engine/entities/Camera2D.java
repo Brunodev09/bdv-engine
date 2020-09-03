@@ -17,7 +17,7 @@ public class Camera2D {
 
     }
 
-    public void move(double delta) {
+    public void move() {
         long windowContext = RenderManager.getWindow();
 
         if (glfwGetKey(windowContext, GLFW_KEY_W) == GLFW_PRESS) {
@@ -52,6 +52,14 @@ public class Camera2D {
 
     public float getRoll() {
         return _roll;
+    }
+
+    public float getSpeed() {
+        return _speed;
+    }
+
+    public void setSpeed(float speed) {
+        this._speed = speed;
     }
 }
 

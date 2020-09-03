@@ -22,8 +22,6 @@ import java.util.logging.Logger;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 // @TODO - Set this up as a gradle project and remove dependencies from source code
-// @TODO - Add fps counter
-// @TODO - Font rendering
 // @TODO - Imgui binding
 // @TODO - Implement custom exceptions
 // @TODO - Fix class structure of Entity and EntityAPI to be more flexible towards spritesheets
@@ -40,6 +38,8 @@ public class Engine {
     Map<String, Model> models = new HashMap<>();
     Model rectangleModel;
     double lastTime;
+    double lastUpdate;
+    int frames = 0;
 
     Logger LOG = Logger.getLogger(Engine.class.getName());
 
@@ -53,7 +53,7 @@ public class Engine {
 
         if (config.script.camera == null) {
 
-            Camera2D cam2d = config.script.camera2d;
+            Camera2D cam2d = config.script.camera2d == null ? new Camera2D() : config.script.camera2d;
 
             for (EntityAPI entity : scriptEntities) {
                 Model mdl = null;
@@ -86,6 +86,9 @@ public class Engine {
                     texture2D.setToggleGlow(true);
                     texture2D.setGlowColor(entity.getColorGlow());
                 }
+                if (entity.isPlayer()) {
+                    texture2D.setPlayer(true);
+                }
                 TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
                 Entity formerEntity = new Entity(tmdl2,
                         entity.getPosition(),
@@ -100,14 +103,24 @@ public class Engine {
             }
 
             while (!RenderManager.shouldExit()) {
-                double thisTime = currentTimeMillis();
-                double delta = thisTime - lastTime;
-                lastTime = thisTime;
 
                 RenderManager.toggleDebugShaderMode(config.script.debugShader);
                 createAndUpdateFormerEntity();
+
+                if (lastUpdate == 0.0) {
+                    lastUpdate = currentTimeMillis();
+                }
+
+                if (currentTimeMillis() - lastUpdate >= 1000) {
+                    if (config.script.logFps) {
+                        LOG.info("FPS -> " + frames);
+                    }
+                    frames = 0;
+                    lastUpdate = currentTimeMillis();
+                }
+
+                frames++;
                 config.script.update();
-                cam2d.move(delta);
 
                 toRender.forEach((key, val) -> RenderManager.processEntity(val));
 
@@ -190,6 +203,9 @@ public class Engine {
                 if (entity.isGlowing()) {
                     texture2D.setToggleGlow(true);
                     texture2D.setGlowColor(entity.getColorGlow());
+                }
+                if (entity.isPlayer()) {
+                    texture2D.setPlayer(true);
                 }
                 TexturedModel tmdl2 = new TexturedModel(models.get(entity.getWidth() + "," + entity.getHeight()), texture2D);
                 former.setModel(tmdl2);

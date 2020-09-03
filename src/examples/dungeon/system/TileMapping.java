@@ -9,7 +9,8 @@ public enum TileMapping {
     ROOM(5),
     STONE(6),
     ENTRANCE(9),
-    EXIT(10);
+    EXIT(10),
+    PLAYER(100);
 
     private final int tile;
 

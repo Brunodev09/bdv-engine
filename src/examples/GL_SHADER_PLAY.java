@@ -39,7 +39,7 @@ public class GL_SHADER_PLAY extends BdvScriptGL {
 
     @Override
     public void update() {
-
+        this.camera2d.move();
     }
 
     public static void main(String[] args) {

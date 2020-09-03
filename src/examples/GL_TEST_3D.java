@@ -36,6 +36,7 @@ public class GL_TEST_3D extends BdvScriptGL {
 
     @Override
     public void update() {
+        camera.move(0.0);
         this.entities.get(0).rotate(0, 0.5f, 0.5f);
     }
 

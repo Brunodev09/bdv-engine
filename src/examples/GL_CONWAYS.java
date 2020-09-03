@@ -91,6 +91,7 @@ public class GL_CONWAYS extends BdvScriptGL {
 
     @Override
     public void update() {
+        this.camera2d.move();
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 if (!shouldDie(i, j)) {

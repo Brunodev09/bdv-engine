@@ -98,6 +98,7 @@ public class GL_MANDELBROT extends BdvScriptGL {
 
     @Override
     public void update() {
+        this.camera2d.move();
         for (int i = 0; i < setDimensions; i++) {
             for (int j = 0; j < setDimensions; j++) {
                 double x0 = xCenter - size / 2 + size * i / setDimensions;

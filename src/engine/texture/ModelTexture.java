@@ -12,6 +12,7 @@ public class ModelTexture {
     private boolean toggleGlow = false;
     private boolean ambientLightToggle = false;
     private Vector3f glowColor;
+    private boolean player;
 
     public ModelTexture(int id) {
         this._textureId = id;
@@ -75,6 +76,14 @@ public class ModelTexture {
 
     public void setAmbientLightToggle(boolean ambientLightToggle) {
         this.ambientLightToggle = ambientLightToggle;
+    }
+
+    public boolean isPlayer() {
+        return player;
+    }
+
+    public void setPlayer(boolean player) {
+        this.player = player;
     }
 }
 

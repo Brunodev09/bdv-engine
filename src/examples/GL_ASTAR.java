@@ -117,6 +117,7 @@ public class GL_ASTAR extends BdvScriptGL {
 
     @Override
     public void update() {
+        this.camera2d.move();
         if (!this.stuck && !this.currentNode.isEndNode()) this.currentNode = this.computeNext(this.currentNode);
     }
 

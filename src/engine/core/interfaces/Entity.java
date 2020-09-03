@@ -14,15 +14,10 @@ public class Entity {
     private Vector3f previousPosition;
     private Vector3f initialPosition;
     private Vector2f speed;
-    private Vector2f middle;
     private Dimension dimension;
     private RGBA color;
-    private boolean player;
-    private Entity referenced;
-    private boolean following;
-    private boolean lockMovement;
-    private String message;
     private Texture texture;
+    private boolean player;
 
     public Entity() {
         this.id = ++_c;
@@ -70,24 +65,8 @@ public class Entity {
         return initialPosition;
     }
 
-    public boolean getFollowing() {
-        return following;
-    }
-
-    public boolean getLockMovement() {
-        return lockMovement;
-    }
-
-    public boolean getPlayer() {
+    public boolean isPlayer() {
         return player;
-    }
-
-    public Entity getReferenced() {
-        return referenced;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public Model getMdl() {
@@ -106,10 +85,6 @@ public class Entity {
         return color;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
     public Texture getTexture() {
         return texture;
     }
@@ -122,28 +97,12 @@ public class Entity {
         this.dimension = dimension;
     }
 
-    public void setFollowing(boolean following) {
-        this.following = following;
-    }
-
     public void setId(int id) {
         this.id = id;
     }
 
-    public void setLockMovement(boolean lockMovement) {
-        this.lockMovement = lockMovement;
-    }
-
     public void setMdl(Model mdl) {
         this.mdl = mdl;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public void setPlayer(boolean player) {
-        this.player = player;
     }
 
     public void setPosition(Vector3f position) {
@@ -151,9 +110,6 @@ public class Entity {
         this.position = position;
     }
 
-    public void setReferenced(Entity referenced) {
-        this.referenced = referenced;
-    }
 
     public void setSpeed(Vector2f speed) {
         this.speed = speed;

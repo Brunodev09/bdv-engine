@@ -59,6 +59,8 @@ public class GL_TEST_GRID extends BdvScriptGL {
 
     @Override
     public void update() {
+        camera2d.move();
+
     }
 
     public static void main(String[] args) {

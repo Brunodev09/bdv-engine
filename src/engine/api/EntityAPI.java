@@ -33,6 +33,7 @@ public class EntityAPI {
     private boolean isGlowing = false;
     private boolean ambientLightToggle = false;
     private Vector3f colorGlow;
+    private boolean player;
 
     private int _API_LINK;
 
@@ -258,5 +259,13 @@ public class EntityAPI {
 
     public void setAmbientLightOn(boolean ambientLightOn) {
         ambientLightToggle = ambientLightOn;
+    }
+
+    public void setPlayer(boolean player) {
+        this.player = player;
+    }
+
+    public boolean isPlayer() {
+        return player;
     }
 }

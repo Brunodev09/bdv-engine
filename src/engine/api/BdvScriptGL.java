@@ -17,6 +17,8 @@ public abstract class BdvScriptGL {
     public Camera2D camera2d;
     public int FPS = 0;
     public boolean debugShader = false;
+    public boolean logFps;
+    public static InputAPI input;
 
     public abstract void init(List<EntityAPI> entities, Dimension resolution, RGBAf background);
     public abstract void update();

@@ -48,6 +48,11 @@ public abstract class Tile {
         this.positionX = positionX;
     }
 
+    public void setPosition(int xPosition, int yPosition) {
+        this.positionX = xPosition;
+        this.positionY = yPosition;
+    }
+
     public void setPositionY(int positionY) {
         this.positionY = positionY;
     }

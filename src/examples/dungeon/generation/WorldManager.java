@@ -1,5 +1,6 @@
 package examples.dungeon.generation;
 
+import examples.dungeon.player.Player;
 import examples.dungeon.system.TileMapping;
 import examples.dungeon.tiles.Tile;
 import examples.dungeon.tiles.Wall;
@@ -66,27 +67,54 @@ public class WorldManager {
     }
 
     public static void populateMapWithRoom(int x, int y, int z, List<Tile> room) {
-        List<List<Tile>> map = world.get(generateHashKey(x, y, z)).getMap();
+        List<List<Tile>> map = tryToAcessMap(x, y, z);
         for (Tile tile : room) {
             map.get(tile.getPositionX()).set(tile.getPositionY(), new Wall(tile.getPositionX(), tile.getPositionY()));
         }
     }
 
     public static void populateMapWithTile(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal, Tile tile) {
-        List<List<Tile>> map = world.get(generateHashKey(xGlobal, yGlobal, zGlobal)).getMap();
+        List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
+        if (map == null) return;
         tile.setPositionX(xLocal);
         tile.setPositionY(yLocal);
         map.get(xLocal).set(yLocal, tile);
     }
 
+    public static void populateMapWithPlayer(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal, Player player) {
+        List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
+        player.getPlayerTile().setPositionX(xLocal);
+        player.getPlayerTile().setPositionY(yLocal);
+        map.get(xLocal).set(yLocal, player.getPlayerTile());
+    }
+
     public static boolean tryToAcessTile(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal) {
         try {
-            List<List<Tile>> map = world.get(generateHashKey(xGlobal, yGlobal, zGlobal)).getMap();
+            List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
+            if (map == null) return false;
             map.get(xLocal).get(yLocal);
         } catch (IndexOutOfBoundsException exception) {
             LOG.info("Out of bounds at [" + xLocal + ", " + yLocal + "]");
             return false;
         }
         return true;
+    }
+
+    public static List<List<Tile>> tryToAcessMap(int xGlobal, int yGlobal, int zGlobal) {
+        Location location = world.get(generateHashKey(xGlobal, yGlobal, zGlobal));
+        if (location == null) {
+            String msg = new StringBuilder()
+                    .append("NO SUCH GLOBAL LOCATION AT ")
+                    .append("[").append(xGlobal)
+                    .append(", ")
+                    .append(yGlobal)
+                    .append(", ")
+                    .append(zGlobal)
+                    .append("]")
+                    .toString();
+            LOG.info(msg);
+            return null;
+        }
+        return location.getMap();
     }
 }

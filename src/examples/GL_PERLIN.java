@@ -74,6 +74,7 @@ public class GL_PERLIN extends BdvScriptGL {
 
     @Override
     public void update() {
+        camera2d.move();
         counter++;
         if (counter < 50) return;
 

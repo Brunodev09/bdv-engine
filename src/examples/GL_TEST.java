@@ -34,6 +34,7 @@ public class GL_TEST extends BdvScriptGL {
     @Override
     public void update() {
         entities.get(0).rotate(0, 0, 0.5f);
+        camera2d.move();
     }
 
     public static void main(String[] args) {

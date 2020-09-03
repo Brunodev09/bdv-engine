@@ -135,6 +135,8 @@ public class Renderer {
             _geoShader.loadGlowColor(tmdl.getModelTexture().getGlowColor());
         }
 
+        _geoShader.loadIsPlayer(tmdl.getModelTexture().isPlayer());
+
         // Entities independent uniform variables
         _geoShader.loadCurrentTimeFlow();
         _geoShader.loadDebugToggle(debugShader);

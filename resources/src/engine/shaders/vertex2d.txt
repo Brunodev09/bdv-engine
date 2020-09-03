@@ -10,9 +10,16 @@ out vec4 vertexPosition;
 uniform mat4 transformation;
 uniform mat4 projection;
 uniform mat4 view;
+uniform bool isPlayer;
 
 void main(void) {
-    gl_Position = projection * view * transformation * vec4(position.xy, 0.0, 1.0);
+    if (!isPlayer) {
+        gl_Position = projection * view * transformation * vec4(position.xy, 0.0, 1.0);
+    } else gl_Position = projection * transformation * vec4(position.xy, 0.0, 1.0);
+
     passTextureCoordinates = textureCoordinates;
-    vertexPosition = projection * view * transformation * vec4(position.xy, 0.0, 1.0);
+
+    if (!isPlayer) vertexPosition = projection * view * transformation * vec4(position.xy, 0.0, 1.0);
+    else vertexPosition = projection * transformation * vec4(position.xy, 0.0, 1.0);
+
 }
