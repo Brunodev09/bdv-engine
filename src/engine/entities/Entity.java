@@ -13,6 +13,7 @@ public class Entity {
     private float _scaleX;
     private float _scaleY;
     private float _scaleZ;
+    private boolean shouldRender;
 
     public static int _GLOBAL_ID_ = 0;
     private final int id;
@@ -133,6 +134,14 @@ public class Entity {
 
     public int getId() {
         return id;
+    }
+
+    public boolean shouldRender() {
+        return shouldRender;
+    }
+
+    public void setShouldRender(boolean shouldRender) {
+        this.shouldRender = shouldRender;
     }
 }
 

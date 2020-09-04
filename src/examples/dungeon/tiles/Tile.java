@@ -1,8 +1,11 @@
 package examples.dungeon.tiles;
 
 import engine.api.EntityAPI;
+import engine.texture.SpriteSheet;
 import examples.dungeon.system.TileMapping;
 
+import java.awt.*;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,6 +16,9 @@ public abstract class Tile {
     protected boolean solid = false;
     protected EntityAPI entityObject;
     protected Map<Object, Object> scriptProperties = new HashMap<>();
+    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 3, 2);
+
 
     public Tile() {
     }
@@ -71,5 +77,9 @@ public abstract class Tile {
 
     public Map<Object, Object> getScriptProperties() {
         return scriptProperties;
+    }
+
+    public SpriteSheet getSprite() {
+        return sprite;
     }
 }

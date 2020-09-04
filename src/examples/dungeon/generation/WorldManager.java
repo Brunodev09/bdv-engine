@@ -73,33 +73,6 @@ public class WorldManager {
         }
     }
 
-    public static void populateMapWithTile(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal, Tile tile) {
-        List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
-        if (map == null) return;
-        tile.setPositionX(xLocal);
-        tile.setPositionY(yLocal);
-        map.get(xLocal).set(yLocal, tile);
-    }
-
-    public static void populateMapWithPlayer(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal, Player player) {
-        List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
-        player.getPlayerTile().setPositionX(xLocal);
-        player.getPlayerTile().setPositionY(yLocal);
-        map.get(xLocal).set(yLocal, player.getPlayerTile());
-    }
-
-    public static boolean tryToAcessTile(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal) {
-        try {
-            List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
-            if (map == null) return false;
-            map.get(xLocal).get(yLocal);
-        } catch (IndexOutOfBoundsException exception) {
-            LOG.info("Out of bounds at [" + xLocal + ", " + yLocal + "]");
-            return false;
-        }
-        return true;
-    }
-
     public static List<List<Tile>> tryToAcessMap(int xGlobal, int yGlobal, int zGlobal) {
         Location location = world.get(generateHashKey(xGlobal, yGlobal, zGlobal));
         if (location == null) {
@@ -113,8 +86,37 @@ public class WorldManager {
                     .append("]")
                     .toString();
             LOG.info(msg);
-            return null;
+            return new ArrayList<>();
         }
         return location.getMap();
+    }
+
+    public static Tile tryGetTile(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal) {
+        List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
+        if (map == null) return null;
+        if (!tryToAcessTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal)) return null;
+        Tile tile = map.get(xLocal).get(yLocal);
+        LOG.info("Getting tile of id " + tile.getType() + " in position [" + xLocal + ", " + yLocal + "]");
+        return map.get(xLocal).get(yLocal);
+    }
+
+    public static void trySetTile(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal, Tile tile) {
+        if (!tryToAcessTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal)) return;
+        List<List<Tile>> map = getMapFromLocation(xGlobal, yGlobal, zGlobal);
+        map.get(xLocal).set(yLocal, tile);
+        LOG.info("Setting tile of id " + tile.getType() + " in position [" + xLocal + ", " + yLocal + "]");
+        tile.setPosition(xLocal, yLocal);
+    }
+
+    public static boolean tryToAcessTile(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal) {
+        try {
+            List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
+            if (map == null) return false;
+            map.get(xLocal).get(yLocal);
+        } catch (IndexOutOfBoundsException exception) {
+            LOG.info("Out of bounds at [" + xLocal + ", " + yLocal + "]");
+            return false;
+        }
+        return true;
     }
 }

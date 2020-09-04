@@ -117,7 +117,7 @@ public class Dungeon extends Location {
 
         List<Tile> toUpdate = generateMaze(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal());
         for (Tile tile : toUpdate) {
-            WorldManager.populateMapWithTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Stone());
+            WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Stone());
         }
     }
 

@@ -32,7 +32,7 @@ public class Engine {
     Map<Integer, Entity> toRender = new HashMap<>();
     Map<Integer, Lightsource> lights = new HashMap<>();
     Map<String, Integer> textures = new HashMap<>();
-    Map<SpriteSheet, Integer> sprites = new HashMap<>();
+    Map<String, Integer> sprites = new HashMap<>();
     List<EntityAPI> scriptEntities;
     Map<String, ProcessedBufferedImage> processedImages = new HashMap<>();
     Map<String, Model> models = new HashMap<>();
@@ -99,6 +99,7 @@ public class Engine {
                         entity.getScaleY(),
                         entity.getScaleZ());
                 entity.setLink(formerEntity.getId());
+                formerEntity.setShouldRender(entity.shouldRender());
                 toRender.put(formerEntity.getId(), formerEntity);
             }
 
@@ -122,7 +123,9 @@ public class Engine {
                 frames++;
                 config.script.update();
 
-                toRender.forEach((key, val) -> RenderManager.processEntity(val));
+                toRender.forEach((key, val) -> {
+                    if (val.shouldRender()) RenderManager.processEntity(val);
+                });
 
                 RenderManager.renderBatch(cam2d);
                 RenderManager.updateRender(config.FPS);
@@ -183,6 +186,9 @@ public class Engine {
                     former.getPosition().z != entity.getPosition().z) {
                 former.setPosition(entity.getPosition());
             }
+            if (former.shouldRender() != entity.shouldRender()) {
+                former.setShouldRender(entity.shouldRender());
+            }
             if (former.getRotX() != entity.getRotationX()
                     || former.getRotY() != entity.getRotationY()
                     || former.getRotZ() != entity.getRotationZ()) {
@@ -217,12 +223,16 @@ public class Engine {
     // TODO - Make a test with a controlled number of sprites and assert that the texture map is holding that exact controlled number
     private int getTextureId(EntityAPI entity) {
         int id = 0;
+        String spriteKey = null;
+        if (entity.getSpriteSheet() != null) {
+            spriteKey = entity.getSpriteSheet().getFile() + "" + entity.getSpriteSheet().getTileX() + entity.getSpriteSheet().getTileY();
+        }
         if (textures.get(entity.getFile()) == null || entity.getSpriteSheet() != null) {
-            if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) == null) {
+            if (entity.getSpriteSheet() != null && sprites.get(spriteKey) == null) {
                 id = pipe.loadTextureFromSpritesheet(entity.getSpriteSheet());
-                sprites.put(entity.getSpriteSheet(), id);
-            } else if (entity.getSpriteSheet() != null && sprites.get(entity.getSpriteSheet()) != null) {
-                id = sprites.get(entity.getSpriteSheet());
+                sprites.put(spriteKey, id);
+            } else if (entity.getSpriteSheet() != null && sprites.get(spriteKey) != null) {
+                id = sprites.get(spriteKey);
             } else if (entity.getSpriteSheet() == null && textures.get(entity.getFile()) == null) {
                 id = pipe.loadTexture(entity.getFile());
                 textures.put(entity.getFile(), id);

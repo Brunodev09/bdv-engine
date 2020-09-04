@@ -34,6 +34,7 @@ public class EntityAPI {
     private boolean ambientLightToggle = false;
     private Vector3f colorGlow;
     private boolean player;
+    private boolean shouldRender = true;
 
     private int _API_LINK;
 
@@ -267,5 +268,13 @@ public class EntityAPI {
 
     public boolean isPlayer() {
         return player;
+    }
+
+    public boolean shouldRender() {
+        return shouldRender;
+    }
+
+    public void setShouldRender(boolean shouldRender) {
+        this.shouldRender = shouldRender;
     }
 }

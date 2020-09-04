@@ -17,7 +17,7 @@ public class Input {
     public Input() {
     }
 
-    public static boolean movePlayerOnMap(Player player, Camera2D camera) {
+    public static boolean movePlayerOnMap(Player player) {
         boolean triggerRender = false;
         Location location = player.getCurrentLocation();
         List<List<Tile>> map = player.getCurrentLocation().getMap();
@@ -27,41 +27,49 @@ public class Input {
             if (keyPressed.equals("W")) {
                 // checking if tile is accessible
                 if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        player.getPlayerTile().getPositionX() - 1, player.getPlayerTile().getPositionY())) break;
-                Tile previousTileBeforePlayer = player.getPreviousTile();
-                Tile newTile = map.get(player.getPlayerTile().getPositionX() - 1).get(player.getPlayerTile().getPositionY());
-                movePlayer(map, player, previousTileBeforePlayer, newTile);
-                camera.move();
-                triggerRender = true;
-            }
-            if (keyPressed.equals("A")) {
-                // checking if tile is accessible
-                if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
                         player.getPlayerTile().getPositionX(), player.getPlayerTile().getPositionY() - 1)) break;
+                // getting the tile the player is actively standing on
                 Tile previousTileBeforePlayer = player.getPreviousTile();
+                // getting the tile the player is going to be
                 Tile newTile = map.get(player.getPlayerTile().getPositionX()).get(player.getPlayerTile().getPositionY() - 1);
+                // moving the player
                 movePlayer(map, player, previousTileBeforePlayer, newTile);
-                camera.move();
-                triggerRender = true;
-            }
-            if (keyPressed.equals("D")) {
-                // checking if tile is accessible
-                if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        player.getPlayerTile().getPositionX(), player.getPlayerTile().getPositionY() + 1)) break;
-                Tile previousTileBeforePlayer = player.getPreviousTile();
-                Tile newTile = map.get(player.getPlayerTile().getPositionX()).get(player.getPlayerTile().getPositionY() + 1);
-                movePlayer(map, player, previousTileBeforePlayer, newTile);
-                camera.move();
                 triggerRender = true;
             }
             if (keyPressed.equals("S")) {
                 // checking if tile is accessible
                 if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        player.getPlayerTile().getPositionX() + 1, player.getPlayerTile().getPositionY())) break;
+                        player.getPlayerTile().getPositionX(), player.getPlayerTile().getPositionY() + 1)) break;
+                // getting the tile the player is actively standing on
                 Tile previousTileBeforePlayer = player.getPreviousTile();
-                Tile newTile = map.get(player.getPlayerTile().getPositionX() + 1).get(player.getPlayerTile().getPositionY());
+                // getting the tile the player is going to be
+                Tile newTile = map.get(player.getPlayerTile().getPositionX()).get(player.getPlayerTile().getPositionY() + 1);
+                // moving the player
                 movePlayer(map, player, previousTileBeforePlayer, newTile);
-                camera.move();
+                triggerRender = true;
+            }
+            if (keyPressed.equals("D")) {
+                // checking if tile is accessible
+                if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                        player.getPlayerTile().getPositionX() + 1, player.getPlayerTile().getPositionY())) break;
+                // getting the tile the player is actively standing on
+                Tile previousTileBeforePlayer = player.getPreviousTile();
+                // getting the tile the player is going to be
+                Tile newTile = map.get(player.getPlayerTile().getPositionX() + 1).get(player.getPlayerTile().getPositionY());
+                // moving the player
+                movePlayer(map, player, previousTileBeforePlayer, newTile);
+                triggerRender = true;
+            }
+            if (keyPressed.equals("A")) {
+                // checking if tile is accessible
+                if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                        player.getPlayerTile().getPositionX() - 1, player.getPlayerTile().getPositionY())) break;
+                // getting the tile the player is actively standing on
+                Tile previousTileBeforePlayer = player.getPreviousTile();
+                // getting the tile the player is going to be
+                Tile newTile = map.get(player.getPlayerTile().getPositionX() - 1).get(player.getPlayerTile().getPositionY());
+                // moving the player
+                movePlayer(map, player, previousTileBeforePlayer, newTile);
                 triggerRender = true;
             }
         }

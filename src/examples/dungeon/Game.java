@@ -6,7 +6,6 @@ import engine.api.EntityAPI;
 import engine.entities.Camera2D;
 import engine.math.Dimension;
 import engine.math.RGBAf;
-import engine.texture.SpriteSheet;
 import examples.dungeon.generation.Location;
 import examples.dungeon.generation.WorldManager;
 import examples.dungeon.player.Player;
@@ -16,8 +15,6 @@ import examples.dungeon.tiles.Tile;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.awt.*;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -28,19 +25,9 @@ public class Game extends BdvScriptGL {
 
     private static final Logger LOG = Logger.getLogger(Game.class.getName());
 
-    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
-    private static final String SPRITESHEET_FILE_PATH2 = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
-
-    SpriteSheet wall = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 5, 3);
-    SpriteSheet dirt = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 3);
-    SpriteSheet stone = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 3, 2);
-
-    SpriteSheet playerSprite = new SpriteSheet(SPRITESHEET_FILE_PATH2, new Rectangle(39, 39), 1, 1);
-
-    private static final int ROWS = 100;
-    private static final int COLS = 100;
     private final Dimension tileSize;
     private final Random random = new Random();
+    Dimension cameraDimensions = new Dimension(20, 20);
     Player player;
 
     public Game() {
@@ -49,7 +36,8 @@ public class Game extends BdvScriptGL {
         this.resolution = new Dimension(1024, 768);
         this.background = new RGBAf(0, 0, 0, 255);
         this.FPS = 60;
-        this.tileSize = new Dimension(this.resolution.width / ROWS, this.resolution.height / COLS);
+        this.tileSize = new Dimension(this.resolution.width / cameraDimensions.width,
+                this.resolution.height / cameraDimensions.height);
         this.camera2d.setSpeed(tileSize.width / tileSize.height);
         this.logFps = false;
 
@@ -72,7 +60,7 @@ public class Game extends BdvScriptGL {
         player = new Player(playerSpawnTile.getPositionX(), playerSpawnTile.getPositionY());
         player.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
         player.setPreviousTile(playerSpawnTile);
-        WorldManager.populateMapWithTile(0, 0, -1,
+        WorldManager.trySetTile(0, 0, -1,
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2,
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2,
                 player.getPlayerTile());
@@ -80,131 +68,129 @@ public class Game extends BdvScriptGL {
                 numberOfRooms,
                 roomMaxWidth, roomMaxHeight,
                 roomMinWidth, roomMinHeight);
+        initRender(WorldManager.getLocationAtIndex(0, 0, -1).getMap());
         render();
     }
 
     @Override
     public void update() {
-        if (Input.movePlayerOnMap(player, camera2d)) {
+        if (Input.movePlayerOnMap(player)) {
             this.render();
         }
     }
 
     public void render() {
-        this.renderEntireMap();
+        renderChunkFromMap(getPlayerChunk(player), player.getCurrentLocation().getMap());
     }
 
 
-    public void renderChunk(List<List<Tile>> chunkToRender) {
-
-    }
-
-    public void renderChunkFromPlayerCamera(List<List<Tile>> chunkToRender, EntityAPI player) {
-
-    }
-
-
-    // @TODO - Method to render tile
-    public void renderEntireMap() {
-        List<List<Tile>> world = WorldManager.getMapFromLocation(0, 0, -1);
-        Location location = WorldManager.getLocationAtIndex(0, 0, -1);
-        int xIterator = 0;
-        for (int i = -location.getMapWidth() / 2; i < location.getMapWidth() / 2; i++) {
-            int yIterator = 0;
-            for (int j = -location.getMapHeight() / 2; j < location.getMapHeight() / 2; j++) {
-                EntityAPI entityAPI = null;
-                if (world.get(yIterator).get(xIterator).getType() == TileMapping.PLAYER.getTile()) {
-
-                    EntityAPI playerEntity = null;
-
-                    if (world.get(yIterator).get(xIterator).getEntityObject() == null) {
-                        playerEntity = new EntityAPI(null, new Vector3f(
-                                0, 0, 1),
-                                new Dimension(50, 50),
-                                new Vector2f(0, 0));
-                        world.get(yIterator).get(xIterator).setEntityObject(playerEntity);
-                        player.setPlayerEntity(playerEntity);
-                        playerEntity.setSpriteSheet(playerSprite);
-                        this.entities.add(playerEntity);
-                    } else {
-                        playerEntity = world.get(yIterator).get(xIterator).getEntityObject();
-                        playerEntity.translate(new Vector3f(
-                                (float) tileSize.width * i,
-                                (float) tileSize.height * j, 1));
-                    }
-
-//                    playerEntity.setPlayer(true);
-
-                    if (player.getPreviousTile().getEntityObject() == null) {
-                        entityAPI = new EntityAPI(null,
-                                new Vector3f(
-                                        (float) tileSize.width * i,
-                                        (float) tileSize.height * j, 0),
-                                new Dimension(tileSize.width, tileSize.height),
-                                new Vector2f(0, 0));
-                        player.getPreviousTile().setEntityObject(entityAPI);
-                        this.entities.add(entityAPI);
-                    } else entityAPI = player.getPreviousTile().getEntityObject();
-
-                    switch (player.getPreviousTile().getType()) {
-                        case 0:
-                            entityAPI.setSpriteSheet(dirt);
-                            break;
-                        case 1:
-                            entityAPI.setSpriteSheet(stone);
-                            break;
-                    }
+    public void renderChunkFromMap(List<List<Tile>> chunkToRender, List<List<Tile>> map) {
+        int x = 0;
+        for (int i = -chunkToRender.size() / 2; i < chunkToRender.size() / 2; i++) {
+            int y = 0;
+            for (int j = -chunkToRender.size() / 2; j < chunkToRender.get(x).size() / 2; j++) {
+                if (chunkToRender.get(x).get(y).getType() == TileMapping.PLAYER.getTile()) {
+                    renderPlayer(player, player.getPlayerTile().getPositionX(), player.getPlayerTile().getPositionY(), i, j);
+                } else {
+                    Tile tile = chunkToRender.get(x).get(y);
+                    renderTile(map, tile, tile.getPositionX(), tile.getPositionY(), i, j);
                 }
-                if (world.get(yIterator).get(xIterator).getType() == TileMapping.FREE.getTile()) {
-                    if (world.get(yIterator).get(xIterator).getEntityObject() == null) {
-                        entityAPI = new EntityAPI(null,
-                                new Vector3f(
-                                        (float) tileSize.width * i,
-                                        (float) tileSize.height * j, 0),
-                                new Dimension(tileSize.width, tileSize.height),
-                                new Vector2f(0, 0));
-                        world.get(yIterator).get(xIterator).setEntityObject(entityAPI);
-                        this.entities.add(entityAPI);
-                    } else entityAPI = world.get(yIterator).get(xIterator).getEntityObject();
-
-                    entityAPI.setSpriteSheet(dirt);
-                }
-                else if (world.get(yIterator).get(xIterator).getType() == TileMapping.WALL.getTile()) {
-                    if (world.get(yIterator).get(xIterator).getEntityObject() == null) {
-                        entityAPI = new EntityAPI(null,
-                                new Vector3f(
-                                        (float) tileSize.width * i,
-                                        (float) tileSize.height * j, 0),
-                                new Dimension(tileSize.width, tileSize.height),
-                                new Vector2f(0, 0));
-                        world.get(yIterator).get(xIterator).setEntityObject(entityAPI);
-                        this.entities.add(entityAPI);
-                    } else entityAPI = world.get(yIterator).get(xIterator).getEntityObject();
-                    entityAPI.setSpriteSheet(wall);
-                }
-                else if (world.get(yIterator).get(xIterator).getType() == TileMapping.STONE.getTile()) {
-                    if (world.get(yIterator).get(xIterator).getEntityObject() == null) {
-                        entityAPI = new EntityAPI(null,
-                                new Vector3f(
-                                        (float) tileSize.width * i,
-                                        (float) tileSize.height * j, 0),
-                                new Dimension(tileSize.width, tileSize.height),
-                                new Vector2f(0, 0));
-                        world.get(yIterator).get(xIterator).setEntityObject(entityAPI);
-                        this.entities.add(entityAPI);
-                    } else entityAPI = world.get(yIterator).get(xIterator).getEntityObject();
-                    entityAPI.setSpriteSheet(stone);
-                }
-                if (entityAPI == null) continue;
-                yIterator++;
+                y++;
             }
-            xIterator++;
+            x++;
         }
     }
 
-    public void renderOrUpdateTile(List<List<Tile>> world) {
+    public List<List<Tile>> getPlayerChunk(Player player) {
+        Location location = player.getCurrentLocation();
+        Tile playerTile = player.getPlayerTile();
+        List<List<Tile>> tilesToRender = new ArrayList<>();
 
+        for (int i = 0; i < location.getMapWidth(); i++) {
+            List<Tile> chunk = new ArrayList<>();
+            for (int j = 0; j < location.getMapHeight(); j++) {
+                if (i >= playerTile.getPositionX() - cameraDimensions.width && i <= playerTile.getPositionX() + cameraDimensions.width) {
+                    if (j >= playerTile.getPositionY() - cameraDimensions.height && j <= playerTile.getPositionY() + cameraDimensions.height) {
+                        Tile tileToAdd = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), i, j);
+                        if (tileToAdd != null) {
+                            tileToAdd.getEntityObject().setShouldRender(true);
+                            chunk.add(tileToAdd);
+                        }
+                    }
+                } else {
+                    Tile tileToAdd = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), i, j);
+                    if (tileToAdd != null) tileToAdd.getEntityObject().setShouldRender(false);
+                }
+            }
+            if (chunk.isEmpty()) continue;
+            tilesToRender.add(chunk);
+        }
+
+        return tilesToRender;
     }
+
+    // @TODO - Theres a bug here
+    public void renderPlayer(Player player, int x, int y, int xGL, int yGL) {
+        List<List<Tile>> map = player.getCurrentLocation().getMap();
+        EntityAPI playerEntity = null;
+
+        playerEntity = map.get(x).get(y).getEntityObject();
+        playerEntity.translate(new Vector3f(
+                (float) tileSize.width * xGL,
+                (float) tileSize.height * yGL, 1));
+
+//                    playerEntity.setPlayer(true);
+        playerEntity.setShouldRender(true);
+//        renderTile(map, player.getPreviousTile(), player.getPreviousTile().getPositionX(), player.getPreviousTile().getPositionY(), 0, 0);
+    }
+
+
+    public void renderTile(List<List<Tile>> map, Tile tile, int x, int y, int xGL, int yGL) {
+        EntityAPI entityAPI = map.get(x).get(y).getEntityObject();
+        entityAPI.setShouldRender(true);
+        entityAPI.translate(new Vector3f(
+                (float) tileSize.width * xGL,
+                (float) tileSize.height * yGL, 0));
+        entityAPI.setSpriteSheet(tile.getSprite());
+    }
+
+    public void initRender(List<List<Tile>> map) {
+        for (int x = 0; x < map.size(); x++) {
+            for (int y = 0; y < map.get(x).size(); y++) {
+                if (map.get(x).get(y).getType() == TileMapping.PLAYER.getTile()) {
+                    EntityAPI playerEntity = new EntityAPI(null, new Vector3f(
+                            0, 0, 1),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
+                    map.get(x).get(y).setEntityObject(playerEntity);
+                    player.setPlayerEntity(playerEntity);
+                    playerEntity.setSpriteSheet(player.getPlayerTile().getSprite());
+                    playerEntity.setShouldRender(false);
+
+                    EntityAPI entityAPI = new EntityAPI(null,
+                            new Vector3f(0, 0, 0),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
+                    player.getPreviousTile().setEntityObject(entityAPI);
+                    player.getPreviousTile().getEntityObject().setSpriteSheet(player.getPlayerTile().getSprite());
+                    player.getPreviousTile().getEntityObject().setShouldRender(false);
+
+                    this.entities.add(entityAPI);
+                    this.entities.add(playerEntity);
+                } else {
+                    EntityAPI entityAPI = new EntityAPI(null,
+                            new Vector3f(0, 0, 0),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
+                    map.get(x).get(y).setEntityObject(entityAPI);
+                    entityAPI.setShouldRender(false);
+                    entityAPI.setSpriteSheet(map.get(x).get(y).getSprite());
+                    this.entities.add(entityAPI);
+                }
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         try {
