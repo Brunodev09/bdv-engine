@@ -62,7 +62,7 @@ public class Engine {
                 // This aids tiling when scripting.
                 if (models.get(entity.getWidth() + "," + entity.getHeight()) == null) {
                     BufferedModel defaultData2D = new BufferedModel(
-                            Prefab.squareFactory(0,0,entity.getWidth(), entity.getHeight()),
+                            Prefab.squareFactory(0, 0, entity.getWidth(), entity.getHeight()),
                             Prefab.SquareTextureCoordinates,
                             Prefab.SquareIndexes);
                     mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());

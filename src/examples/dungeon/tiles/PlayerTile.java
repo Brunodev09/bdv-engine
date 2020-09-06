@@ -29,4 +29,5 @@ public class PlayerTile extends Tile {
     public SpriteSheet getSprite() {
         return sprite;
     }
+
 }

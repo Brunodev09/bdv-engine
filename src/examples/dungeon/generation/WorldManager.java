@@ -1,6 +1,5 @@
 package examples.dungeon.generation;
 
-import examples.dungeon.player.Player;
 import examples.dungeon.system.TileMapping;
 import examples.dungeon.tiles.Tile;
 import examples.dungeon.tiles.Wall;
@@ -51,7 +50,6 @@ public class WorldManager {
         return location.getMap();
     }
 
-
     // @TODO - Adjust the seed according to number of free leftover tiles not only the leftover lines of tiles
     public static Tile findRandomFreeTileOnMap(int x, int y, int z, int numberOfFreeLines) {
         Location location = world.get(generateHashKey(x, y, z));
@@ -96,7 +94,6 @@ public class WorldManager {
         if (map == null) return null;
         if (!tryToAcessTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal)) return null;
         Tile tile = map.get(xLocal).get(yLocal);
-        LOG.info("Getting tile of id " + tile.getType() + " in position [" + xLocal + ", " + yLocal + "]");
         return map.get(xLocal).get(yLocal);
     }
 
@@ -104,7 +101,6 @@ public class WorldManager {
         if (!tryToAcessTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal)) return;
         List<List<Tile>> map = getMapFromLocation(xGlobal, yGlobal, zGlobal);
         map.get(xLocal).set(yLocal, tile);
-        LOG.info("Setting tile of id " + tile.getType() + " in position [" + xLocal + ", " + yLocal + "]");
         tile.setPosition(xLocal, yLocal);
     }
 

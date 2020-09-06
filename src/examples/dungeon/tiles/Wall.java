@@ -29,4 +29,5 @@ public class Wall extends Tile {
     public SpriteSheet getSprite() {
         return sprite;
     }
+
 }

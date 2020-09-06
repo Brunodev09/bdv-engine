@@ -9,7 +9,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Tile {
+public abstract class Tile implements Cloneable {
     protected int type = TileMapping.FREE.getTile();
     protected int positionX;
     protected int positionY;
@@ -81,5 +81,10 @@ public abstract class Tile {
 
     public SpriteSheet getSprite() {
         return sprite;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

@@ -17,4 +17,5 @@ public class RoomTile extends Tile {
         super(x, y, solid);
         this.type = TileMapping.ROOM.getTile();
     }
+
 }
