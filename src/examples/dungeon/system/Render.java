@@ -52,7 +52,6 @@ public class Render {
         }
     }
 
-
     public void renderChunkFromMap(List<List<Tile>> chunkToRender, List<List<Tile>> map) {
         int x = 0;
         for (int i = -chunkToRender.size() / 2; i < chunkToRender.size() / 2; i++) {

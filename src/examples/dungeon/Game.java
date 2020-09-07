@@ -60,7 +60,6 @@ public class Game extends BdvScriptGL {
 
         renderer = new Render(entities, player, cameraDimensions, tileSize);
 
-
         player.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
 
         player.setPreviousTile(playerSpawnTile);
