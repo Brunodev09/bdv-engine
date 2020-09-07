@@ -5,7 +5,7 @@ import examples.dungeon.generation.Location;
 import examples.dungeon.tiles.PlayerTile;
 import examples.dungeon.tiles.Tile;
 
-public class Player {
+public class Player implements Cloneable {
     private Tile playerTile;
     private Tile previousTile;
     private EntityAPI playerEntity;
