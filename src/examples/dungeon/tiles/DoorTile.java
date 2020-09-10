@@ -6,26 +6,23 @@ import examples.dungeon.system.TileMapping;
 import java.awt.*;
 import java.io.File;
 
-public class Stone extends Tile {
-
+public class DoorTile extends Tile {
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 1, 3);
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 4, 1);
 
-    public Stone() {
+    public DoorTile() {
         super();
-        this.type = TileMapping.STONE.getTile();
-        this.solid = false;
+        this.type = TileMapping.DOOR.getTile();
     }
 
-    public Stone(int x, int y) {
+    public DoorTile(int x, int y) {
         super(x, y);
-        this.type = TileMapping.STONE.getTile();
-        this.solid = false;
+        this.type = TileMapping.DOOR.getTile();
     }
 
-    public Stone(int x, int y, boolean solid) {
+    public DoorTile(int x, int y, boolean solid) {
         super(x, y, solid);
-        this.type = TileMapping.STONE.getTile();
+        this.type = TileMapping.DOOR.getTile();
     }
 
     @Override

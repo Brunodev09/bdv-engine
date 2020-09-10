@@ -52,6 +52,10 @@ public class Render {
         }
     }
 
+    public void renderFreeCameraMode() {
+
+    }
+
     public void renderChunkFromMap(List<List<Tile>> chunkToRender, List<List<Tile>> map) {
         int x = 0;
         for (int i = -chunkToRender.size() / 2; i < chunkToRender.size() / 2; i++) {
@@ -75,7 +79,7 @@ public class Render {
         Location location = player.getCurrentLocation();
         Tile playerTile = player.getPlayerTile();
         List<List<Tile>> tilesToRender = new ArrayList<>();
-        int validChunkNumber = (cameraDimensions.width + cameraDimensions.height) - 1;
+        int validChunkNumber = (cameraDimensions.width * 2) - 1;
 
         for (int i = 0; i < location.getMapWidth(); i++) {
             List<Tile> chunk = new ArrayList<>();
@@ -110,6 +114,8 @@ public class Render {
                 }
                 previousValidChunk.add(new ArrayList<>(cpList));
             }
+        } else if (validChunkNumber >= location.getMapWidth() / 2) {
+            return tilesToRender;
         } else return renderEdges(player);
 
         if (edges) {

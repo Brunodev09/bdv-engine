@@ -1,9 +1,7 @@
 package examples.dungeon.generation;
 
 import examples.dungeon.system.TileMapping;
-import examples.dungeon.tiles.Stone;
-import examples.dungeon.tiles.Tile;
-import examples.dungeon.tiles.Wall;
+import examples.dungeon.tiles.*;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -102,7 +100,7 @@ public class Dungeon extends Location {
                 int iterator = 0;
                 while (carvingAttempts > 0) {
                     List<Tile> room = createRoom(roomWidth, roomHeight, randomFreePoint,
-                            searchFactors[iterator][1], searchFactors[iterator][1]);
+                            searchFactors[iterator][0], searchFactors[iterator][1]);
                     if (!room.isEmpty()) {
                         roomCreated = true;
                         rooms.add(room);
@@ -124,6 +122,7 @@ public class Dungeon extends Location {
     public List<Tile> createRoom(int cellsToSearchX, int cellsToSearchY, Tile start, int xSearchFactor, int ySearchFactor) {
         List<List<Tile>> world = this.dungeon.getMap();
         boolean canCreateRoom = true;
+        boolean hasDoorBeenCreated = false;
         List<Tile> room = new ArrayList<>();
         int xSearch = 0;
         for (int i = 0; i < cellsToSearchX; i++) {
@@ -137,14 +136,20 @@ public class Dungeon extends Location {
                     canCreateRoom = false;
                     break;
                 }
-                if (world.get(start.getPositionX() + (xSearch * xSearchFactor)).get(start.getPositionY() + (ySearch * ySearchFactor)).getType() != 0) {
-                    LOG.info(world.get(start.getPositionX() + (xSearch * xSearchFactor)).get(start.getPositionY() + (ySearch * ySearchFactor)).getType() + "");
-                }
                 if (world.get(start.getPositionX() + (xSearch * xSearchFactor)).get(start.getPositionY() + (ySearch * ySearchFactor)).getType() != TileMapping.FREE.getTile()) {
                     canCreateRoom = false;
                     break;
                 } else {
-                    room.add(new Wall(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor)));
+                    if (room.size() > cellsToSearchY && room.size() < (cellsToSearchY * (cellsToSearchX - 1)) && ySearch != 0 && ySearch != cellsToSearchY - 1) {
+                        room.add(new RoomTile(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor)));
+
+                    } else {
+                        if (!hasDoorBeenCreated && random.nextInt(3) == 2 && checkNeighboursForPath(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor))) {
+                            hasDoorBeenCreated = true;
+                            room.add(new DoorTile(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor)));
+                        }
+                        else room.add(new Wall(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor)));
+                    }
                 }
                 ySearch++;
             }
@@ -158,6 +163,42 @@ public class Dungeon extends Location {
         }
 
         return room;
+    }
+
+    public boolean checkNeighboursForPath(int x, int y) {
+        int xGlobal = dungeon.getXGlobal();
+        int yGlobal = dungeon.getYGlobal();
+        int zGlobal = dungeon.getZGlobal();
+
+        Tile tile = WorldManager.tryGetTile(xGlobal, yGlobal, zGlobal, x + 1, y);
+        Tile tile2 = WorldManager.tryGetTile(xGlobal, yGlobal, zGlobal, x - 1, y);
+//        Tile tile3 = WorldManager.tryGetTile(xGlobal, yGlobal, zGlobal, x + 1, y + 1);
+//        Tile tile4 = WorldManager.tryGetTile(xGlobal, yGlobal, zGlobal, x + 1, y - 1);
+//        Tile tile5 = WorldManager.tryGetTile(xGlobal, yGlobal, zGlobal, x - 1, y + 1);
+//        Tile tile6 = WorldManager.tryGetTile(xGlobal, yGlobal, zGlobal, x - 1, y - 1);
+        Tile tile7 = WorldManager.tryGetTile(xGlobal, yGlobal, zGlobal, x, y + 1);
+        Tile tile8 = WorldManager.tryGetTile(xGlobal, yGlobal, zGlobal, x, y - 1);
+
+        if (tile == null) tile = new Wall(0, 0);
+        if (tile2 == null) tile2 = new Wall(0, 0);
+//        if (tile3 == null) tile3 = new Wall(0, 0);
+//        if (tile4 == null) tile4 = new Wall(0, 0);
+//        if (tile5 == null) tile5 = new Wall(0, 0);
+//        if (tile6 == null) tile6 = new Wall(0, 0);
+        if (tile7 == null) tile7 = new Wall(0, 0);
+        if (tile8 == null) tile8 = new Wall(0, 0);
+
+        if (tile.getType() == TileMapping.FREE.getTile() ||
+                tile2.getType() == TileMapping.FREE.getTile() ||
+//                tile3.getType() == TileMapping.FREE.getTile() ||
+//                tile4.getType() == TileMapping.FREE.getTile() ||
+//                tile5.getType() == TileMapping.FREE.getTile() ||
+//                tile6.getType() == TileMapping.FREE.getTile() ||
+                tile7.getType() == TileMapping.FREE.getTile() ||
+                tile8.getType() == TileMapping.FREE.getTile()) {
+            return true;
+        }
+        return false;
     }
 
     public List<Tile> generateMaze(int x, int y, int z) {
@@ -293,7 +334,8 @@ public class Dungeon extends Location {
                 tileToUpdate = map.get(current.getPositionX()).get(current.getPositionY() - 1);
             }
 
-            if (tileToUpdate != null && tileToUpdate.getType() == TileMapping.FREE.getTile()) tilesToUpdate.add(tileToUpdate);
+            if (tileToUpdate != null && tileToUpdate.getType() == TileMapping.FREE.getTile())
+                tilesToUpdate.add(tileToUpdate);
 
             tilesToUpdate.add(randomN);
             tilesToUpdate.add(current);

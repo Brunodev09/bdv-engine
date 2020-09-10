@@ -67,7 +67,7 @@ public class WorldManager {
     public static void populateMapWithRoom(int x, int y, int z, List<Tile> room) {
         List<List<Tile>> map = tryToAcessMap(x, y, z);
         for (Tile tile : room) {
-            map.get(tile.getPositionX()).set(tile.getPositionY(), new Wall(tile.getPositionX(), tile.getPositionY()));
+            map.get(tile.getPositionX()).set(tile.getPositionY(), tile);
         }
     }
 
