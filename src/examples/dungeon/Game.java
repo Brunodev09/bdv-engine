@@ -7,10 +7,13 @@ import engine.entities.Camera2D;
 import engine.math.Dimension;
 import engine.math.RGBAf;
 import examples.dungeon.generation.WorldManager;
+import examples.dungeon.objects.InstalledObject;
 import examples.dungeon.player.Player;
 import examples.dungeon.system.Input;
 import examples.dungeon.system.Render;
 import examples.dungeon.tiles.Tile;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -25,7 +28,7 @@ public class Game extends BdvScriptGL {
     private final Random random = new Random();
     Render renderer;
     Dimension cameraDimensions = new Dimension(20, 20);
-    Player player;
+    InstalledObject player;
 
     public Game() {
         this.camera2d = new Camera2D();
@@ -51,24 +54,13 @@ public class Game extends BdvScriptGL {
         final int roomMinHeight = 3;
 
         WorldManager.newDungeonLocation(0, 0, -1, 100, 100);
-
         Tile playerSpawnTile = WorldManager.getMapFromLocation(0, 0, -1).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2);
-
-        player = new Player(playerSpawnTile.getPositionX(), playerSpawnTile.getPositionY());
-
+        player = new Player(WorldManager.getLocationAtIndex(0, 0, -1), playerSpawnTile, 50, 50);
+        player.setType("player");
         renderer = new Render(entities, player, cameraDimensions, tileSize);
-
         player.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
-
-        player.setPreviousTile(playerSpawnTile);
-
-        WorldManager.trySetTile(0, 0, -1,
-                WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2,
-                WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2,
-                player.getPlayerTile());
-
         WorldManager.generateDungeonLocationLayout(0, 0, -1, 0,
                 numberOfRooms,
                 roomMaxWidth, roomMaxHeight,

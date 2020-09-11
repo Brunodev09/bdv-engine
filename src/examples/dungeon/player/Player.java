@@ -1,46 +1,30 @@
 package examples.dungeon.player;
 
-import engine.api.EntityAPI;
+import engine.texture.SpriteSheet;
 import examples.dungeon.generation.Location;
-import examples.dungeon.tiles.PlayerTile;
+import examples.dungeon.objects.InstalledObject;
 import examples.dungeon.tiles.Tile;
 
-public class Player implements Cloneable {
-    private Tile playerTile;
-    private Tile previousTile;
-    private EntityAPI playerEntity;
-    private Location currentLocation;
+import java.awt.*;
+import java.io.File;
 
-    public Player(int x, int y) {
-        playerTile = new PlayerTile(x, y);
+public class Player extends InstalledObject implements Cloneable {
+
+    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 1, 1);
+
+    public Player(Tile tile) {
+        super(tile);
+        tile.setInstalledObject(this);
     }
 
-    public Tile getPlayerTile() {
-        return playerTile;
+    public Player(Location location, Tile tile, int width, int height) {
+        super(location, tile, width, height);
     }
 
-    public void setPreviousTile(Tile previousTile) {
-        this.previousTile = previousTile;
-    }
-
-    public Tile getPreviousTile() {
-        return previousTile;
-    }
-
-    public EntityAPI getPlayerEntity() {
-        return playerEntity;
-    }
-
-    public void setPlayerEntity(EntityAPI playerEntity) {
-        this.playerEntity = playerEntity;
-    }
-
-    public Location getCurrentLocation() {
-        return currentLocation;
-    }
-
-    public void setCurrentLocation(Location currentLocation) {
-        this.currentLocation = currentLocation;
+    @Override
+    public SpriteSheet getSprite() {
+        return sprite;
     }
 
     @Override

@@ -2,6 +2,7 @@ package examples.dungeon.tiles;
 
 import engine.api.EntityAPI;
 import engine.texture.SpriteSheet;
+import examples.dungeon.objects.InstalledObject;
 import examples.dungeon.system.TileMapping;
 
 import java.awt.*;
@@ -16,9 +17,9 @@ public abstract class Tile implements Cloneable {
     protected boolean solid = false;
     protected EntityAPI entityObject;
     protected Map<Object, Object> scriptProperties = new HashMap<>();
-    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 3, 2);
-
+    protected static String spriteSheet = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
+    protected SpriteSheet sprite = new SpriteSheet(spriteSheet, new Rectangle(39, 39), 3, 2);
+    protected InstalledObject installedObject;
 
     public Tile() {
     }
@@ -81,6 +82,34 @@ public abstract class Tile implements Cloneable {
 
     public SpriteSheet getSprite() {
         return sprite;
+    }
+
+    public static String getSpritesheetFilePath() {
+        return spriteSheet;
+    }
+
+    public InstalledObject getInstalledObject() {
+        return installedObject;
+    }
+
+    public void setInstalledObject(InstalledObject installedObject) {
+        this.installedObject = installedObject;
+    }
+
+    public void setSprite(SpriteSheet sprite) {
+        this.sprite = sprite;
+    }
+
+    public void setScriptProperties(Map<Object, Object> scriptProperties) {
+        this.scriptProperties = scriptProperties;
+    }
+
+    public static void setSpritesheetFilePath(String spritesheetFilePath) {
+        spriteSheet = spritesheetFilePath;
+    }
+
+    public void setType(int type) {
+        this.type = type;
     }
 
     @Override

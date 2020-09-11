@@ -52,7 +52,7 @@ public class Dungeon extends Location {
             for (int i = 0; i < world.size(); i++) {
                 List<Integer> freeTilesOnThisLine = new ArrayList<>();
                 for (int j = 0; j < world.get(i).size(); j++) {
-                    if (world.get(j).get(i).getType() == TileMapping.FREE.getTile()) {
+                    if (world.get(j).get(i).getType() == TileMapping.FREE.getTile() && world.get(j).get(i).getInstalledObject() == null) {
                         freeTilesOnThisLine.add(j);
                     }
                 }
@@ -115,6 +115,7 @@ public class Dungeon extends Location {
 
         List<Tile> toUpdate = generateMaze(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal());
         for (Tile tile : toUpdate) {
+            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getInstalledObject() != null) continue;
             WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Stone());
         }
     }
@@ -133,6 +134,14 @@ public class Dungeon extends Location {
                         dungeon.getZGlobal(),
                         start.getPositionX() + (xSearch * xSearchFactor),
                         start.getPositionY() + (ySearch * ySearchFactor))) {
+                    canCreateRoom = false;
+                    break;
+                }
+                else if (WorldManager.tryGetTile(dungeon.getXGlobal(),
+                        dungeon.getYGlobal(),
+                        dungeon.getZGlobal(),
+                        start.getPositionX() + (xSearch * xSearchFactor),
+                        start.getPositionY() + (ySearch * ySearchFactor)).getInstalledObject() != null) {
                     canCreateRoom = false;
                     break;
                 }
