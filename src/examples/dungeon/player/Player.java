@@ -8,7 +8,7 @@ import examples.dungeon.tiles.Tile;
 import java.awt.*;
 import java.io.File;
 
-public class Player extends InstalledObject implements Cloneable {
+public class Player extends InstalledObject {
 
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
     protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 1, 1);

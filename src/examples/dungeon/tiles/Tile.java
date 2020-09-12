@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class Tile implements Cloneable {
+    static int id = 0;
     protected int type = TileMapping.FREE.getTile();
     protected int positionX;
     protected int positionY;
@@ -22,14 +23,17 @@ public abstract class Tile implements Cloneable {
     protected InstalledObject installedObject;
 
     public Tile() {
+        id++;
     }
 
     public Tile(int x, int y) {
+        id++;
         this.positionX = x;
         this.positionY = y;
     }
 
     public Tile(int x, int y, boolean solid) {
+        id++;
         this.positionX = x;
         this.positionY = y;
         this.solid = solid;
@@ -110,6 +114,10 @@ public abstract class Tile implements Cloneable {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public static int getId() {
+        return id;
     }
 
     @Override

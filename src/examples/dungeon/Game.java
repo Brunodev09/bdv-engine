@@ -14,9 +14,7 @@ import examples.dungeon.system.Render;
 import examples.dungeon.tiles.Tile;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,7 +51,7 @@ public class Game extends BdvScriptGL {
         final int roomMinWidth = 3;
         final int roomMinHeight = 3;
 
-        WorldManager.newDungeonLocation(0, 0, -1, 100, 100);
+        WorldManager.newDungeonLocation(0, 0, -1, 250, 250);
         Tile playerSpawnTile = WorldManager.getMapFromLocation(0, 0, -1).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2);
@@ -72,9 +70,7 @@ public class Game extends BdvScriptGL {
 
     @Override
     public void update() {
-        if (Input.movePlayerOnMap(player)) {
-            renderer.render();
-        }
+        if (Input.movePlayerOnMap(player)) renderer.render();
     }
 
 

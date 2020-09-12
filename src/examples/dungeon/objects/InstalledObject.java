@@ -20,6 +20,8 @@ public abstract class InstalledObject implements Cloneable {
 
     protected String type;
 
+    protected int movementCost = 1;
+
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
     protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0);
     protected EntityAPI entityObject;
@@ -123,6 +125,14 @@ public abstract class InstalledObject implements Cloneable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public int getMovementCost() {
+        return movementCost;
+    }
+
+    public void setMovementCost(int movementCost) {
+        this.movementCost = movementCost;
     }
 
     @Override

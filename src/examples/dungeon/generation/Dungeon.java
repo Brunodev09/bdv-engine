@@ -1,7 +1,10 @@
 package examples.dungeon.generation;
 
+import examples.dungeon.algorithms.astar.AStar;
+import examples.dungeon.algorithms.astar.AStarNode;
 import examples.dungeon.system.TileMapping;
 import examples.dungeon.tiles.*;
+import examples.dungeon.tiles.Void;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -113,10 +116,15 @@ public class Dungeon extends Location {
             }
         }
 
-        List<Tile> toUpdate = generateMaze(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal());
+        List<Tile> toUpdate = generateMaze();
         for (Tile tile : toUpdate) {
             if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getInstalledObject() != null) continue;
-            WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Stone());
+            WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Stone(tile.getPositionX(), tile.getPositionY()));
+        }
+        List<Tile> toUpdateDoorPathTiles = connectDoors();
+        for (Tile tile : toUpdateDoorPathTiles) {
+            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getInstalledObject() != null) continue;
+            WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Void(tile.getPositionX(), tile.getPositionY()));
         }
     }
 
@@ -137,7 +145,7 @@ public class Dungeon extends Location {
                     canCreateRoom = false;
                     break;
                 }
-                else if (WorldManager.tryGetTile(dungeon.getXGlobal(),
+                if (WorldManager.tryGetTile(dungeon.getXGlobal(),
                         dungeon.getYGlobal(),
                         dungeon.getZGlobal(),
                         start.getPositionX() + (xSearch * xSearchFactor),
@@ -210,7 +218,7 @@ public class Dungeon extends Location {
         return false;
     }
 
-    public List<Tile> generateMaze(int x, int y, int z) {
+    public List<Tile> generateMaze() {
 //                          Depth first search
 //        Choose the initial cell, mark it as visited and push it to the stack
 //        While the stack is not empty
@@ -226,12 +234,12 @@ public class Dungeon extends Location {
 //          C C C
 //          C B C
 //          C C C
-        List<List<Tile>> map = WorldManager.getMapFromLocation(x, y, z);
+        List<List<Tile>> map = WorldManager.getMapFromLocation(this.getXGlobal(), this.getYGlobal(), this.getZGlobal());
         List<Tile> tilesToUpdate = new ArrayList<>();
         List<Tile> visitedTiles = new ArrayList<>();
         Stack<Tile> stack = new Stack<>();
 
-        Tile initialTile = WorldManager.findRandomFreeTileOnMap(x, y, z, 100);
+        Tile initialTile = WorldManager.findRandomFreeTileOnMap(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), 100);
         Tile evenTile = map.get((initialTile.getPositionX() / 2) * 2).get((initialTile.getPositionY() / 2) * 2);
         visitedTiles.add(evenTile);
         stack.push(evenTile);
@@ -250,28 +258,28 @@ public class Dungeon extends Location {
             Tile n7 = null;
             Tile n8 = null;
 
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() + 2, current.getPositionY())) {
+            if (WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), current.getPositionX() + 2, current.getPositionY())) {
                 n1 = map.get(current.getPositionX() + 2).get(current.getPositionY());
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() - 2, current.getPositionY())) {
+            if (WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), current.getPositionX() - 2, current.getPositionY())) {
                 n2 = map.get(current.getPositionX() - 2).get(current.getPositionY());
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() + 2, current.getPositionY() + 2)) {
+            if (WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), current.getPositionX() + 2, current.getPositionY() + 2)) {
                 n3 = map.get(current.getPositionX() + 2).get(current.getPositionY() + 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() - 2, current.getPositionY() - 2)) {
+            if (WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), current.getPositionX() - 2, current.getPositionY() - 2)) {
                 n4 = map.get(current.getPositionX() - 2).get(current.getPositionY() - 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() - 2, current.getPositionY() + 2)) {
+            if (WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), current.getPositionX() - 2, current.getPositionY() + 2)) {
                 n5 = map.get(current.getPositionX() - 2).get(current.getPositionY() + 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX() + 2, current.getPositionY() - 2)) {
+            if (WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), current.getPositionX() + 2, current.getPositionY() - 2)) {
                 n6 = map.get(current.getPositionX() + 2).get(current.getPositionY() - 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX(), current.getPositionY() + 2)) {
+            if (WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), current.getPositionX(), current.getPositionY() + 2)) {
                 n7 = map.get(current.getPositionX()).get(current.getPositionY() + 2);
             }
-            if (WorldManager.tryToAcessTile(x, y, z, current.getPositionX(), current.getPositionY() - 2)) {
+            if (WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), current.getPositionX(), current.getPositionY() - 2)) {
                 n8 = map.get(current.getPositionX()).get(current.getPositionY() - 2);
             }
 
@@ -350,6 +358,66 @@ public class Dungeon extends Location {
             tilesToUpdate.add(current);
         }
 
+        return tilesToUpdate;
+    }
+
+    public List<Tile> connectDoors() {
+        List<List<Tile>> map = WorldManager.getMapFromLocation(this.getXGlobal(), this.getYGlobal(), this.getZGlobal());
+        int rows = WorldManager.getLocationAtIndex(this.getXGlobal(), this.getYGlobal(), this.getZGlobal()).getMapWidth();
+        int cols = WorldManager.getLocationAtIndex(this.getXGlobal(), this.getYGlobal(), this.getZGlobal()).getMapHeight();
+        List<Tile> tilesToUpdate = new ArrayList<>();
+        Map<String, Integer> tracker = new HashMap<>();
+        List<Tile> doors = new ArrayList<>();
+
+        int i = 0;
+        for (List<Tile> room : this.rooms) {
+            Tile door = null;
+            List<Tile> endpoints = new ArrayList<>();
+            for (Tile tile : room) {
+                endpoints.clear();
+                if (tile.getType() == TileMapping.DOOR.getTile()) {
+                    door = tile;
+                    break;
+                }
+            }
+            for (int x = i + 1; x < this.rooms.size() - 1; x++) {
+                for (int y = 0; y < this.rooms.get(x).size(); y++) {
+                    if (this.rooms.get(x).get(y).getType() == TileMapping.DOOR.getTile()) {
+                        endpoints.add(this.rooms.get(x).get(y));
+                    }
+                }
+            }
+            for (Tile doorToConnect : endpoints) {
+                int found = 0;
+                for (Tile repeatedPair : doors) {
+                    if (doorToConnect == repeatedPair || door == repeatedPair) {
+                        found++;
+                    }
+                }
+
+                if (found >= 2) continue;
+
+                AStar aStar = new AStar(map, rows, cols, door, doorToConnect, new Wall());
+                while (!aStar.isStuck() && !aStar.getCurrentNode().isEndNode()) {
+                    aStar.setCurrentNode(aStar.computeNext(aStar.getCurrentNode()));
+                }
+                doors.add(door);
+                doors.add(doorToConnect);
+                for (AStarNode node : aStar.getBestPathList()) {
+                    if (!WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY())) continue;
+                    if (tracker.get(node.getPosition().getX() + "," + node.getPosition().getY()) != null) {
+                        int prev = tracker.get(node.getPosition().getX() + "," + node.getPosition().getY());
+                        tracker.put(node.getPosition().getX() + "," + node.getPosition().getY(), ++prev);
+                    } else tracker.put(node.getPosition().getX() + "," + node.getPosition().getY(), 1);
+                    if (tracker.get(node.getPosition().getX() + "," + node.getPosition().getY()) > 1) continue;
+                    if (node.isStartNode() || node.isEndNode()) continue;
+                    if (WorldManager.tryGetTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY()).getType() == TileMapping.DOOR.getTile()) continue;
+                    if (WorldManager.tryGetTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY()).getType() == TileMapping.FREE.getTile()) continue;
+                    tilesToUpdate.add(WorldManager.tryGetTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY()));
+                }
+            }
+            i++;
+        }
         return tilesToUpdate;
     }
 
