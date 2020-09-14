@@ -8,7 +8,7 @@ import examples.dungeon.tiles.Tile;
 import java.awt.*;
 import java.io.File;
 
-public abstract class InstalledObject implements Cloneable {
+public abstract class Actor implements Cloneable {
     protected Location currentLocation;
 
     protected Tile previousTile;
@@ -26,17 +26,17 @@ public abstract class InstalledObject implements Cloneable {
     protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0);
     protected EntityAPI entityObject;
 
-    public InstalledObject(Tile tile) {
+    public Actor(Tile tile) {
         this.currentTile = tile;
-        tile.setInstalledObject(this);
+        tile.setActor(this);
     }
 
-    public InstalledObject(Location location, Tile tile, int width, int height) {
+    public Actor(Location location, Tile tile, int width, int height) {
         this.currentTile = tile;
         this.width = width;
         this.height = height;
         this.currentLocation = location;
-        tile.setInstalledObject(this);
+        tile.setActor(this);
     }
 
 
@@ -54,7 +54,7 @@ public abstract class InstalledObject implements Cloneable {
 
     public void setCurrentTile(Tile tile) {
         this.currentTile = tile;
-        tile.setInstalledObject(this);
+        tile.setActor(this);
     }
 
     public Tile getTile() {
@@ -82,7 +82,7 @@ public abstract class InstalledObject implements Cloneable {
     }
 
     public void setPreviousTile(Tile previousTile) {
-        previousTile.setInstalledObject(null);
+        previousTile.setActor(null);
         this.previousTile = previousTile;
     }
 
@@ -133,6 +133,10 @@ public abstract class InstalledObject implements Cloneable {
 
     public void setMovementCost(int movementCost) {
         this.movementCost = movementCost;
+    }
+
+    public boolean move() {
+        return false;
     }
 
     @Override

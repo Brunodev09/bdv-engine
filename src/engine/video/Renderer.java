@@ -1,12 +1,10 @@
 package engine.video;
 
-import engine.api.BdvScriptGL;
 import engine.entities.Entity;
 import engine.math.MatrixUtils;
 import engine.models.Model;
 import engine.models.TexturedModel;
 import engine.shaders.DefaultShader;
-import engine.shaders.GeometryShader;
 import engine.shaders.RectangleShader;
 import engine.texture.ModelTexture;
 import org.lwjgl.opengl.*;

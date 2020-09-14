@@ -4,7 +4,7 @@ import engine.api.EntityAPI;
 import engine.math.Dimension;
 import examples.dungeon.generation.Location;
 import examples.dungeon.generation.WorldManager;
-import examples.dungeon.objects.InstalledObject;
+import examples.dungeon.objects.Actor;
 import examples.dungeon.player.Player;
 import examples.dungeon.tiles.Tile;
 import org.lwjgl.util.vector.Vector2f;
@@ -23,14 +23,14 @@ public class Render {
     private static final Logger LOG = Logger.getLogger(Render.class.getName());
 
     private List<EntityAPI> entities;
-    private final InstalledObject player;
+    private final Actor player;
     private Dimension cameraDimensions;
     private Dimension tileSize;
     private List<List<Tile>> previousValidChunk = new ArrayList<>();
-    private InstalledObject previousPlayerObject;
+    private Actor previousPlayerObject;
     private boolean edges;
 
-    public Render(List<EntityAPI> entities, InstalledObject player, Dimension cameraDimensions, Dimension tileSize) {
+    public Render(List<EntityAPI> entities, Actor player, Dimension cameraDimensions, Dimension tileSize) {
         this.entities = entities;
         this.player = player;
         this.cameraDimensions = cameraDimensions;
@@ -72,7 +72,7 @@ public class Render {
         }
     }
 
-    public List<List<Tile>> getPlayerChunk(InstalledObject player) throws CloneNotSupportedException {
+    public List<List<Tile>> getPlayerChunk(Actor player) throws CloneNotSupportedException {
         Location location = player.getCurrentLocation();
         Tile playerTile = player.getCurrentTile();
         List<List<Tile>> tilesToRender = new ArrayList<>();
@@ -122,15 +122,15 @@ public class Render {
         return tilesToRender;
     }
 
-    public List<List<Tile>> renderEdges(InstalledObject player) throws CloneNotSupportedException {
+    public List<List<Tile>> renderEdges(Actor player) throws CloneNotSupportedException {
         edges = true;
         Tile playerTile = player.getCurrentTile();
 
         for (int i = 0; i < previousValidChunk.size(); i++) {
             for (int j = 0; j < previousValidChunk.get(i).size(); j++) {
-                if (previousValidChunk.get(i).get(j).getInstalledObject() != null &&
-                        previousValidChunk.get(i).get(j).getInstalledObject().getType().equals("player")) {
-                    previousValidChunk.get(i).get(j).setInstalledObject(null);
+                if (previousValidChunk.get(i).get(j).getActor() != null &&
+                        previousValidChunk.get(i).get(j).getActor().getType().equals("player")) {
+                    previousValidChunk.get(i).get(j).setActor(null);
                 }
             }
         }
@@ -138,7 +138,7 @@ public class Render {
             for (int j = 0; j < previousValidChunk.get(i).size(); j++) {
                 if (previousValidChunk.get(i).get(j).getPositionX() == playerTile.getPositionX()) {
                     if (previousValidChunk.get(i).get(j).getPositionY() == playerTile.getPositionY()) {
-                        previousValidChunk.get(i).get(j).setInstalledObject(playerTile.getInstalledObject());
+                        previousValidChunk.get(i).get(j).setActor(playerTile.getActor());
                         previousPlayerObject = (Player) player.clone();
                     }
                 }
@@ -173,8 +173,8 @@ public class Render {
                 (float) tileSize.width * xGL,
                 (float) tileSize.height * yGL, 0));
         entityAPI.setSpriteSheet(tile.getSprite());
-        if (tile.getInstalledObject() != null && tile.getInstalledObject().getEntityObject() != null) {
-            EntityAPI object = tile.getInstalledObject().getEntityObject();
+        if (tile.getActor() != null && tile.getActor().getEntityObject() != null) {
+            EntityAPI object = tile.getActor().getEntityObject();
             object.translate(new Vector3f(
                     (float) tileSize.width * xGL,
                     (float) tileSize.height * yGL, 1));
@@ -193,15 +193,15 @@ public class Render {
                 entityAPI.setShouldRender(false);
                 entityAPI.setSpriteSheet(map.get(x).get(y).getSprite());
                 this.entities.add(entityAPI);
-                if (map.get(x).get(y).getInstalledObject() != null) {
-                    InstalledObject object = map.get(x).get(y).getInstalledObject();
+                if (map.get(x).get(y).getActor() != null) {
+                    Actor object = map.get(x).get(y).getActor();
                     EntityAPI entityAPIForObject = new EntityAPI(null,
                             new Vector3f(0, 0, 1),
                             new Dimension(object.getWidth(), object.getHeight()),
                             new Vector2f(0, 0));
                     object.setEntityObject(entityAPIForObject);
                     entityAPIForObject.setShouldRender(false);
-                    entityAPIForObject.setSpriteSheet(map.get(x).get(y).getInstalledObject().getSprite());
+                    entityAPIForObject.setSpriteSheet(map.get(x).get(y).getActor().getSprite());
                     this.entities.add(entityAPIForObject);
                 }
             }

@@ -55,7 +55,7 @@ public class Dungeon extends Location {
             for (int i = 0; i < world.size(); i++) {
                 List<Integer> freeTilesOnThisLine = new ArrayList<>();
                 for (int j = 0; j < world.get(i).size(); j++) {
-                    if (world.get(j).get(i).getType() == TileMapping.FREE.getTile() && world.get(j).get(i).getInstalledObject() == null) {
+                    if (world.get(j).get(i).getType() == TileMapping.FREE.getTile() && world.get(j).get(i).getActor() == null) {
                         freeTilesOnThisLine.add(j);
                     }
                 }
@@ -118,12 +118,12 @@ public class Dungeon extends Location {
 
         List<Tile> toUpdate = generateMaze();
         for (Tile tile : toUpdate) {
-            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getInstalledObject() != null) continue;
+            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getActor() != null) continue;
             WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Stone(tile.getPositionX(), tile.getPositionY()));
         }
         List<Tile> toUpdateDoorPathTiles = connectDoors();
         for (Tile tile : toUpdateDoorPathTiles) {
-            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getInstalledObject() != null) continue;
+            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getActor() != null) continue;
             WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Void(tile.getPositionX(), tile.getPositionY()));
         }
     }
@@ -149,7 +149,7 @@ public class Dungeon extends Location {
                         dungeon.getYGlobal(),
                         dungeon.getZGlobal(),
                         start.getPositionX() + (xSearch * xSearchFactor),
-                        start.getPositionY() + (ySearch * ySearchFactor)).getInstalledObject() != null) {
+                        start.getPositionY() + (ySearch * ySearchFactor)).getActor() != null) {
                     canCreateRoom = false;
                     break;
                 }

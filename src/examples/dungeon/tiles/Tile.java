@@ -2,7 +2,7 @@ package examples.dungeon.tiles;
 
 import engine.api.EntityAPI;
 import engine.texture.SpriteSheet;
-import examples.dungeon.objects.InstalledObject;
+import examples.dungeon.objects.Actor;
 import examples.dungeon.system.TileMapping;
 
 import java.awt.*;
@@ -20,7 +20,7 @@ public abstract class Tile implements Cloneable {
     protected Map<Object, Object> scriptProperties = new HashMap<>();
     protected static String spriteSheet = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
     protected SpriteSheet sprite = new SpriteSheet(spriteSheet, new Rectangle(39, 39), 3, 2);
-    protected InstalledObject installedObject;
+    protected Actor actor;
 
     public Tile() {
         id++;
@@ -92,12 +92,12 @@ public abstract class Tile implements Cloneable {
         return spriteSheet;
     }
 
-    public InstalledObject getInstalledObject() {
-        return installedObject;
+    public Actor getActor() {
+        return actor;
     }
 
-    public void setInstalledObject(InstalledObject installedObject) {
-        this.installedObject = installedObject;
+    public void setActor(Actor actor) {
+        this.actor = actor;
     }
 
     public void setSprite(SpriteSheet sprite) {
