@@ -42,6 +42,11 @@ public class AStar {
     public void init() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
+                try {
+                    boolean b = this.matrix.get(i).get(j).getPositionX() == tileStart.getPositionX() && this.matrix.get(i).get(j).getPositionY() == tileStart.getPositionY();
+                } catch (Exception e) {
+                    System.out.println();
+                }
                 if (this.matrix.get(i).get(j).getPositionX() == tileStart.getPositionX() && this.matrix.get(i).get(j).getPositionY() == tileStart.getPositionY()) {
                     AStarNode node = new AStarNode();
                     node.setPosition(new Vector2i(i, j));

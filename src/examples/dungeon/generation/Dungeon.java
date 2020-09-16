@@ -118,12 +118,14 @@ public class Dungeon extends Location {
 
         List<Tile> toUpdate = generateMaze();
         for (Tile tile : toUpdate) {
-            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getActor() != null) continue;
+            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getActor() != null)
+                continue;
             WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Stone(tile.getPositionX(), tile.getPositionY()));
         }
         List<Tile> toUpdateDoorPathTiles = connectDoors();
         for (Tile tile : toUpdateDoorPathTiles) {
-            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getActor() != null) continue;
+            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getActor() != null)
+                continue;
             WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Void(tile.getPositionX(), tile.getPositionY()));
         }
     }
@@ -161,11 +163,13 @@ public class Dungeon extends Location {
                         room.add(new RoomTile(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor)));
 
                     } else {
-                        if (!hasDoorBeenCreated && random.nextInt(3) == 2 && checkNeighboursForPath(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor))) {
+                        if (!hasDoorBeenCreated &&
+                                random.nextInt(3) == 2 &&
+                                xSearch != 0 && xSearch != cellsToSearchX - 1) {
                             hasDoorBeenCreated = true;
                             room.add(new DoorTile(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor)));
-                        }
-                        else room.add(new Wall(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor)));
+                        } else
+                            room.add(new Wall(start.getPositionX() + (xSearch * xSearchFactor), start.getPositionY() + (ySearch * ySearchFactor)));
                     }
                 }
                 ySearch++;
@@ -380,6 +384,7 @@ public class Dungeon extends Location {
                     break;
                 }
             }
+
             for (int x = i + 1; x < this.rooms.size() - 1; x++) {
                 for (int y = 0; y < this.rooms.get(x).size(); y++) {
                     if (this.rooms.get(x).get(y).getType() == TileMapping.DOOR.getTile()) {
@@ -395,7 +400,8 @@ public class Dungeon extends Location {
                     }
                 }
 
-                if (found >= 2) continue;
+                // @TODO - Find out why this is coming as null in some rooms
+                if (found >= 2 || door == null || doorToConnect == null) continue;
 
                 AStar aStar = new AStar(map, rows, cols, door, doorToConnect, new Wall());
                 while (!aStar.isStuck() && !aStar.getCurrentNode().isEndNode()) {
@@ -404,15 +410,18 @@ public class Dungeon extends Location {
                 doors.add(door);
                 doors.add(doorToConnect);
                 for (AStarNode node : aStar.getBestPathList()) {
-                    if (!WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY())) continue;
+                    if (!WorldManager.tryToAcessTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY()))
+                        continue;
                     if (tracker.get(node.getPosition().getX() + "," + node.getPosition().getY()) != null) {
                         int prev = tracker.get(node.getPosition().getX() + "," + node.getPosition().getY());
                         tracker.put(node.getPosition().getX() + "," + node.getPosition().getY(), ++prev);
                     } else tracker.put(node.getPosition().getX() + "," + node.getPosition().getY(), 1);
                     if (tracker.get(node.getPosition().getX() + "," + node.getPosition().getY()) > 1) continue;
                     if (node.isStartNode() || node.isEndNode()) continue;
-                    if (WorldManager.tryGetTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY()).getType() == TileMapping.DOOR.getTile()) continue;
-                    if (WorldManager.tryGetTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY()).getType() == TileMapping.FREE.getTile()) continue;
+                    if (WorldManager.tryGetTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY()).getType() == TileMapping.DOOR.getTile())
+                        continue;
+                    if (WorldManager.tryGetTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY()).getType() == TileMapping.FREE.getTile())
+                        continue;
                     tilesToUpdate.add(WorldManager.tryGetTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), node.getPosition().getX(), node.getPosition().getY()));
                 }
             }

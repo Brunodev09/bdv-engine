@@ -9,18 +9,18 @@ import java.io.File;
 public class Stone extends Tile {
 
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 1, 3);
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 3);
 
     public Stone() {
         super();
         this.type = TileMapping.STONE.getTile();
-        this.solid = false;
+        this.solid = true;
     }
 
     public Stone(int x, int y) {
         super(x, y);
         this.type = TileMapping.STONE.getTile();
-        this.solid = false;
+        this.solid = true;
     }
 
     public Stone(int x, int y, boolean solid) {
