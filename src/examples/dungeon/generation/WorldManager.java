@@ -89,6 +89,34 @@ public class WorldManager {
         return location.getMap();
     }
 
+    public static List<Tile> tryToGetNeighbor(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal) {
+
+        List<Tile> result = new ArrayList<>();
+        Tile target = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal);
+
+        if (target == null) return result;
+
+        Tile tile1 = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal + 1, yLocal);
+        Tile tile2 = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal - 1, yLocal);
+        Tile tile3 = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal + 1, yLocal + 1);
+        Tile tile4 = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal + 1, yLocal - 1);
+        Tile tile5 = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal - 1, yLocal + 1);
+        Tile tile6 = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal - 1, yLocal - 1);
+        Tile tile7 = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal - 1);
+        Tile tile8 = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal + 1);
+
+        if (tile1 != null) result.add(tile1);
+        if (tile2 != null) result.add(tile2);
+        if (tile3 != null) result.add(tile3);
+        if (tile4 != null) result.add(tile4);
+        if (tile5 != null) result.add(tile5);
+        if (tile6 != null) result.add(tile6);
+        if (tile7 != null) result.add(tile7);
+        if (tile8 != null) result.add(tile8);
+
+        return result;
+    }
+
     public static Tile tryGetTile(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal) {
         List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
         if (map == null) return null;

@@ -12,6 +12,7 @@ public class AStarNodeComparator implements Comparator<AStarNode> {
             else weightA += 500;
         } else if (b.getfCost() > a.getfCost()) weightA += 500;
         else if (b.getfCost() < a.getfCost()) weightB += 500;
+        if (weightA == weightB) return 0;
         return weightB - weightA;
     }
 }

@@ -21,6 +21,7 @@ public abstract class Tile implements Cloneable {
     protected static String spriteSheet = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
     protected SpriteSheet sprite = new SpriteSheet(spriteSheet, new Rectangle(39, 39), 3, 2);
     protected Actor actor;
+    protected boolean hidden;
 
     public Tile() {
         id++;
@@ -118,6 +119,14 @@ public abstract class Tile implements Cloneable {
 
     public static int getId() {
         return id;
+    }
+
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     @Override
