@@ -4,7 +4,7 @@ import examples.dungeon.algorithms.astar.AStar;
 import examples.dungeon.algorithms.astar.AStarNode;
 import examples.dungeon.system.TileMapping;
 import examples.dungeon.tiles.*;
-import examples.dungeon.tiles.Void;
+import examples.dungeon.tiles.VoidTile;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -126,7 +126,7 @@ public class Dungeon extends Location {
         for (Tile tile : toUpdateDoorPathTiles) {
             if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getActor() != null)
                 continue;
-            WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new Void(tile.getPositionX(), tile.getPositionY()));
+            WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new VoidTile(tile.getPositionX(), tile.getPositionY()));
         }
     }
 
