@@ -55,6 +55,51 @@ public class Render {
         }
     }
 
+    public void renderTile(List<List<Tile>> map, Tile tile, int x, int y, int xGL, int yGL) {
+        EntityAPI entityAPI = map.get(x).get(y).getEntityObject();
+        entityAPI.setShouldRender(true);
+        entityAPI.translate(new Vector3f(
+                (float) tileSize.width * xGL,
+                (float) tileSize.height * yGL, 0));
+        entityAPI.setSpriteSheet(tile.getSprite());
+        if (tile.isHidden() && tile.getLight() == null) entityAPI.setRgbVector(new Vector3f(0.2f, 0.2f, 0.2f));
+        else if (!tile.isHidden() && tile.getLight() == null) entityAPI.setRgbVector(null);
+        if (tile.getLight() != null) entityAPI.setRgbVector(tile.getLight());
+        if (tile.getActor() != null && tile.getActor().getEntityObject() != null && !tile.getActor().getType().equals("light")) {
+            EntityAPI object = tile.getActor().getEntityObject();
+            object.translate(new Vector3f(
+                    (float) tileSize.width * xGL,
+                    (float) tileSize.height * yGL, 1));
+            object.setShouldRender(true);
+        }
+    }
+
+    public void initRender(List<List<Tile>> map) {
+        for (int x = 0; x < map.size(); x++) {
+            for (int y = 0; y < map.get(x).size(); y++) {
+                EntityAPI entityAPI = new EntityAPI(null,
+                        new Vector3f(0, 0, 0),
+                        new Dimension(tileSize.width, tileSize.height),
+                        new Vector2f(0, 0));
+                map.get(x).get(y).setEntityObject(entityAPI);
+                entityAPI.setShouldRender(false);
+                entityAPI.setSpriteSheet(map.get(x).get(y).getSprite());
+                this.entities.add(entityAPI);
+                if (map.get(x).get(y).getActor() != null && !map.get(x).get(y).getActor().getType().equals("light")) {
+                    Actor object = map.get(x).get(y).getActor();
+                    EntityAPI entityAPIForObject = new EntityAPI(null,
+                            new Vector3f(0, 0, 1),
+                            new Dimension(object.getWidth(), object.getHeight()),
+                            new Vector2f(0, 0));
+                    object.setEntityObject(entityAPIForObject);
+                    entityAPIForObject.setShouldRender(false);
+                    entityAPIForObject.setSpriteSheet(map.get(x).get(y).getActor().getSprite());
+                    this.entities.add(entityAPIForObject);
+                }
+            }
+        }
+    }
+
     public void renderFreeCameraMode() {
 
     }
@@ -246,7 +291,8 @@ public class Render {
 
         for (List<Tile> tiles : chunk) {
             for (Tile tile : tiles) {
-                tile.setHidden(true);
+                if (tile.getLight() == null)
+                    tile.setHidden(true);
             }
         }
 
@@ -452,49 +498,5 @@ public class Render {
             if (entry.getValue() > 1) duplicateFinal.put(entry.getKey(), entry.getValue());
         }
         return duplicateFinal;
-    }
-
-    public void renderTile(List<List<Tile>> map, Tile tile, int x, int y, int xGL, int yGL) {
-        EntityAPI entityAPI = map.get(x).get(y).getEntityObject();
-        entityAPI.setShouldRender(true);
-        entityAPI.translate(new Vector3f(
-                (float) tileSize.width * xGL,
-                (float) tileSize.height * yGL, 0));
-        entityAPI.setSpriteSheet(tile.getSprite());
-        if (tile.isHidden()) entityAPI.setRgbVector(new Vector3f(0.3f, 0.3f, 0.3f));
-        else entityAPI.setRgbVector(null);
-        if (tile.getActor() != null && tile.getActor().getEntityObject() != null) {
-            EntityAPI object = tile.getActor().getEntityObject();
-            object.translate(new Vector3f(
-                    (float) tileSize.width * xGL,
-                    (float) tileSize.height * yGL, 1));
-            object.setShouldRender(true);
-        }
-    }
-
-    public void initRender(List<List<Tile>> map) {
-        for (int x = 0; x < map.size(); x++) {
-            for (int y = 0; y < map.get(x).size(); y++) {
-                EntityAPI entityAPI = new EntityAPI(null,
-                        new Vector3f(0, 0, 0),
-                        new Dimension(tileSize.width, tileSize.height),
-                        new Vector2f(0, 0));
-                map.get(x).get(y).setEntityObject(entityAPI);
-                entityAPI.setShouldRender(false);
-                entityAPI.setSpriteSheet(map.get(x).get(y).getSprite());
-                this.entities.add(entityAPI);
-                if (map.get(x).get(y).getActor() != null) {
-                    Actor object = map.get(x).get(y).getActor();
-                    EntityAPI entityAPIForObject = new EntityAPI(null,
-                            new Vector3f(0, 0, 1),
-                            new Dimension(object.getWidth(), object.getHeight()),
-                            new Vector2f(0, 0));
-                    object.setEntityObject(entityAPIForObject);
-                    entityAPIForObject.setShouldRender(false);
-                    entityAPIForObject.setSpriteSheet(map.get(x).get(y).getActor().getSprite());
-                    this.entities.add(entityAPIForObject);
-                }
-            }
-        }
     }
 }

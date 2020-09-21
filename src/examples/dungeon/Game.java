@@ -8,10 +8,12 @@ import engine.math.Dimension;
 import engine.math.RGBAf;
 import examples.dungeon.generation.WorldManager;
 import examples.dungeon.objects.Actor;
+import examples.dungeon.objects.Light;
 import examples.dungeon.player.Player;
 import examples.dungeon.system.Render;
 import examples.dungeon.system.Turn;
 import examples.dungeon.tiles.Tile;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -56,15 +58,22 @@ public class Game extends BdvScriptGL {
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2);
         player = new Player(WorldManager.getLocationAtIndex(0, 0, -1), playerSpawnTile, 50, 50);
-        player.setType("player");
-        renderer = new Render(entities, player, cameraDimensions, tileSize);
+
         player.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
         WorldManager.generateDungeonLocationLayout(0, 0, -1, 0,
                 numberOfRooms,
                 roomMaxWidth, roomMaxHeight,
                 roomMinWidth, roomMinHeight);
 
+        Tile lightSpawnTile = WorldManager.getMapFromLocation(0, 0, -1).get(
+                (WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2) + 5).get(
+                (WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 5);
+        Actor light = new Light(WorldManager.getLocationAtIndex(0, 0, -1), lightSpawnTile, new Vector3f(1, 0, 0), 4);
+
+        renderer = new Render(entities, player, cameraDimensions, tileSize);
+
         turn.addToJobQueue(player);
+        turn.addToJobQueue(light);
 
         renderer.initRender(WorldManager.getLocationAtIndex(0, 0, -1).getMap());
         renderer.render();

@@ -16,7 +16,7 @@ public class Turn {
     public boolean process() {
         boolean action = false;
         for (Actor actor : jobs) {
-            if (actor.move()) action = true;
+            action = actor.action();
         }
         return action;
     }

@@ -143,4 +143,21 @@ public class WorldManager {
         }
         return true;
     }
+
+    public static List<Tile> tryGetChunk(int xGlobal, int yGlobal, int zGlobal, int xLocal, int yLocal, int radius) {
+        List<Tile> chunk = new ArrayList<>();
+        List<List<Tile>> map = tryToAcessMap(xGlobal, yGlobal, zGlobal);
+        if (map == null) return chunk;
+        Tile tileFrom = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal);
+        if (tileFrom == null) return chunk;
+
+        for (int i = 0; i < radius; i++) {
+            for (int j = 0; j < radius; j++) {
+                Tile target = tryGetTile(xGlobal, yGlobal, zGlobal, tileFrom.getPositionX() + i, tileFrom.getPositionY() + j);
+                if (target != null) chunk.add(target);
+            }
+        }
+
+        return chunk;
+    }
 }

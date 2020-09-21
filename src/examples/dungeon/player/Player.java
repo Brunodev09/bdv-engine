@@ -24,6 +24,12 @@ public class Player extends Actor {
 
     public Player(Location location, Tile tile, int width, int height) {
         super(location, tile, width, height);
+        this.type = "player";
+    }
+
+    @Override
+    public boolean action() {
+        return move();
     }
 
     @Override

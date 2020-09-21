@@ -39,6 +39,10 @@ public abstract class Actor implements Cloneable {
         tile.setActor(this);
     }
 
+    public boolean action() {
+        return true;
+    }
+
 
     public static String getSpritesheetFilePath() {
         return SPRITESHEET_FILE_PATH;

@@ -4,6 +4,7 @@ import engine.api.EntityAPI;
 import engine.texture.SpriteSheet;
 import examples.dungeon.objects.Actor;
 import examples.dungeon.system.TileMapping;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.*;
 import java.io.File;
@@ -22,6 +23,7 @@ public abstract class Tile implements Cloneable {
     protected SpriteSheet sprite = new SpriteSheet(spriteSheet, new Rectangle(39, 39), 3, 2);
     protected Actor actor;
     protected boolean hidden = true;
+    protected Vector3f light;
 
     public Tile() {
         id++;
@@ -127,6 +129,14 @@ public abstract class Tile implements Cloneable {
 
     public void setHidden(boolean hidden) {
         this.hidden = hidden;
+    }
+
+    public Vector3f getLight() {
+        return light;
+    }
+
+    public void setLight(Vector3f light) {
+        this.light = light;
     }
 
     @Override
