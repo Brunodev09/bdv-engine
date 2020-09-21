@@ -12,11 +12,15 @@ public class Turn {
     public void addToJobQueue(Actor obj) {
         jobs.add(obj);
     }
-
+// @TODO - Don't re-render entire chunk if only 1-2 tiles are oscilating
     public boolean process() {
         boolean action = false;
         for (Actor actor : jobs) {
             action = actor.action();
+            for (Actor subActor : actor.getSubActors()) {
+                subActor.action();
+            }
+            if (actor.getType().equals("player") && !action) break;
         }
         return action;
     }

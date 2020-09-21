@@ -9,6 +9,7 @@ import engine.math.RGBAf;
 import examples.dungeon.generation.WorldManager;
 import examples.dungeon.objects.Actor;
 import examples.dungeon.objects.Light;
+import examples.dungeon.objects.Torch;
 import examples.dungeon.player.Player;
 import examples.dungeon.system.Render;
 import examples.dungeon.system.Turn;
@@ -54,26 +55,28 @@ public class Game extends BdvScriptGL {
         final int roomMinHeight = 3;
 
         WorldManager.newDungeonLocation(0, 0, -1, 100, 100);
+
         Tile playerSpawnTile = WorldManager.getMapFromLocation(0, 0, -1).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2);
         player = new Player(WorldManager.getLocationAtIndex(0, 0, -1), playerSpawnTile, 50, 50);
 
         player.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
+
         WorldManager.generateDungeonLocationLayout(0, 0, -1, 0,
                 numberOfRooms,
                 roomMaxWidth, roomMaxHeight,
                 roomMinWidth, roomMinHeight);
 
-        Tile lightSpawnTile = WorldManager.getMapFromLocation(0, 0, -1).get(
-                (WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2) + 5).get(
-                (WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 5);
-        Actor light = new Light(WorldManager.getLocationAtIndex(0, 0, -1), lightSpawnTile, new Vector3f(1, 0, 0), 4);
+        Tile torchSpawnTile = WorldManager.getMapFromLocation(0, 0, -1)
+                .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2) + 5)
+                .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 5);
+        Actor torch = new Torch(WorldManager.getLocationAtIndex(0, 0, -1), torchSpawnTile, 50, 50, new Vector3f(1, 1, 1), 4);
 
         renderer = new Render(entities, player, cameraDimensions, tileSize);
 
         turn.addToJobQueue(player);
-        turn.addToJobQueue(light);
+        turn.addToJobQueue(torch);
 
         renderer.initRender(WorldManager.getLocationAtIndex(0, 0, -1).getMap());
         renderer.render();

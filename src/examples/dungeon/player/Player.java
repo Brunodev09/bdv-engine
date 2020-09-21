@@ -23,8 +23,8 @@ public class Player extends Actor {
     }
 
     public Player(Location location, Tile tile, int width, int height) {
-        super(location, tile, width, height);
-        this.type = "player";
+        super(location, tile, width, height, "player");
+        setType("player");
     }
 
     @Override
@@ -38,38 +38,45 @@ public class Player extends Actor {
         Location location = this.getCurrentLocation();
         List<String> keysPressed = InputAPI.listenForKeyboard();
 
+        label:
         for (String keyPressed : keysPressed) {
-            if (keyPressed.equals("W")) {
-                // checking if tile is accessible
-                if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() - 1)) break;
-                movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() - 1)));
-                triggerRender = true;
-            }
-            else if (keyPressed.equals("S")) {
-                // checking if tile is accessible
-                if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() + 1)) break;
-                movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() + 1)));
-                triggerRender = true;
-            }
-            else if (keyPressed.equals("D")) {
-                // checking if tile is accessible
-                if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        this.getCurrentTile().getPositionX() + 1, this.getCurrentTile().getPositionY())) break;
-                movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        this.getCurrentTile().getPositionX() + 1, this.getCurrentTile().getPositionY())));
-                triggerRender = true;
-            }
-            else if (keyPressed.equals("A")) {
-                // checking if tile is accessible
-                if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        this.getCurrentTile().getPositionX() - 1, this.getCurrentTile().getPositionY())) break;
-                movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
-                        this.getCurrentTile().getPositionX() - 1, this.getCurrentTile().getPositionY())));
-                triggerRender = true;
+            switch (keyPressed) {
+                case "W":
+                    // checking if tile is accessible
+                    if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                            this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() - 1))
+                        break label;
+                    movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                            this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() - 1)));
+                    triggerRender = true;
+                    break;
+                case "S":
+                    // checking if tile is accessible
+                    if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                            this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() + 1))
+                        break label;
+                    movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                            this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() + 1)));
+                    triggerRender = true;
+                    break;
+                case "D":
+                    // checking if tile is accessible
+                    if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                            this.getCurrentTile().getPositionX() + 1, this.getCurrentTile().getPositionY()))
+                        break label;
+                    movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                            this.getCurrentTile().getPositionX() + 1, this.getCurrentTile().getPositionY())));
+                    triggerRender = true;
+                    break;
+                case "A":
+                    // checking if tile is accessible
+                    if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                            this.getCurrentTile().getPositionX() - 1, this.getCurrentTile().getPositionY()))
+                        break label;
+                    movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                            this.getCurrentTile().getPositionX() - 1, this.getCurrentTile().getPositionY())));
+                    triggerRender = true;
+                    break;
             }
         }
         return triggerRender;

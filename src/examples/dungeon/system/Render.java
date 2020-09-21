@@ -66,10 +66,12 @@ public class Render {
         else if (!tile.isHidden() && tile.getLight() == null) entityAPI.setRgbVector(null);
         if (tile.getLight() != null) entityAPI.setRgbVector(tile.getLight());
         if (tile.getActor() != null && tile.getActor().getEntityObject() != null && !tile.getActor().getType().equals("light")) {
+            int depth = 1;
+            if (tile.getActor().getType().equals("player")) depth = 2;
             EntityAPI object = tile.getActor().getEntityObject();
             object.translate(new Vector3f(
                     (float) tileSize.width * xGL,
-                    (float) tileSize.height * yGL, 1));
+                    (float) tileSize.height * yGL, depth));
             object.setShouldRender(true);
         }
     }

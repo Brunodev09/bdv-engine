@@ -7,6 +7,8 @@ import examples.dungeon.tiles.Tile;
 
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Actor implements Cloneable {
     protected Location currentLocation;
@@ -26,17 +28,21 @@ public abstract class Actor implements Cloneable {
     protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0);
     protected EntityAPI entityObject;
 
+    protected List<Actor> subActors = new ArrayList<>();
+
     public Actor(Tile tile) {
         this.currentTile = tile;
         tile.setActor(this);
     }
 
-    public Actor(Location location, Tile tile, int width, int height) {
+    public Actor(Location location, Tile tile, int width, int height, String type) {
         this.currentTile = tile;
         this.width = width;
         this.height = height;
         this.currentLocation = location;
-        tile.setActor(this);
+
+        if (!type.equals("light"))
+            tile.setActor(this);
     }
 
     public boolean action() {
@@ -141,6 +147,18 @@ public abstract class Actor implements Cloneable {
 
     public boolean move() {
         return false;
+    }
+
+    public List<Actor> getSubActors() {
+        return subActors;
+    }
+
+    public void setSubActors(List<Actor> subActors) {
+        this.subActors = subActors;
+    }
+
+    public void addSubActor(Actor subActor) {
+        this.subActors.add(subActor);
     }
 
     @Override

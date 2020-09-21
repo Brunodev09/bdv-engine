@@ -151,8 +151,8 @@ public class WorldManager {
         Tile tileFrom = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal);
         if (tileFrom == null) return chunk;
 
-        for (int i = 0; i < radius; i++) {
-            for (int j = 0; j < radius; j++) {
+        for (int i = -radius; i < radius / 2; i++) {
+            for (int j = -radius; j < radius / 2; j++) {
                 Tile target = tryGetTile(xGlobal, yGlobal, zGlobal, tileFrom.getPositionX() + i, tileFrom.getPositionY() + j);
                 if (target != null) chunk.add(target);
             }

@@ -16,11 +16,11 @@ public class Light extends Actor {
     protected List<Tile> oscilatingTiles = new ArrayList<>();
 
     public Light(Location location, Tile tile, Vector3f light, int lightRadius) {
-        super(location, tile, 0, 0);
+        super(location, tile, 0, 0, "light");
         this.rgbLight = light;
         this.lightRadius = lightRadius;
-        this.type = "light";
         this.installLight();
+        setType("light");
     }
 
     private void installLight() {
@@ -41,20 +41,51 @@ public class Light extends Actor {
     }
 
     private boolean oscilate() {
+        int x = this.currentLocation.getXGlobal();
+        int y = this.currentLocation.getYGlobal();
+        int z = this.currentLocation.getZGlobal();
+
         for (int i = 0; i < neighborsByRadius.size(); i++) {
-            int x = this.currentLocation.getXGlobal();
-            int y = this.currentLocation.getYGlobal();
-            int z = this.currentLocation.getZGlobal();
-            if (i == lightRadius / 2 || i == neighborsByRadius.size() - (lightRadius / 2)) {
-                Tile target = WorldManager.tryGetTile(x, y, z, neighborsByRadius.get(i).getPositionX() + 1,
+            if (i == lightRadius / 2) {
+                Tile target = WorldManager.tryGetTile(x, y, z, neighborsByRadius.get(i).getPositionX() - 1,
                         neighborsByRadius.get(i).getPositionY());
-                if (target == null) continue;
+                Tile target2 = WorldManager.tryGetTile(x, y, z, neighborsByRadius.get(i).getPositionX() + lightRadius,
+                        neighborsByRadius.get(i).getPositionY());
+                Tile target3 = WorldManager.tryGetTile(x, y, z, neighborsByRadius.get(i).getPositionX() + lightRadius / 2,
+                        neighborsByRadius.get(i).getPositionY() - (lightRadius / 2) - 1);
+                Tile target4 = WorldManager.tryGetTile(x, y, z, neighborsByRadius.get(i).getPositionX() + lightRadius / 2,
+                        neighborsByRadius.get(i).getPositionY() + (lightRadius / 2));
+
+
+                if (shouldOscilate) {
+                    if (target != null) target.setLight(null);
+                    if (target2 != null) target2.setLight(null);
+                    if (target3 != null) target3.setLight(null);
+                    if (target4 != null) target4.setLight(null);
+                }
+                else {
+                    if (target != null) {
+                        target.setLight(rgbLight);
+                        target.setHidden(false);
+                    }
+                    if (target2 != null) {
+                        target2.setLight(rgbLight);
+                        target2.setHidden(false);
+                    }
+                    if (target3 != null) {
+                        target3.setLight(rgbLight);
+                        target3.setHidden(false);
+                    }
+                    if (target4 != null) {
+                        target4.setLight(rgbLight);
+                        target4.setHidden(false);
+                    }
+
+                }
                 shouldOscilate = !shouldOscilate;
-                if (shouldOscilate) target.setLight(null);
-                else target.setLight(rgbLight);
             }
         }
-        return shouldOscilate;
+        return true;
     }
 
     public Vector3f getLight() {
