@@ -2,7 +2,6 @@ package examples.dungeon.generation;
 
 import examples.dungeon.system.TileMapping;
 import examples.dungeon.tiles.Tile;
-import examples.dungeon.tiles.Wall;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -151,8 +150,8 @@ public class WorldManager {
         Tile tileFrom = tryGetTile(xGlobal, yGlobal, zGlobal, xLocal, yLocal);
         if (tileFrom == null) return chunk;
 
-        for (int i = -radius; i < radius / 2; i++) {
-            for (int j = -radius; j < radius / 2; j++) {
+        for (int i = -radius / 2; i < radius / 2; i++) {
+            for (int j = -radius / 2; j < radius / 2; j++) {
                 Tile target = tryGetTile(xGlobal, yGlobal, zGlobal, tileFrom.getPositionX() + i, tileFrom.getPositionY() + j);
                 if (target != null) chunk.add(target);
             }
