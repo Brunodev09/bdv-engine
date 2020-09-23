@@ -161,6 +161,10 @@ public abstract class Actor implements Cloneable {
         this.subActors.add(subActor);
     }
 
+    public boolean mouse() {
+        return false;
+    }
+
     @Override
     public Object clone() throws CloneNotSupportedException {
         return super.clone();

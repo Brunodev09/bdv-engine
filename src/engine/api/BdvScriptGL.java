@@ -19,6 +19,7 @@ public abstract class BdvScriptGL {
     public boolean debugShader = false;
     public boolean logFps;
     public static InputAPI input;
+    public InputAPI inputAPI;
 
     public abstract void init(List<EntityAPI> entities, Dimension resolution, RGBAf background);
     public abstract void update();

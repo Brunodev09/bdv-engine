@@ -24,7 +24,7 @@ public class Render {
     private static final Logger LOG = Logger.getLogger(Render.class.getName());
 
     private List<EntityAPI> entities;
-    private final Actor player;
+    private final Player player;
     private Dimension cameraDimensions;
     private Dimension tileSize;
     private List<List<Tile>> previousValidChunk = new ArrayList<>();
@@ -32,7 +32,7 @@ public class Render {
     private boolean edges;
     private List<EntityAPI> extraLayer = new ArrayList<>();
 
-    public Render(List<EntityAPI> entities, Actor player, Dimension cameraDimensions, Dimension tileSize) {
+    public Render(List<EntityAPI> entities, Player player, Dimension cameraDimensions, Dimension tileSize) {
         this.entities = entities;
         this.player = player;
         this.cameraDimensions = cameraDimensions;
@@ -62,9 +62,11 @@ public class Render {
                 (float) tileSize.width * xGL,
                 (float) tileSize.height * yGL, 0));
         entityAPI.setSpriteSheet(tile.getSprite());
-        if (tile.isHidden() && tile.getLight() == null) entityAPI.setRgbVector(new Vector3f(0.2f, 0.2f, 0.2f));
-        else if (!tile.isHidden() && tile.getLight() == null) entityAPI.setRgbVector(null);
-        if (tile.getLight() != null) entityAPI.setRgbVector(tile.getLight());
+        if (tile.isHidden() && tile.getLight() == null && !tile.isSelected())
+            entityAPI.setRgbVector(new Vector3f(0.2f, 0.2f, 0.2f));
+        else if (!tile.isHidden() && tile.getLight() == null && !tile.isSelected()) entityAPI.setRgbVector(null);
+        if (tile.isSelected()) entityAPI.setRgbVector(new Vector3f(1.0f, 1.0f, 0));
+        if (tile.getLight() != null && !tile.isSelected()) entityAPI.setRgbVector(tile.getLight());
         if (tile.getActor() != null && tile.getActor().getEntityObject() != null && !tile.getActor().getType().equals("light")) {
             int depth = 1;
             if (tile.getActor().getType().equals("player")) depth = 2;
@@ -108,11 +110,11 @@ public class Render {
 
     public void renderChunkFromMap(List<List<Tile>> chunkToRender, List<List<Tile>> map) {
         int x = 0;
-        for (int i = -chunkToRender.size() / 2; i < chunkToRender.size() / 2; i++) {
-            if (x >= chunkToRender.size()) break;
+        for (int i = -cameraDimensions.width / 2; i < cameraDimensions.width / 2; i++) {
+            if (x >= cameraDimensions.width - 1) break;
             int y = 0;
-            for (int j = -chunkToRender.size() / 2; j < chunkToRender.get(x).size() / 2; j++) {
-                if (y >= chunkToRender.get(x).size()) break;
+            for (int j = -cameraDimensions.height / 2; j < cameraDimensions.height / 2; j++) {
+                if (y >= cameraDimensions.height - 1) break;
                 Tile tile = chunkToRender.get(x).get(y);
                 renderTile(map, tile, tile.getPositionX(), tile.getPositionY(), i, j);
                 y++;
@@ -121,32 +123,51 @@ public class Render {
         }
     }
 
-    public List<List<Tile>> getPlayerChunk(Actor player) throws CloneNotSupportedException {
+    public List<List<Tile>> getPlayerChunk(Player player) throws CloneNotSupportedException {
         Location location = player.getCurrentLocation();
         Tile playerTile = player.getCurrentTile();
         List<List<Tile>> tilesToRender = new ArrayList<>();
-        int validChunkNumber = (cameraDimensions.width * 2) - 1;
+        int validChunkNumber = cameraDimensions.width - 1;
 
         for (int i = 0; i < location.getMapWidth(); i++) {
             List<Tile> chunk = new ArrayList<>();
-            for (int j = 0; j < location.getMapWidth(); j++) {
-                if (i > playerTile.getPositionX() - cameraDimensions.width && i < playerTile.getPositionX() + cameraDimensions.width) {
-                    if (j > playerTile.getPositionY() - cameraDimensions.height && j < playerTile.getPositionY() + cameraDimensions.height) {
-                        Tile tileToAdd = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), i, j);
-                        if (tileToAdd != null) {
-                            tileToAdd.getEntityObject().setShouldRender(true);
-                            chunk.add(tileToAdd);
+            for (int j = 0; j < location.getMapHeight(); j++) {
+                if (i > playerTile.getPositionX() - (cameraDimensions.width / 2) && i < playerTile.getPositionX() + (cameraDimensions.width / 2) &&
+                   j > playerTile.getPositionY() - (cameraDimensions.height / 2) && j < playerTile.getPositionY() + (cameraDimensions.height / 2)) {
+
+                    Tile tileToAdd = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), i, j);
+                    if (tileToAdd != null) {
+                        tileToAdd.getEntityObject().setShouldRender(true);
+                        chunk.add(tileToAdd);
+                    }
+
+                } else {
+                    Tile tileToRemove = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), i, j);
+                    if (tileToRemove != null) {
+                        tileToRemove.getEntityObject().setShouldRender(false);
+                        if (tileToRemove.getActor() != null) {
+                            tileToRemove.getActor().getEntityObject().setShouldRender(false);
                         }
-                    } else {
-                        Tile tileToRemove = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), i, j);
-                        if (tileToRemove != null) tileToRemove.getEntityObject().setShouldRender(false);
                     }
                 }
             }
             if (chunk.isEmpty()) continue;
             tilesToRender.add(chunk);
         }
-        if (tilesToRender.size() != validChunkNumber) {
+        // Adding possibly missing tiles
+        for (List<Tile> tiles : tilesToRender) {
+            if (tiles.size() < validChunkNumber) {
+                int numTiles = validChunkNumber - tiles.size();
+                for (int i = 0; i < numTiles; i++) {
+                    for (int j = 0; j < validChunkNumber; j++) {
+                        Tile voidTile = new VoidTile();
+                        tiles.add(voidTile);
+                    }
+                }
+            }
+        }
+        // Adding possibly missing layers of tiles
+        if (tilesToRender.size() < validChunkNumber) {
             int numLayers = validChunkNumber - tilesToRender.size();
             for (int i = 0; i < numLayers; i++) {
                 List<Tile> newChunk = new ArrayList<>();
@@ -179,6 +200,7 @@ public class Render {
 //            edges = false;
 //            return previousValidChunk;
 //        }
+        player.setChunk(tilesToRender);
         return rayCastingFOV(tilesToRender, player);
     }
 

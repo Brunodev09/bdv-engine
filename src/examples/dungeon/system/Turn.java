@@ -20,7 +20,14 @@ public class Turn {
             for (Actor subActor : actor.getSubActors()) {
                 subActor.action();
             }
-            if (actor.getType().equals("player") && !action) break;
+            if (actor.getType().equals("player") && !action) {
+                break;
+            }
+        }
+        for (Actor actor : jobs) {
+            if (actor.getType().equals("player")) {
+                action = actor.mouse();
+            }
         }
         return action;
     }

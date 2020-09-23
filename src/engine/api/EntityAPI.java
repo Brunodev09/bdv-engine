@@ -34,7 +34,7 @@ public class EntityAPI {
     private boolean ambientLightToggle = false;
     private Vector3f colorGlow;
     private boolean player;
-    private boolean shouldRender = true;
+    private boolean shouldRender = false;
 
     private int _API_LINK;
 

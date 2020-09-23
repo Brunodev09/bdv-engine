@@ -24,6 +24,7 @@ public abstract class Tile implements Cloneable {
     protected Actor actor;
     protected boolean hidden = true;
     protected Vector3f light;
+    protected boolean selected;
 
     public Tile() {
         id++;
@@ -137,6 +138,14 @@ public abstract class Tile implements Cloneable {
 
     public void setLight(Vector3f light) {
         this.light = light;
+    }
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
 
     @Override

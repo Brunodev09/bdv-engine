@@ -3,12 +3,15 @@ package examples.dungeon;
 import engine.Bdv;
 import engine.api.BdvScriptGL;
 import engine.api.EntityAPI;
+import engine.api.InputAPI;
 import engine.entities.Camera2D;
 import engine.math.Dimension;
 import engine.math.RGBAf;
 import examples.dungeon.generation.WorldManager;
+import examples.dungeon.input.InputManager;
+import examples.dungeon.input.Keyboard;
+import examples.dungeon.input.Mouse;
 import examples.dungeon.objects.Actor;
-import examples.dungeon.objects.Light;
 import examples.dungeon.objects.Torch;
 import examples.dungeon.player.Player;
 import examples.dungeon.system.Render;
@@ -26,10 +29,12 @@ public class Game extends BdvScriptGL {
 
     private final Dimension tileSize;
     private final Random random = new Random();
+    public InputAPI inputAPI;
     Render renderer;
     Dimension cameraDimensions = new Dimension(20, 20);
-    Actor player;
+    Player player;
     Turn turn = new Turn();
+    boolean firstTime = true;
 
     public Game() {
         this.camera2d = new Camera2D();
@@ -73,7 +78,21 @@ public class Game extends BdvScriptGL {
                 .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 5);
         Actor torch = new Torch(WorldManager.getLocationAtIndex(0, 0, -1), torchSpawnTile, 50, 50, new Vector3f(1, 1, 1), 4);
 
+        // Setting up input and renderer
+        // ==============================
+        player.setTileSizeForMouseCursor(this.tileSize.width, this.tileSize.height);
+        Keyboard keyboard = new Keyboard(player);
+        Mouse mouse = new Mouse(player);
+
+        inputAPI = new InputAPI();
+
+        inputAPI.registerKeyCallback(keyboard);
+        inputAPI.registerMouseCallback(mouse);
+
+        InputManager.newInstance(keyboard, mouse);
+
         renderer = new Render(entities, player, cameraDimensions, tileSize);
+        // ==============================
 
         turn.addToJobQueue(player);
         turn.addToJobQueue(torch);
@@ -84,9 +103,12 @@ public class Game extends BdvScriptGL {
 
     @Override
     public void update() {
+        if (firstTime) {
+            firstTime = false;
+            inputAPI.setupInputListener();
+        }
         if (turn.process()) renderer.render();
     }
-
 
     public static void main(String[] args) {
         try {

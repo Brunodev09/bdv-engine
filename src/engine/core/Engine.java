@@ -130,6 +130,10 @@ public class Engine {
                 RenderManager.renderBatch(cam2d);
                 RenderManager.updateRender(config.FPS);
             }
+            // Freeing memory
+            if (config.script.inputAPI != null) {
+                config.script.inputAPI.destroy();
+            }
 
         } else {
             Camera cam = config.script.camera;
