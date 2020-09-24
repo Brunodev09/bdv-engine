@@ -12,6 +12,8 @@ import examples.dungeon.input.InputManager;
 import examples.dungeon.input.Keyboard;
 import examples.dungeon.input.Mouse;
 import examples.dungeon.objects.Actor;
+import examples.dungeon.objects.Camera;
+import examples.dungeon.objects.Knight;
 import examples.dungeon.objects.Torch;
 import examples.dungeon.player.Player;
 import examples.dungeon.system.Render;
@@ -31,17 +33,18 @@ public class Game extends BdvScriptGL {
     private final Random random = new Random();
     public InputAPI inputAPI;
     Render renderer;
-    Dimension cameraDimensions = new Dimension(20, 20);
+    Dimension cameraDimensions = new Dimension(25, 25);
     Player player;
+    Camera camera;
     Turn turn = new Turn();
     boolean firstTime = true;
 
     public Game() {
         this.camera2d = new Camera2D();
         this.entities = new ArrayList<>();
-        this.resolution = new Dimension(1024, 768);
+        this.resolution = new Dimension(1440, 900);
         this.background = new RGBAf(0, 0, 0, 255);
-        this.FPS = 10;
+        this.FPS = 60;
         this.tileSize = new Dimension(this.resolution.width / cameraDimensions.width,
                 this.resolution.height / cameraDimensions.height);
         this.camera2d.setSpeed(tileSize.width / tileSize.height);
@@ -64,9 +67,9 @@ public class Game extends BdvScriptGL {
         Tile playerSpawnTile = WorldManager.getMapFromLocation(0, 0, -1).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2);
-        player = new Player(WorldManager.getLocationAtIndex(0, 0, -1), playerSpawnTile, 50, 50);
+        camera = new Camera(WorldManager.getLocationAtIndex(0, 0, -1), playerSpawnTile, 50, 50);
 
-        player.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
+        camera.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
 
         WorldManager.generateDungeonLocationLayout(0, 0, -1, 0,
                 numberOfRooms,
@@ -76,13 +79,22 @@ public class Game extends BdvScriptGL {
         Tile torchSpawnTile = WorldManager.getMapFromLocation(0, 0, -1)
                 .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2) + 5)
                 .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 5);
-        Actor torch = new Torch(WorldManager.getLocationAtIndex(0, 0, -1), torchSpawnTile, 50, 50, new Vector3f(1, 1, 1), 4);
+        Actor torch = new Torch(WorldManager.getLocationAtIndex(0, 0, -1), torchSpawnTile, 50, 50);
+
+        Tile knightSpawnTile = WorldManager.getMapFromLocation(0, 0, -1)
+                .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2) + 10)
+                .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 5);
+        Knight knight = new Knight(WorldManager.getLocationAtIndex(0, 0, -1), knightSpawnTile, 50, 50);
+
+        turn.addToJobQueue(camera);
+        turn.addToJobQueue(torch);
+        turn.addToJobQueue(knight);
 
         // Setting up input and renderer
         // ==============================
-        player.setTileSizeForMouseCursor(this.tileSize.width, this.tileSize.height);
-        Keyboard keyboard = new Keyboard(player);
-        Mouse mouse = new Mouse(player);
+        camera.setTileSizeForMouseCursor(this.tileSize.width, this.tileSize.height);
+        Keyboard keyboard = new Keyboard(camera);
+        Mouse mouse = new Mouse(camera);
 
         inputAPI = new InputAPI();
 
@@ -91,11 +103,8 @@ public class Game extends BdvScriptGL {
 
         InputManager.newInstance(keyboard, mouse);
 
-        renderer = new Render(entities, player, cameraDimensions, tileSize);
+        renderer = new Render(entities, turn,  camera, cameraDimensions, tileSize);
         // ==============================
-
-        turn.addToJobQueue(player);
-        turn.addToJobQueue(torch);
 
         renderer.initRender(WorldManager.getLocationAtIndex(0, 0, -1).getMap());
         renderer.render();

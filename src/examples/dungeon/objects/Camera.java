@@ -1,20 +1,18 @@
-package examples.dungeon.player;
+package examples.dungeon.objects;
 
-import engine.texture.SpriteSheet;
 import examples.dungeon.generation.Location;
 import examples.dungeon.generation.WorldManager;
-import examples.dungeon.objects.Actor;
 import examples.dungeon.tiles.Tile;
 
-import java.awt.*;
-import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
-public class Player extends Actor {
+public class Camera extends Actor {
+    public Camera(Location location, Tile tile, int width, int height) {
+        super(location, tile, width, height, "camera");
+        setType("camera");
+    }
 
-    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 1, 1);
     private String lastKeyPressed;
     private String lastKeyReleased;
     private boolean leftClicked;
@@ -22,14 +20,10 @@ public class Player extends Actor {
     private double latestCursorX;
     private double latestCursorY;
     private Tile mouseSelectedTile;
-    private List<List<Tile>> chunk;
+    private java.util.List<java.util.List<Tile>> chunk;
     private int tilesizeX;
     private int tilesizeY;
 
-    public Player(Location location, Tile tile, int width, int height) {
-        super(location, tile, width, height, "player");
-        setType("player");
-    }
 
     @Override
     public boolean mouse() {
@@ -73,7 +67,7 @@ public class Player extends Actor {
                 if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
                         this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() - 1))
                     break;
-                movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                moveCamera(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
                         this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() - 1)));
                 triggerRender = true;
                 break;
@@ -82,7 +76,7 @@ public class Player extends Actor {
                 if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
                         this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() + 1))
                     break;
-                movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                moveCamera(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
                         this.getCurrentTile().getPositionX(), this.getCurrentTile().getPositionY() + 1)));
                 triggerRender = true;
                 break;
@@ -91,7 +85,7 @@ public class Player extends Actor {
                 if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
                         this.getCurrentTile().getPositionX() + 1, this.getCurrentTile().getPositionY()))
                     break;
-                movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                moveCamera(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
                         this.getCurrentTile().getPositionX() + 1, this.getCurrentTile().getPositionY())));
                 triggerRender = true;
                 break;
@@ -100,7 +94,7 @@ public class Player extends Actor {
                 if (!WorldManager.tryToAcessTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
                         this.getCurrentTile().getPositionX() - 1, this.getCurrentTile().getPositionY()))
                     break;
-                movePlayer(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
+                moveCamera(Objects.requireNonNull(WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(),
                         this.getCurrentTile().getPositionX() - 1, this.getCurrentTile().getPositionY())));
                 triggerRender = true;
                 break;
@@ -116,13 +110,11 @@ public class Player extends Actor {
     }
 
 
-    private void movePlayer(Tile newTile) {
-        Tile currentPlayerTile = this.getCurrentTile();
-        if (!newTile.isSolid()) {
-            this.setPreviousTile(currentPlayerTile);
-            this.setCurrentTile(newTile);
-            this.setNextTile(null);
-        }
+    private void moveCamera(Tile newTile) {
+        Tile currentCameraTile = this.getCurrentTile();
+        this.setPreviousTile(currentCameraTile);
+        this.setCurrentTile(newTile);
+        this.setNextTile(null);
     }
 
     public void setTileSizeForMouseCursor(int tilesizeX, int tilesizeY) {
@@ -182,22 +174,11 @@ public class Player extends Actor {
         return mouseSelectedTile;
     }
 
-    public List<List<Tile>> getChunk() {
+    public java.util.List<java.util.List<Tile>> getChunk() {
         return chunk;
     }
 
     public void setChunk(List<List<Tile>> chunk) {
         this.chunk = chunk;
     }
-
-    @Override
-    public SpriteSheet getSprite() {
-        return sprite;
-    }
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-
 }

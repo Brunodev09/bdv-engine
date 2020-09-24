@@ -48,6 +48,7 @@ public class GL_TEST_GRID extends BdvScriptGL {
                         new Dimension(tileSize.width, tileSize.height),
                         new Vector2f(0, 0));
                 entityAPI.setSpriteSheet(tile1);
+                entityAPI.setShouldRender(true);
 //                entityAPI.setAmbientLightOn(true);w
 //                entityAPI.setAmbientLight(new Vector3f(random.nextFloat(), random.nextFloat(), random.nextFloat()));
                 this.entities.add(entityAPI);

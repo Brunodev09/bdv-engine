@@ -1,23 +1,28 @@
 package examples.dungeon.input;
 
 import engine.api.events.BdvKeyEvent;
+import examples.dungeon.objects.Actor;
+import examples.dungeon.objects.Camera;
 import examples.dungeon.player.Player;
 
 public class Keyboard implements BdvKeyEvent {
-    private final Player player;
+    private final Actor player;
 
-    public Keyboard(Player player) {
+    public Keyboard(Actor player) {
         this.player = player;
     }
 
-    public Player getPlayer() {
+    public Actor getPlayer() {
         return player;
     }
 
     @Override
     public void onKeyEvent(String key, String action) {
         if (action.equals("RELEASE")) {
-            player.setLastKeyReleased(key);
+            if (player.getType().equals("player"))
+                ((Player) player).setLastKeyReleased(key);
+            else
+                ((Camera) player).setLastKeyReleased(key);
         }
     }
 }

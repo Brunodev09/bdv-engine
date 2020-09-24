@@ -2,33 +2,52 @@ package examples.dungeon.input;
 
 
 import engine.api.events.BdvMouseEvent;
+import examples.dungeon.objects.Actor;
+import examples.dungeon.objects.Camera;
 import examples.dungeon.player.Player;
 
 public class Mouse implements BdvMouseEvent {
-    private final Player player;
+    private final Actor player;
 
-    public Mouse(Player player) {
+    public Mouse(Actor player) {
         this.player = player;
     }
 
-    public Player getPlayer() {
+    public Actor getPlayer() {
         return player;
     }
 
     @Override
     public void onMove(double x, double y) {
-        player.setLatestCursorX(x);
-        player.setLatestCursorY(y);
+        if (player.getType().equals("player")) {
+            ((Player) player).setLatestCursorX(x);
+            ((Player) player).setLatestCursorY(y);
+        }
+        else {
+            ((Camera) player).setLatestCursorX(x);
+            ((Camera) player).setLatestCursorY(y);
+        }
+
     }
 
     @Override
     public void onLeftClick(boolean clicked) {
-        player.setLeftClicked(clicked);
+        if (player.getType().equals("player")) {
+            ((Player) player).setLeftClicked(clicked);
+        }
+        else {
+            ((Camera) player).setLeftClicked(clicked);
+        }
     }
 
     @Override
     public void onRightClick(boolean clicked) {
-        player.setRightClicked(clicked);
+        if (player.getType().equals("player")) {
+            ((Player) player).setRightClicked(clicked);
+        }
+        else {
+            ((Camera) player).setRightClicked(clicked);
+        }
     }
 
     @Override

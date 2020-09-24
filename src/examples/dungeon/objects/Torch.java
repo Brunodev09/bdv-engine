@@ -20,6 +20,12 @@ public class Torch extends Actor {
         setType("torch");
     }
 
+    public Torch(Location location, Tile tile, int width, int height) {
+        super(location, tile, width, height, "torch");
+        fov = 20;
+        setType("torch");
+    }
+
     @Override
     public SpriteSheet getSprite() {
         return sprite;

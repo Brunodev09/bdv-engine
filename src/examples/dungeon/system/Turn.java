@@ -28,7 +28,16 @@ public class Turn {
             if (actor.getType().equals("player")) {
                 action = actor.mouse();
             }
+            // free camera mode
+            else {
+                actor.action();
+                actor.mouse();
+            }
         }
         return action;
+    }
+
+    public List<Actor> getJobs() {
+        return jobs;
     }
 }
