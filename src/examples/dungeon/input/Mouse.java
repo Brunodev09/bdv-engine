@@ -4,7 +4,7 @@ package examples.dungeon.input;
 import engine.api.events.BdvMouseEvent;
 import examples.dungeon.objects.Actor;
 import examples.dungeon.objects.Camera;
-import examples.dungeon.player.Player;
+import examples.dungeon.objects.Player;
 
 public class Mouse implements BdvMouseEvent {
     private final Actor player;

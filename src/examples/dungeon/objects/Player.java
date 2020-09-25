@@ -1,4 +1,4 @@
-package examples.dungeon.player;
+package examples.dungeon.objects;
 
 import engine.texture.SpriteSheet;
 import examples.dungeon.generation.Location;

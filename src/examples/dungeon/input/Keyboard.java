@@ -3,7 +3,7 @@ package examples.dungeon.input;
 import engine.api.events.BdvKeyEvent;
 import examples.dungeon.objects.Actor;
 import examples.dungeon.objects.Camera;
-import examples.dungeon.player.Player;
+import examples.dungeon.objects.Player;
 
 public class Keyboard implements BdvKeyEvent {
     private final Actor player;

@@ -6,13 +6,12 @@ import examples.dungeon.generation.Location;
 import examples.dungeon.generation.WorldManager;
 import examples.dungeon.objects.Actor;
 import examples.dungeon.objects.Camera;
-import examples.dungeon.player.Player;
+import examples.dungeon.objects.Player;
 import examples.dungeon.tiles.Tile;
 import examples.dungeon.tiles.VoidTile;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

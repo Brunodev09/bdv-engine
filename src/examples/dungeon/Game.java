@@ -15,7 +15,7 @@ import examples.dungeon.objects.Actor;
 import examples.dungeon.objects.Camera;
 import examples.dungeon.objects.Knight;
 import examples.dungeon.objects.Torch;
-import examples.dungeon.player.Player;
+import examples.dungeon.objects.Player;
 import examples.dungeon.system.Render;
 import examples.dungeon.system.Turn;
 import examples.dungeon.tiles.Tile;

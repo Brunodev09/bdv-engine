@@ -111,6 +111,7 @@ public class Camera extends Actor {
 
 
     private void moveCamera(Tile newTile) {
+        if (newTile.getActor() != null) return;
         Tile currentCameraTile = this.getCurrentTile();
         this.setPreviousTile(currentCameraTile);
         this.setCurrentTile(newTile);
