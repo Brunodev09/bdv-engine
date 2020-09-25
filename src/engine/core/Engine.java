@@ -15,8 +15,10 @@ import engine.video.Pipeline;
 import engine.video.RenderManager;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -59,14 +61,29 @@ public class Engine {
                 Model mdl = null;
 
                 float[] textureStrategy;
-                if (entity.getUv() == null) textureStrategy = Prefab.SquareTextureCoordinates;
-                else textureStrategy = entity.getUv();
+                if (entity.isRenderSpriteRetroCompatibility()) textureStrategy = Prefab.SquareTextureCoordinates;
+                else {
+                    Rectangle subImageSize = entity.getSpriteSheet().getTile();
+                    Rectangle fullImageSize = entity.getSpriteSheet().getFullImageSize();
+                    float uOffset = entity.getSpriteSheet().getTileX();
+                    float vOffset = entity.getSpriteSheet().getTileY();
+                    float u = (float) subImageSize.width / fullImageSize.width;
+                    float v = (float) subImageSize.height / fullImageSize.height;
+
+                    textureStrategy = new float[]{
+                            (u * uOffset), (vOffset * v),
+                            (u + (u * uOffset)), (vOffset * v),
+                            (u + (u * uOffset)), (v + (vOffset * v)),
+                            (u * uOffset), (v + (vOffset * v)),
+                    };
+                    entity.setUv(textureStrategy);
+                }
 
                 boolean shouldInsert = true;
                 for (Map.Entry<float[], Model> entryModel : modelsDemo.entrySet()) {
                     float[] prevTexture = entryModel.getKey();
                     float[] texturesScope;
-                    if (entity.getUv() == null) texturesScope = textureStrategy;
+                    if (entity.isRenderSpriteRetroCompatibility()) texturesScope = textureStrategy;
                     else texturesScope = entity.getUv();
                     if (Arrays.equals(prevTexture, texturesScope)) {
                         shouldInsert = false;
@@ -233,7 +250,7 @@ public class Engine {
                 if (entity.isPlayer()) {
                     texture2D.setPlayer(true);
                 }
-                if (entity.getUv() == null) entity.setUv(Prefab.SquareTextureCoordinates);
+                if (entity.isRenderSpriteRetroCompatibility()) entity.setUv(Prefab.SquareTextureCoordinates);
                 TexturedModel tmdl2 = new TexturedModel(findMatchingModelWithTextureCoordinatesBuffer(entity.getUv()), texture2D);
                 former.setModel(tmdl2);
                 entity.setEditModel(false);

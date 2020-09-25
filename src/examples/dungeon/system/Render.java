@@ -90,27 +90,7 @@ public class Render {
                         new Dimension(tileSize.width, tileSize.height),
                         new Vector2f(0, 0));
 
-                Rectangle subImageSize = map.get(x).get(y).getSprite().getTile();
-                Rectangle fullImageSize = map.get(x).get(y).getSprite().getFullImageSize();
-                float uOffset = map.get(x).get(y).getSprite().getTileX();
-                float vOffset = map.get(x).get(y).getSprite().getTileY();
-                float u = (float) subImageSize.width / fullImageSize.width;
-                float v = (float) subImageSize.height / fullImageSize.height;
-//                float[] uvBuffer = new float[]{
-//                        (u + (u * uOffset)), (v + (vOffset * v)),
-//                        (u * uOffset), (v + (vOffset * v)),
-//                        (u * uOffset), (vOffset * v),
-//                        (u + (u * uOffset)), (vOffset * v)
-//                };
-                float[] uvBuffer = new float[]{
-                        (u * uOffset), (vOffset * v),
-                        (u + (u * uOffset)), (vOffset * v),
-                        (u + (u * uOffset)), (v + (vOffset * v)),
-                        (u * uOffset), (v + (vOffset * v)),
-                };
-
                 entityAPI.setRenderSpriteRetroCompatibility(false);
-                entityAPI.setUv(uvBuffer);
                 map.get(x).get(y).setEntityObject(entityAPI);
                 entityAPI.setShouldRender(false);
                 entityAPI.setSpriteSheet(map.get(x).get(y).getSprite());
@@ -124,21 +104,7 @@ public class Render {
                             new Dimension(object.getWidth(), object.getHeight()),
                             new Vector2f(0, 0));
 
-                    Rectangle subImageSizeActor = object.getSprite().getTile();
-                    Rectangle fullImageSizeActor = object.getSprite().getFullImageSize();
-                    float uOffsetActor = object.getSprite().getTileX();
-                    float vOffsetActor = object.getSprite().getTileY();
-                    float uActor = (float) subImageSizeActor.width / fullImageSizeActor.width;
-                    float vActor = (float) subImageSizeActor.height / fullImageSizeActor.height;
-
-                    float[] uvBufferActor = new float[]{
-                            (uActor * uOffsetActor), (vOffsetActor * vActor),
-                            (uActor + (uActor * uOffsetActor)), (vOffsetActor * vActor),
-                            (uActor + (uActor * uOffsetActor)), (vActor + (vOffsetActor * vActor)),
-                            (uActor * uOffsetActor), (vActor + (vOffsetActor * vActor)),
-                    };
                     entityAPIForObject.setRenderSpriteRetroCompatibility(false);
-                    entityAPIForObject.setUv(uvBufferActor);
                     object.setEntityObject(entityAPIForObject);
                     entityAPI.setRenderSpriteRetroCompatibility(false);
                     entityAPIForObject.setShouldRender(false);

@@ -34,7 +34,7 @@ public class Game extends BdvScriptGL {
     private final Random random = new Random();
     public InputAPI inputAPI;
     Render renderer;
-    Dimension cameraDimensions = new Dimension(100, 100);
+    Dimension cameraDimensions = new Dimension(25, 25);
     Player player;
     Camera camera;
     Turn turn = new Turn();
