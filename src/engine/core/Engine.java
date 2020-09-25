@@ -36,6 +36,7 @@ public class Engine {
     List<EntityAPI> scriptEntities;
     Map<String, ProcessedBufferedImage> processedImages = new HashMap<>();
     Map<String, Model> models = new HashMap<>();
+    Map<float[], Model> modelsDemo = new HashMap<>();
     Model rectangleModel;
     double lastTime;
     double lastUpdate;
@@ -54,20 +55,35 @@ public class Engine {
         if (config.script.camera == null) {
 
             Camera2D cam2d = config.script.camera2d == null ? new Camera2D() : config.script.camera2d;
-
             for (EntityAPI entity : scriptEntities) {
                 Model mdl = null;
-                // Checks if the current model needs a new setup (only if it has a different w/h config than previously stored models)
-                // This allows me to only load into the VAO the minimum. While same w/h rectangles get the same model
-                // This aids tiling when scripting.
-                if (models.get(entity.getWidth() + "," + entity.getHeight()) == null) {
+
+                float[] textureStrategy;
+                if (entity.getUv() == null) textureStrategy = Prefab.SquareTextureCoordinates;
+                else textureStrategy = entity.getUv();
+
+                boolean shouldInsert = true;
+                for (Map.Entry<float[], Model> entryModel : modelsDemo.entrySet()) {
+                    float[] prevTexture = entryModel.getKey();
+                    float[] texturesScope;
+                    if (entity.getUv() == null) texturesScope = textureStrategy;
+                    else texturesScope = entity.getUv();
+                    if (Arrays.equals(prevTexture, texturesScope)) {
+                        shouldInsert = false;
+                        break;
+                    }
+                }
+                if (shouldInsert) {
                     BufferedModel defaultData2D = new BufferedModel(
                             Prefab.squareFactory(0, 0, entity.getWidth(), entity.getHeight()),
-                            Prefab.SquareTextureCoordinates,
+                            textureStrategy,
                             Prefab.SquareIndexes);
+
                     mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
-                    models.put(entity.getWidth() + "," + entity.getHeight(), mdl);
-                } else mdl = models.get(entity.getWidth() + "," + entity.getHeight());
+                    modelsDemo.put(textureStrategy, mdl);
+                } else {
+                    mdl = findMatchingModelWithTextureCoordinatesBuffer(entity.getUv());
+                }
 
                 int textureId = getTextureId(entity);
                 int newTexure = checkForImageProcessing(entity, textureId);
@@ -217,7 +233,8 @@ public class Engine {
                 if (entity.isPlayer()) {
                     texture2D.setPlayer(true);
                 }
-                TexturedModel tmdl2 = new TexturedModel(models.get(entity.getWidth() + "," + entity.getHeight()), texture2D);
+                if (entity.getUv() == null) entity.setUv(Prefab.SquareTextureCoordinates);
+                TexturedModel tmdl2 = new TexturedModel(findMatchingModelWithTextureCoordinatesBuffer(entity.getUv()), texture2D);
                 former.setModel(tmdl2);
                 entity.setEditModel(false);
             }
@@ -228,11 +245,16 @@ public class Engine {
     private int getTextureId(EntityAPI entity) {
         int id = 0;
         String spriteKey = null;
-        if (entity.getSpriteSheet() != null) {
+        if (entity.getSpriteSheet() != null && entity.getSpriteSheet().getFile() != null && entity.getSpriteSheet().getFullImageSize() == null) {
             spriteKey = entity.getSpriteSheet().getFile() + "" + entity.getSpriteSheet().getTileX() + entity.getSpriteSheet().getTileY();
+        } else if (entity.getSpriteSheet() != null && entity.getSpriteSheet().getFullImageSize() != null) {
+            spriteKey = entity.getSpriteSheet().getFile() + "" + entity.getSpriteSheet().getFullImageSize().width + "," + entity.getSpriteSheet().getFullImageSize().height;
         }
         if (textures.get(entity.getFile()) == null || entity.getSpriteSheet() != null) {
-            if (entity.getSpriteSheet() != null && sprites.get(spriteKey) == null) {
+            if (entity.getSpriteSheet() != null && sprites.get(spriteKey) == null && entity.getUv() != null && !entity.isRenderSpriteRetroCompatibility()) {
+                id = pipe.loadTexture(entity.getSpriteSheet().getFile());
+                sprites.put(spriteKey, id);
+            } else if (entity.getSpriteSheet() != null && sprites.get(spriteKey) == null) {
                 id = pipe.loadTextureFromSpritesheet(entity.getSpriteSheet());
                 sprites.put(spriteKey, id);
             } else if (entity.getSpriteSheet() != null && sprites.get(spriteKey) != null) {
@@ -281,6 +303,18 @@ public class Engine {
 
         }
         return resultingTextureId;
+    }
+
+    private Model findMatchingModelWithTextureCoordinatesBuffer(float[] textureCoordinates) {
+        Model indexModel = null;
+        for (Map.Entry<float[], Model> entryModel : modelsDemo.entrySet()) {
+            float[] prevTexture = entryModel.getKey();
+            if (Arrays.equals(prevTexture, textureCoordinates)) {
+                indexModel = entryModel.getValue();
+                break;
+            }
+        }
+        return indexModel;
     }
 
     public static float currentTimeMillis() {

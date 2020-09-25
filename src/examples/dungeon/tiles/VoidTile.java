@@ -8,7 +8,7 @@ import java.io.File;
 
 public class VoidTile extends Tile {
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 3, 2);
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 3, 2, new Rectangle(783, 783));
 
     public VoidTile() {
         super();

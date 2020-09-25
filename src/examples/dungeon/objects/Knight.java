@@ -9,7 +9,7 @@ import java.io.File;
 
 public class Knight extends Actor {
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 1);
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 1, new Rectangle(783, 393));
 
     public Knight(Location location, Tile tile, int width, int height) {
         super(location, tile, width, height, "knight");

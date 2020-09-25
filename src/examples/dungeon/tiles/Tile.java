@@ -20,7 +20,7 @@ public abstract class Tile implements Cloneable {
     protected EntityAPI entityObject;
     protected Map<Object, Object> scriptProperties = new HashMap<>();
     protected static String spriteSheet = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(spriteSheet, new Rectangle(39, 39), 3, 2);
+    protected SpriteSheet sprite = new SpriteSheet(spriteSheet, new Rectangle(39, 39), 3, 2, new Rectangle(784, 784));
     protected Actor actor;
     protected boolean hidden = true;
     protected Vector3f light;

@@ -28,7 +28,7 @@ public abstract class Actor implements Cloneable {
     protected boolean mob = false;
 
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0);
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0, new Rectangle(783, 393));
     protected EntityAPI entityObject;
 
     protected List<Actor> subActors = new ArrayList<>();

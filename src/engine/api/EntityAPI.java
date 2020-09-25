@@ -35,6 +35,9 @@ public class EntityAPI {
     private Vector3f colorGlow;
     private boolean player;
     private boolean shouldRender = false;
+    private boolean renderSpriteRetroCompatibility = true;
+
+    private float[] uv;
 
     private int _API_LINK;
 
@@ -276,5 +279,21 @@ public class EntityAPI {
 
     public void setShouldRender(boolean shouldRender) {
         this.shouldRender = shouldRender;
+    }
+
+    public float[] getUv() {
+        return uv;
+    }
+
+    public void setUv(float[] uv) {
+        this.uv = uv;
+    }
+
+    public boolean isRenderSpriteRetroCompatibility() {
+        return renderSpriteRetroCompatibility;
+    }
+
+    public void setRenderSpriteRetroCompatibility(boolean renderSpriteRetroCompatibility) {
+        this.renderSpriteRetroCompatibility = renderSpriteRetroCompatibility;
     }
 }

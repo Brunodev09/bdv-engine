@@ -18,6 +18,7 @@ public class Renderer {
     private Matrix4f _projection;
     private DefaultShader _shader;
     private RectangleShader _geoShader;
+    private int previousBoundTexture = 0;
 
     private boolean debugShader;
 
@@ -139,8 +140,12 @@ public class Renderer {
         _geoShader.loadCurrentTimeFlow();
         _geoShader.loadDebugToggle(debugShader);
 
-        GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, tmdl.getModelTexture().getId());
+        if (previousBoundTexture != tmdl.getModelTexture().getId()) {
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, tmdl.getModelTexture().getId());
+        }
+
+        previousBoundTexture = tmdl.getModelTexture().getId();
     }
 
     private void _unbindTexture() {

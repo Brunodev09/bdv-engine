@@ -19,7 +19,6 @@ import examples.dungeon.player.Player;
 import examples.dungeon.system.Render;
 import examples.dungeon.system.Turn;
 import examples.dungeon.tiles.Tile;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -29,11 +28,13 @@ public class Game extends BdvScriptGL {
 
     private static final Logger LOG = Logger.getLogger(Game.class.getName());
 
+    // @TODO - Have a List of actors in each tile instead of a single one
+
     private final Dimension tileSize;
     private final Random random = new Random();
     public InputAPI inputAPI;
     Render renderer;
-    Dimension cameraDimensions = new Dimension(25, 25);
+    Dimension cameraDimensions = new Dimension(100, 100);
     Player player;
     Camera camera;
     Turn turn = new Turn();

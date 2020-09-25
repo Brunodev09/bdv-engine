@@ -12,6 +12,7 @@ import examples.dungeon.tiles.VoidTile;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -88,17 +89,58 @@ public class Render {
                         new Vector3f(0, 0, 0),
                         new Dimension(tileSize.width, tileSize.height),
                         new Vector2f(0, 0));
+
+                Rectangle subImageSize = map.get(x).get(y).getSprite().getTile();
+                Rectangle fullImageSize = map.get(x).get(y).getSprite().getFullImageSize();
+                float uOffset = map.get(x).get(y).getSprite().getTileX();
+                float vOffset = map.get(x).get(y).getSprite().getTileY();
+                float u = (float) subImageSize.width / fullImageSize.width;
+                float v = (float) subImageSize.height / fullImageSize.height;
+//                float[] uvBuffer = new float[]{
+//                        (u + (u * uOffset)), (v + (vOffset * v)),
+//                        (u * uOffset), (v + (vOffset * v)),
+//                        (u * uOffset), (vOffset * v),
+//                        (u + (u * uOffset)), (vOffset * v)
+//                };
+                float[] uvBuffer = new float[]{
+                        (u * uOffset), (vOffset * v),
+                        (u + (u * uOffset)), (vOffset * v),
+                        (u + (u * uOffset)), (v + (vOffset * v)),
+                        (u * uOffset), (v + (vOffset * v)),
+                };
+
+                entityAPI.setRenderSpriteRetroCompatibility(false);
+                entityAPI.setUv(uvBuffer);
                 map.get(x).get(y).setEntityObject(entityAPI);
                 entityAPI.setShouldRender(false);
                 entityAPI.setSpriteSheet(map.get(x).get(y).getSprite());
                 this.entities.add(entityAPI);
-                if (map.get(x).get(y).getActor() != null && !map.get(x).get(y).getActor().getType().equals("light") && !map.get(x).get(y).getActor().getType().equals("camera")) {
+
+                if (map.get(x).get(y).getActor() != null && !map.get(x).get(y).getActor().getType().equals("light")
+                        && !map.get(x).get(y).getActor().getType().equals("camera")) {
                     Actor object = map.get(x).get(y).getActor();
                     EntityAPI entityAPIForObject = new EntityAPI(null,
                             new Vector3f(0, 0, 1),
                             new Dimension(object.getWidth(), object.getHeight()),
                             new Vector2f(0, 0));
+
+                    Rectangle subImageSizeActor = object.getSprite().getTile();
+                    Rectangle fullImageSizeActor = object.getSprite().getFullImageSize();
+                    float uOffsetActor = object.getSprite().getTileX();
+                    float vOffsetActor = object.getSprite().getTileY();
+                    float uActor = (float) subImageSizeActor.width / fullImageSizeActor.width;
+                    float vActor = (float) subImageSizeActor.height / fullImageSizeActor.height;
+
+                    float[] uvBufferActor = new float[]{
+                            (uActor * uOffsetActor), (vOffsetActor * vActor),
+                            (uActor + (uActor * uOffsetActor)), (vOffsetActor * vActor),
+                            (uActor + (uActor * uOffsetActor)), (vActor + (vOffsetActor * vActor)),
+                            (uActor * uOffsetActor), (vActor + (vOffsetActor * vActor)),
+                    };
+                    entityAPIForObject.setRenderSpriteRetroCompatibility(false);
+                    entityAPIForObject.setUv(uvBufferActor);
                     object.setEntityObject(entityAPIForObject);
+                    entityAPI.setRenderSpriteRetroCompatibility(false);
                     entityAPIForObject.setShouldRender(false);
                     entityAPIForObject.setSpriteSheet(map.get(x).get(y).getActor().getSprite());
                     this.entities.add(entityAPIForObject);
@@ -132,7 +174,7 @@ public class Render {
             List<Tile> chunk = new ArrayList<>();
             for (int j = 0; j < location.getMapHeight(); j++) {
                 if (i > playerTile.getPositionX() - (cameraDimensions.width / 2) && i < playerTile.getPositionX() + (cameraDimensions.width / 2) &&
-                   j > playerTile.getPositionY() - (cameraDimensions.height / 2) && j < playerTile.getPositionY() + (cameraDimensions.height / 2)) {
+                        j > playerTile.getPositionY() - (cameraDimensions.height / 2) && j < playerTile.getPositionY() + (cameraDimensions.height / 2)) {
 
                     Tile tileToAdd = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), i, j);
                     if (tileToAdd != null) {
