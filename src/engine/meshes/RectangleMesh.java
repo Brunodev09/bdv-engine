@@ -1,6 +1,6 @@
-package prefabs;
+package engine.meshes;
 
-public class Prefab {
+public class RectangleMesh {
 
     public static final float[] Cube = {
             0, 0,

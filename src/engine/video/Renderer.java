@@ -91,7 +91,7 @@ public class Renderer {
     }
 
     public void renderEntities2D(Map<TexturedModel, List<Entity>> entities) {
-        // @TODO - reduce the number of draw calls into one big VAO
+        // @TODO - Reduce the number of draw calls into one big VAO - one big mesh
         for (TexturedModel key : entities.keySet()) {
             this._modelSetup2D(key);
             List<Entity> entitiesToLoadFromModel = entities.get(key);

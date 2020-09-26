@@ -1,7 +1,11 @@
 package engine.core;
 
+import engine.api.ChunkAPI;
+import engine.api.ChunkManagerAPI;
+import engine.math.Dimension;
+import engine.meshes.ChunkMesh;
 import engine.texture.*;
-import prefabs.Prefab;
+import engine.meshes.RectangleMesh;
 import engine.api.EntityAPI;
 import engine.entities.Camera;
 import engine.entities.Camera2D;
@@ -13,6 +17,7 @@ import engine.models.TexturedModel;
 import engine.video.ModelParser;
 import engine.video.Pipeline;
 import engine.video.RenderManager;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.*;
@@ -30,6 +35,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetTime;
 
 public class Engine {
 
+    Configuration configuration;
     Pipeline pipe = new Pipeline();
     Map<Integer, Entity> toRender = new HashMap<>();
     Map<Integer, Lightsource> lights = new HashMap<>();
@@ -50,6 +56,8 @@ public class Engine {
 
         if (config.script == null) return;
 
+        configuration = config;
+
         RenderManager.createRender(config.WIDTH, config.HEIGHT, config.TITLE, config.script.background);
 
         scriptEntities = config.script.entities;
@@ -57,89 +65,14 @@ public class Engine {
         if (config.script.camera == null) {
 
             Camera2D cam2d = config.script.camera2d == null ? new Camera2D() : config.script.camera2d;
-            for (EntityAPI entity : scriptEntities) {
-                Model mdl = null;
 
-                float[] textureStrategy;
-                if (entity.isRenderSpriteRetroCompatibility()) textureStrategy = Prefab.SquareTextureCoordinates;
-                else {
-                    Rectangle subImageSize = entity.getSpriteSheet().getTile();
-                    Rectangle fullImageSize = entity.getSpriteSheet().getFullImageSize();
-                    float uOffset = entity.getSpriteSheet().getTileX();
-                    float vOffset = entity.getSpriteSheet().getTileY();
-                    float u = (float) subImageSize.width / fullImageSize.width;
-                    float v = (float) subImageSize.height / fullImageSize.height;
-
-                    textureStrategy = new float[]{
-                            (u * uOffset), (vOffset * v),
-                            (u + (u * uOffset)), (vOffset * v),
-                            (u + (u * uOffset)), (v + (vOffset * v)),
-                            (u * uOffset), (v + (vOffset * v)),
-                    };
-                    entity.setUv(textureStrategy);
-                }
-
-                boolean shouldInsert = true;
-                for (Map.Entry<float[], Model> entryModel : modelsDemo.entrySet()) {
-                    float[] prevTexture = entryModel.getKey();
-                    float[] texturesScope;
-                    if (entity.isRenderSpriteRetroCompatibility()) texturesScope = textureStrategy;
-                    else texturesScope = entity.getUv();
-                    if (Arrays.equals(prevTexture, texturesScope)) {
-                        shouldInsert = false;
-                        break;
-                    }
-                }
-                if (shouldInsert) {
-                    BufferedModel defaultData2D = new BufferedModel(
-                            Prefab.squareFactory(0, 0, entity.getWidth(), entity.getHeight()),
-                            textureStrategy,
-                            Prefab.SquareIndexes);
-
-                    mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
-                    modelsDemo.put(textureStrategy, mdl);
-                } else {
-                    mdl = findMatchingModelWithTextureCoordinatesBuffer(entity.getUv());
-                }
-
-                int textureId = getTextureId(entity);
-                int newTexure = checkForImageProcessing(entity, textureId);
-
-                if (newTexure != 0) textureId = newTexure;
-
-                ModelTexture texture2D = new ModelTexture(textureId);
-                if (entity.getRgbVector() != null) {
-                    texture2D.setColorOffset(entity.getRgbVector());
-                }
-                if (entity.isAmbientLightOn()) {
-                    texture2D.setAmbientLightToggle(true);
-                    texture2D.setAmbientLight(entity.getAmbientLight());
-                }
-                if (entity.isGlowing()) {
-                    texture2D.setToggleGlow(true);
-                    texture2D.setGlowColor(entity.getColorGlow());
-                }
-                if (entity.isPlayer()) {
-                    texture2D.setPlayer(true);
-                }
-                TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
-                Entity formerEntity = new Entity(tmdl2,
-                        entity.getPosition(),
-                        entity.getRotationX(),
-                        entity.getRotationY(),
-                        entity.getRotationZ(),
-                        entity.getScaleX(),
-                        entity.getScaleY(),
-                        entity.getScaleZ());
-                entity.setLink(formerEntity.getId());
-                formerEntity.setShouldRender(entity.shouldRender());
-                toRender.put(formerEntity.getId(), formerEntity);
-            }
+            if (config.script.chunkRendering) chunkBasedRendering();
+            else proceduralRendering();
 
             while (!RenderManager.shouldExit()) {
 
                 RenderManager.toggleDebugShaderMode(config.script.debugShader);
-                createAndUpdateFormerEntity();
+                if (!configuration.script.chunkRendering) createAndUpdateFormerEntity();
 
                 if (lastUpdate == 0.0) {
                     lastUpdate = currentTimeMillis();
@@ -169,47 +102,178 @@ public class Engine {
             }
 
         } else {
-            Camera cam = config.script.camera;
-            Lightsource light = new Lightsource(new Vector3f(300, 300, -30), new Vector3f(1, 1, 1));
-
-            for (EntityAPI entity : scriptEntities) {
-                BufferedModel data = ModelParser.parseOBJ(entity.getModel());
-                Model mdl = pipe.loadDataToVAO(data.getVertices(), data.getTextures(), data.getNormals(), data.getIndexes());
-                ModelTexture texture = new ModelTexture(pipe.loadTexture(entity.getFile()));
-                texture.setShineDamper(10);
-                texture.setReflectivity(1);
-                TexturedModel tmdl2 = new TexturedModel(mdl, texture);
-                Entity formerEntity = new Entity(tmdl2,
-                        entity.getPosition(),
-                        entity.getRotationX(),
-                        entity.getRotationY(),
-                        entity.getRotationZ(),
-                        entity.getScaleX(),
-                        entity.getScaleY(),
-                        entity.getScaleZ());
-                entity.setLink(formerEntity.getId());
-                toRender.put(formerEntity.getId(), formerEntity);
-            }
-
-            while (!RenderManager.shouldExit()) {
-                double thisTime = currentTimeMillis();
-                double delta = thisTime - lastTime;
-                lastTime = thisTime;
-
-                config.script.update();
-                createAndUpdateFormerEntity();
-                cam.move(delta);
-
-                toRender.forEach((key, val) -> RenderManager.processEntity(val));
-
-                RenderManager.renderBatch(light, cam);
-                RenderManager.updateRender(config.FPS);
-            }
+            procedural3dRendering();
         }
 
         RenderManager.runCollector();
         pipe.runCollector();
         RenderManager.closeRender();
+    }
+
+    public void chunkBasedRendering() {
+        List<ChunkMesh> chunkMeshes = new ArrayList<>();
+        ChunkManagerAPI chunkManager = configuration.script.chunkManager;
+
+        if (chunkManager.getChunks().size() > 0) {
+            for (ChunkAPI chunk : chunkManager.getChunks()) {
+                SpriteSheet[] spriteSheets = new SpriteSheet[chunk.getChunkSize()];
+                int it = 0;
+                for (EntityAPI entityAPI : chunk.getChunk()) {
+                    spriteSheets[it] = entityAPI.getSpriteSheet();
+                    it++;
+                }
+                ChunkMesh chunkMesh = new ChunkMesh(
+                        chunk.getTileSize().width,
+                        chunk.getTileSize().height,
+                        chunk.getTilesPerRow(),
+                        chunk.getChunkSize(),
+                        chunk.getOpenGlPosition().x,
+                        chunk.getOpenGlPosition().y,
+                        spriteSheets,
+                        chunk.shouldRender());
+                chunkMeshes.add(chunkMesh);
+            }
+
+            for (ChunkMesh mesh : chunkMeshes) {
+                BufferedModel defaultData2D = new BufferedModel(
+                        mesh.getMesh(),
+                        mesh.getTextureCoordinates(),
+                        mesh.getIndexes());
+
+                Model mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
+                EntityAPI entityAPI = new EntityAPI(null,
+                        new Vector3f(mesh.getxPos(), mesh.getyPos(), 0),
+                        new Dimension((int) (mesh.getTilesPerRow() * mesh.getTileSizeX()),
+                                (int) (mesh.getNumberOfTiles() * mesh.getTileSizeY()) / mesh.getTilesPerRow()),
+                        new Vector2f(0, 0));
+                entityAPI.setSpriteSheet(chunkManager.getSpriteSheet());
+                entityAPI.setShouldRender(mesh.shouldRender());
+                textureAndPlaceBackEntity(entityAPI, mdl);
+            }
+        }
+    }
+
+    public void proceduralRendering() {
+        for (EntityAPI entity : scriptEntities) {
+            Model mdl = null;
+
+            float[] textureStrategy;
+            if (entity.isRenderSpriteRetroCompatibility()) textureStrategy = RectangleMesh.SquareTextureCoordinates;
+            else {
+                Rectangle subImageSize = entity.getSpriteSheet().getTile();
+                Rectangle fullImageSize = entity.getSpriteSheet().getFullImageSize();
+                float uOffset = entity.getSpriteSheet().getTileX();
+                float vOffset = entity.getSpriteSheet().getTileY();
+                float u = (float) subImageSize.width / fullImageSize.width;
+                float v = (float) subImageSize.height / fullImageSize.height;
+
+                textureStrategy = new float[]{
+                        (u * uOffset), (vOffset * v),
+                        (u + (u * uOffset)), (vOffset * v),
+                        (u + (u * uOffset)), (v + (vOffset * v)),
+                        (u * uOffset), (v + (vOffset * v)),
+                };
+                entity.setUv(textureStrategy);
+            }
+
+            boolean shouldInsert = true;
+            for (Map.Entry<float[], Model> entryModel : modelsDemo.entrySet()) {
+                float[] prevTexture = entryModel.getKey();
+                float[] texturesScope;
+                if (entity.isRenderSpriteRetroCompatibility()) texturesScope = textureStrategy;
+                else texturesScope = entity.getUv();
+                if (Arrays.equals(prevTexture, texturesScope)) {
+                    shouldInsert = false;
+                    break;
+                }
+            }
+            if (shouldInsert) {
+                BufferedModel defaultData2D = new BufferedModel(
+                        RectangleMesh.squareFactory(0, 0, entity.getWidth(), entity.getHeight()),
+                        textureStrategy,
+                        RectangleMesh.SquareIndexes);
+
+                mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
+                modelsDemo.put(textureStrategy, mdl);
+            } else {
+                mdl = findMatchingModelWithTextureCoordinatesBuffer(entity.getUv());
+            }
+            textureAndPlaceBackEntity(entity, mdl);
+        }
+    }
+
+    private void textureAndPlaceBackEntity(EntityAPI entity, Model mdl) {
+        int textureId = getTextureId(entity);
+        int newTexure = checkForImageProcessing(entity, textureId);
+
+        if (newTexure != 0) textureId = newTexure;
+
+        ModelTexture texture2D = new ModelTexture(textureId);
+        if (entity.getRgbVector() != null) {
+            texture2D.setColorOffset(entity.getRgbVector());
+        }
+        if (entity.isAmbientLightOn()) {
+            texture2D.setAmbientLightToggle(true);
+            texture2D.setAmbientLight(entity.getAmbientLight());
+        }
+        if (entity.isGlowing()) {
+            texture2D.setToggleGlow(true);
+            texture2D.setGlowColor(entity.getColorGlow());
+        }
+        if (entity.isPlayer()) {
+            texture2D.setPlayer(true);
+        }
+        TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
+        Entity formerEntity = new Entity(tmdl2,
+                entity.getPosition(),
+                entity.getRotationX(),
+                entity.getRotationY(),
+                entity.getRotationZ(),
+                entity.getScaleX(),
+                entity.getScaleY(),
+                entity.getScaleZ());
+        entity.setLink(formerEntity.getId());
+        formerEntity.setShouldRender(entity.shouldRender());
+        toRender.put(formerEntity.getId(), formerEntity);
+    }
+
+    public void procedural3dRendering() {
+        Camera cam = configuration.script.camera;
+        Lightsource light = new Lightsource(new Vector3f(300, 300, -30), new Vector3f(1, 1, 1));
+
+        for (EntityAPI entity : scriptEntities) {
+            BufferedModel data = ModelParser.parseOBJ(entity.getModel());
+            Model mdl = pipe.loadDataToVAO(data.getVertices(), data.getTextures(), data.getNormals(), data.getIndexes());
+            ModelTexture texture = new ModelTexture(pipe.loadTexture(entity.getFile()));
+            texture.setShineDamper(10);
+            texture.setReflectivity(1);
+            TexturedModel tmdl2 = new TexturedModel(mdl, texture);
+            Entity formerEntity = new Entity(tmdl2,
+                    entity.getPosition(),
+                    entity.getRotationX(),
+                    entity.getRotationY(),
+                    entity.getRotationZ(),
+                    entity.getScaleX(),
+                    entity.getScaleY(),
+                    entity.getScaleZ());
+            entity.setLink(formerEntity.getId());
+            toRender.put(formerEntity.getId(), formerEntity);
+        }
+
+        while (!RenderManager.shouldExit()) {
+            double thisTime = currentTimeMillis();
+            double delta = thisTime - lastTime;
+            lastTime = thisTime;
+
+            configuration.script.update();
+            createAndUpdateFormerEntity();
+            cam.move(delta);
+
+            toRender.forEach((key, val) -> RenderManager.processEntity(val));
+
+            RenderManager.renderBatch(light, cam);
+            RenderManager.updateRender(configuration.FPS);
+        }
     }
 
     private void createAndUpdateFormerEntity() {
@@ -250,7 +314,7 @@ public class Engine {
                 if (entity.isPlayer()) {
                     texture2D.setPlayer(true);
                 }
-                if (entity.isRenderSpriteRetroCompatibility()) entity.setUv(Prefab.SquareTextureCoordinates);
+                if (entity.isRenderSpriteRetroCompatibility()) entity.setUv(RectangleMesh.SquareTextureCoordinates);
                 TexturedModel tmdl2 = new TexturedModel(findMatchingModelWithTextureCoordinatesBuffer(entity.getUv()), texture2D);
                 former.setModel(tmdl2);
                 entity.setEditModel(false);

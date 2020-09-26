@@ -10,6 +10,7 @@ import java.util.List;
 
 public abstract class BdvScriptGL {
     public List<EntityAPI> entities = new ArrayList<>();
+    public ChunkManagerAPI chunkManager;
     public Dimension resolution;
     public RGBAf background;
     public String windowTitle;
@@ -20,6 +21,7 @@ public abstract class BdvScriptGL {
     public boolean logFps;
     public static InputAPI input;
     public InputAPI inputAPI;
+    public boolean chunkRendering = false;
 
     public abstract void init(List<EntityAPI> entities, Dimension resolution, RGBAf background);
     public abstract void update();

@@ -1,5 +1,7 @@
 package examples.dungeon.system;
 
+import engine.api.ChunkAPI;
+import engine.api.ChunkManagerAPI;
 import engine.api.EntityAPI;
 import engine.math.Dimension;
 import examples.dungeon.generation.Location;
@@ -33,6 +35,7 @@ public class Render {
     private boolean edges;
     private List<EntityAPI> extraLayer = new ArrayList<>();
     private Turn turn;
+    private ChunkManagerAPI chunkManagerAPI;
 
     public Render(List<EntityAPI> entities, Turn turn, Actor player, Dimension cameraDimensions, Dimension tileSize) {
         this.entities = entities;
@@ -40,6 +43,15 @@ public class Render {
         this.cameraDimensions = cameraDimensions;
         this.tileSize = tileSize;
         this.turn = turn;
+    }
+
+    public Render(List<EntityAPI> entities, ChunkManagerAPI chunkManagerAPI, Turn turn, Actor player, Dimension cameraDimensions, Dimension tileSize) {
+        this.entities = entities;
+        this.player = player;
+        this.cameraDimensions = cameraDimensions;
+        this.tileSize = tileSize;
+        this.turn = turn;
+        this.chunkManagerAPI = chunkManagerAPI;
     }
 
     public void setCameraDimensions(Dimension cameraDimensions) {
@@ -52,7 +64,10 @@ public class Render {
 
     public void render() {
         try {
-            renderChunkFromMap(getPlayerChunk(player), player.getCurrentLocation().getMap());
+            if (chunkManagerAPI != null) {
+                renderChunks();
+            }
+            else renderChunkFromMap(getPlayerChunk(player), player.getCurrentLocation().getMap());
         } catch (CloneNotSupportedException cloneNotSupportedException) {
             LOG.severe(cloneNotSupportedException.getMessage());
         }
@@ -112,6 +127,32 @@ public class Render {
                 }
             }
         }
+        if (chunkManagerAPI != null) {
+            int pace = 0;
+            boolean done = false;
+            while ((chunkManagerAPI.getChunks().size() < (this.entities.size() / 400)) || !done) {
+                List<EntityAPI> entityPicker = new ArrayList<>();
+                for (int i = pace; i < i + 400; i++) {
+                    if (i < this.entities.size()) {
+                        entityPicker.add(this.entities.get(i));
+                    } else {
+                        done = true;
+                        break;
+                    }
+                    if (entityPicker.size() % 400 == 0) {
+                        pace += 400;
+                        ChunkAPI chunkAPI = ChunkAPI.newInstance(400, entityPicker, new Dimension(tileSize.width, tileSize.height), 20);
+                        chunkAPI.setOpenGlPosition(new Vector3f(-600, -400, 0));
+                        chunkManagerAPI.addChunk(chunkAPI);
+                        entityPicker.clear();
+                    }
+                }
+            }
+        }
+    }
+
+    public void renderChunks() {
+        chunkManagerAPI.getChunks().get(0).setShouldRender(true);
     }
 
     public void renderChunkFromMap(List<List<Tile>> chunkToRender, List<List<Tile>> map) {

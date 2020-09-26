@@ -2,11 +2,13 @@ package examples.dungeon;
 
 import engine.Bdv;
 import engine.api.BdvScriptGL;
+import engine.api.ChunkManagerAPI;
 import engine.api.EntityAPI;
 import engine.api.InputAPI;
 import engine.entities.Camera2D;
 import engine.math.Dimension;
 import engine.math.RGBAf;
+import engine.texture.SpriteSheet;
 import examples.dungeon.generation.WorldManager;
 import examples.dungeon.input.InputManager;
 import examples.dungeon.input.Keyboard;
@@ -20,7 +22,10 @@ import examples.dungeon.system.Render;
 import examples.dungeon.system.Turn;
 import examples.dungeon.tiles.Tile;
 
+import java.awt.*;
+import java.io.File;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +45,9 @@ public class Game extends BdvScriptGL {
     Turn turn = new Turn();
     boolean firstTime = true;
 
+    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0, new Rectangle(783, 783));
+
     public Game() {
         this.camera2d = new Camera2D();
         this.entities = new ArrayList<>();
@@ -51,6 +59,8 @@ public class Game extends BdvScriptGL {
         this.camera2d.setSpeed(tileSize.width / tileSize.height);
         this.logFps = true;
 
+        this.chunkRendering = true;
+        this.chunkManager = new ChunkManagerAPI(sprite);
         this.init(this.entities, this.resolution, this.background);
     }
 
@@ -104,7 +114,7 @@ public class Game extends BdvScriptGL {
 
         InputManager.newInstance(keyboard, mouse);
 
-        renderer = new Render(entities, turn,  camera, cameraDimensions, tileSize);
+        renderer = new Render(entities, chunkManager, turn,  camera, cameraDimensions, tileSize);
         // ==============================
 
         renderer.initRender(WorldManager.getLocationAtIndex(0, 0, -1).getMap());

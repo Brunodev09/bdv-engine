@@ -41,6 +41,14 @@ public class EntityAPI {
 
     private int _API_LINK;
 
+    private EntityAPI() {
+
+    }
+
+    public static EntityAPI _doNotUse() {
+        return new EntityAPI();
+    }
+
     public EntityAPI(String file) {
         globalId++;
         this.id = globalId;
