@@ -44,46 +44,40 @@ public class ChunkMesh {
         int tilesInRow = 0;
 
         for (int i = 0; i < mesh.length - 11; i += 12) {
-            mesh[i] = startX;
-            mesh[i + 1] = startY;
-            mesh[i + 2] = 0;
-
-            mesh[i + 3] = startX + tileSizeX;
-            mesh[i + 4] = startY;
-            mesh[i + 5] = 0;
-
-            mesh[i + 6] = startX + tileSizeX;
-            mesh[i + 7] = startY + tileSizeY;
-            mesh[i + 8] = 0;
-
-            mesh[i + 9] = startX;
-            mesh[i + 10] = startY + tileSizeY;
-            mesh[i + 11] = 0;
-
+            float[] points = new float[]{
+                    startX, startY, 0,
+                    startX + tileSizeX, startY, 0,
+                    startX + tileSizeX, startY + tileSizeY, 0,
+                    startX, startY + tileSizeY, 0
+            };
+            for (int j = 0; j < points.length; j++) {
+                mesh[i + j] = points[j];
+            }
             if (tilesInRow == tilesPerRow) {
-                startY += tileSizeY;
-                startX = 0;
+                startX += tileSizeX;
+                startY = 0;
                 tilesInRow = 0;
             } else {
-                startX += tileSizeX;
+                startY += tileSizeY;
                 tilesInRow++;
             }
-
         }
+        int it = 0;
         for (int i = 0; i < indexes.length - 5; i += 6) {
-            indexes[i] = i;
-            indexes[i + 1] = i + 1;
-            indexes[i + 2] = i + 3;
-            indexes[i + 3] = i + 3;
-            indexes[i + 4] = i + 1;
-            indexes[i + 5] = i + 2;
+            indexes[i] = it;
+            indexes[i + 1] = it + 1;
+            indexes[i + 2] = it + 3;
+            indexes[i + 3] = it + 3;
+            indexes[i + 4] = it + 1;
+            indexes[i + 5] = it + 2;
+            it+=4;
         }
-
-        for (int i = 0; i < spriteSheets.length - 7; i+=8) {
-            Rectangle subImageSize = spriteSheets[i].getTile();
-            Rectangle fullImageSize = spriteSheets[i].getFullImageSize();
-            float uOffset = spriteSheets[i].getTileX();
-            float vOffset = spriteSheets[i].getTileY();
+        int it2 = 0;
+        for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
+            Rectangle subImageSize = spriteSheets[it2].getTile();
+            Rectangle fullImageSize = spriteSheets[it2].getFullImageSize();
+            float uOffset = spriteSheets[it2].getTileX();
+            float vOffset = spriteSheets[it2].getTileY();
             float u = (float) subImageSize.width / fullImageSize.width;
             float v = (float) subImageSize.height / fullImageSize.height;
 
@@ -95,6 +89,7 @@ public class ChunkMesh {
             textureCoordinates[i + 5] = (v + (vOffset * v));
             textureCoordinates[i + 6] = (u * uOffset);
             textureCoordinates[i + 7] = (v + (vOffset * v));
+            it2++;
         }
     }
 

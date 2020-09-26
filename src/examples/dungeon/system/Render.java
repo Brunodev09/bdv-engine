@@ -110,7 +110,8 @@ public class Render {
                 entityAPI.setSpriteSheet(map.get(x).get(y).getSprite());
                 this.entities.add(entityAPI);
 
-                if (map.get(x).get(y).getActor() != null && !map.get(x).get(y).getActor().getType().equals("light")
+                if (map.get(x).get(y).getActor() != null
+                        && !map.get(x).get(y).getActor().getType().equals("light")
                         && !map.get(x).get(y).getActor().getType().equals("camera")) {
                     Actor object = map.get(x).get(y).getActor();
                     EntityAPI entityAPIForObject = new EntityAPI(null,
@@ -130,7 +131,7 @@ public class Render {
         if (chunkManagerAPI != null) {
             int pace = 0;
             boolean done = false;
-            while ((chunkManagerAPI.getChunks().size() < (this.entities.size() / 400)) || !done) {
+            while (!done) {
                 List<EntityAPI> entityPicker = new ArrayList<>();
                 for (int i = pace; i < i + 400; i++) {
                     if (i < this.entities.size()) {

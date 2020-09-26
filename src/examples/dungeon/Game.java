@@ -114,7 +114,8 @@ public class Game extends BdvScriptGL {
 
         InputManager.newInstance(keyboard, mouse);
 
-        renderer = new Render(entities, chunkManager, turn,  camera, cameraDimensions, tileSize);
+        if (this.chunkRendering) renderer = new Render(entities, chunkManager, turn,  camera, cameraDimensions, tileSize);
+        else renderer = new Render(entities, turn,  camera, cameraDimensions, tileSize);
         // ==============================
 
         renderer.initRender(WorldManager.getLocationAtIndex(0, 0, -1).getMap());

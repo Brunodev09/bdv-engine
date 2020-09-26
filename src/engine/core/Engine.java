@@ -114,14 +114,13 @@ public class Engine {
         List<ChunkMesh> chunkMeshes = new ArrayList<>();
         ChunkManagerAPI chunkManager = configuration.script.chunkManager;
 
-        if (chunkManager.getChunks().size() > 0) {
+        if (!chunkManager.getChunks().isEmpty()) {
             for (ChunkAPI chunk : chunkManager.getChunks()) {
                 SpriteSheet[] spriteSheets = new SpriteSheet[chunk.getChunkSize()];
-                int it = 0;
-                for (EntityAPI entityAPI : chunk.getChunk()) {
-                    spriteSheets[it] = entityAPI.getSpriteSheet();
-                    it++;
+                for (int i = 0; i < chunk.getChunk().size(); i++) {
+                    spriteSheets[i] = chunk.getChunk().get(i).getSpriteSheet();
                 }
+
                 ChunkMesh chunkMesh = new ChunkMesh(
                         chunk.getTileSize().width,
                         chunk.getTileSize().height,
@@ -144,10 +143,12 @@ public class Engine {
                 EntityAPI entityAPI = new EntityAPI(null,
                         new Vector3f(mesh.getxPos(), mesh.getyPos(), 0),
                         new Dimension((int) (mesh.getTilesPerRow() * mesh.getTileSizeX()),
-                                (int) (mesh.getNumberOfTiles() * mesh.getTileSizeY()) / mesh.getTilesPerRow()),
+                                (int) (mesh.getTilesPerRow() * mesh.getTileSizeY())),
                         new Vector2f(0, 0));
                 entityAPI.setSpriteSheet(chunkManager.getSpriteSheet());
                 entityAPI.setShouldRender(mesh.shouldRender());
+                entityAPI.setUv(mesh.getTextureCoordinates());
+                entityAPI.setRenderSpriteRetroCompatibility(false);
                 textureAndPlaceBackEntity(entityAPI, mdl);
             }
         }
