@@ -8,6 +8,8 @@ import java.util.List;
 public class ChunkManagerAPI {
     private final List<ChunkAPI> chunks = new ArrayList<>();
     private final SpriteSheet spriteSheet;
+    private final List<EntityAPI> unChunkedEntities = new ArrayList<>();
+    private boolean updateChunk = false;
 
     public ChunkManagerAPI(SpriteSheet spriteSheet) {
         this.spriteSheet = spriteSheet;
@@ -23,5 +25,25 @@ public class ChunkManagerAPI {
 
     public SpriteSheet getSpriteSheet() {
         return spriteSheet;
+    }
+
+    public EntityAPI getUnChunkedEntities(int index) {
+        return this.unChunkedEntities.get(index);
+    }
+
+    public void setUnChunkedEntities(EntityAPI entity) {
+        this.unChunkedEntities.add(entity);
+    }
+
+    public List<EntityAPI> getUnChunkedEntities() {
+        return unChunkedEntities;
+    }
+
+    public boolean isUpdateChunk() {
+        return updateChunk;
+    }
+
+    public void setUpdateChunk(boolean updateChunk) {
+        this.updateChunk = updateChunk;
     }
 }

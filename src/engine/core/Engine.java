@@ -17,6 +17,7 @@ import engine.models.TexturedModel;
 import engine.video.ModelParser;
 import engine.video.Pipeline;
 import engine.video.RenderManager;
+import engine.video.VAOManager;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -38,6 +39,8 @@ public class Engine {
     Configuration configuration;
     Pipeline pipe = new Pipeline();
     Map<Integer, Entity> toRender = new HashMap<>();
+    Map<Integer, Entity> toRenderChunk = new HashMap<>();
+    List<EntityAPI> toRenderChunkFromScript = new ArrayList<>();
     Map<Integer, Lightsource> lights = new HashMap<>();
     Map<String, Integer> textures = new HashMap<>();
     Map<String, Integer> sprites = new HashMap<>();
@@ -45,7 +48,10 @@ public class Engine {
     Map<String, ProcessedBufferedImage> processedImages = new HashMap<>();
     Map<String, Model> models = new HashMap<>();
     Map<float[], Model> modelsDemo = new HashMap<>();
+    Map<float[], Boolean> modelsChunkDemo = new HashMap<>();
     Model rectangleModel;
+    List<ChunkMesh> chunkMeshes = new ArrayList<>();
+    ChunkManagerAPI chunkManager = null;
     double lastTime;
     double lastUpdate;
     int frames = 0;
@@ -66,13 +72,23 @@ public class Engine {
 
             Camera2D cam2d = config.script.camera2d == null ? new Camera2D() : config.script.camera2d;
 
-            if (config.script.chunkRendering) chunkBasedRendering();
-            else proceduralRendering();
+            if (config.script.chunkRendering) {
+                chunkManager = configuration.script.chunkManager;
+                chunkBasedRendering();
+            }
+            else proceduralRendering(scriptEntities);
 
             while (!RenderManager.shouldExit()) {
 
                 RenderManager.toggleDebugShaderMode(config.script.debugShader);
-                if (!configuration.script.chunkRendering) createAndUpdateFormerEntity();
+                if (!configuration.script.chunkRendering) createAndUpdateFormerEntity(scriptEntities);
+                else {
+                    createAndUpdateFormerEntity(toRenderChunkFromScript);
+                    updateInnerTextureCoordinates();
+                    if (!configuration.script.chunkManager.getUnChunkedEntities().isEmpty()) {
+                        createAndUpdateFormerEntity(configuration.script.chunkManager.getUnChunkedEntities());
+                    }
+                }
 
                 if (lastUpdate == 0.0) {
                     lastUpdate = currentTimeMillis();
@@ -89,9 +105,15 @@ public class Engine {
                 frames++;
                 config.script.update();
 
-                toRender.forEach((key, val) -> {
-                    if (val.shouldRender()) RenderManager.processEntity(val);
-                });
+                if (config.script.chunkRendering) {
+                    toRenderChunk.forEach((key, val) -> {
+                        if (val.shouldRender()) RenderManager.processEntity(val);
+                    });
+                } else {
+                    toRender.forEach((key, val) -> {
+                        if (val.shouldRender()) RenderManager.processEntity(val);
+                    });
+                }
 
                 RenderManager.renderBatch(cam2d);
                 RenderManager.updateRender(config.FPS);
@@ -110,28 +132,30 @@ public class Engine {
         RenderManager.closeRender();
     }
 
-    public void chunkBasedRendering() {
-        List<ChunkMesh> chunkMeshes = new ArrayList<>();
-        ChunkManagerAPI chunkManager = configuration.script.chunkManager;
-
-        if (!chunkManager.getChunks().isEmpty()) {
-            for (ChunkAPI chunk : chunkManager.getChunks()) {
-                SpriteSheet[] spriteSheets = new SpriteSheet[chunk.getChunkSize()];
-                for (int i = 0; i < chunk.getChunk().size(); i++) {
-                    spriteSheets[i] = chunk.getChunk().get(i).getSpriteSheet();
-                }
-
-                ChunkMesh chunkMesh = new ChunkMesh(
-                        chunk.getTileSize().width,
-                        chunk.getTileSize().height,
-                        chunk.getTilesPerRow(),
-                        chunk.getChunkSize(),
-                        chunk.getOpenGlPosition().x,
-                        chunk.getOpenGlPosition().y,
-                        spriteSheets,
-                        chunk.shouldRender());
-                chunkMeshes.add(chunkMesh);
+    private void createMesh(ChunkManagerAPI chunkManager, List<ChunkMesh> chunkMeshes) {
+        for (ChunkAPI chunk : chunkManager.getChunks()) {
+            SpriteSheet[] spriteSheets = new SpriteSheet[chunk.getChunkSize()];
+            for (int i = 0; i < chunk.getChunk().size(); i++) {
+                spriteSheets[i] = chunk.getChunk().get(i).getSpriteSheet();
             }
+
+            ChunkMesh chunkMesh = new ChunkMesh(
+                    chunk.getTileSize().width,
+                    chunk.getTileSize().height,
+                    chunk.getTilesPerRow(),
+                    chunk.getChunkSize(),
+                    chunk.getOpenGlPosition().x,
+                    chunk.getOpenGlPosition().y,
+                    spriteSheets,
+                    chunk.shouldRender());
+            chunkMeshes.add(chunkMesh);
+        }
+    }
+
+    private void chunkBasedRendering() {
+        if (!chunkManager.getChunks().isEmpty()) {
+
+            createMesh(chunkManager, chunkMeshes);
 
             for (ChunkMesh mesh : chunkMeshes) {
                 BufferedModel defaultData2D = new BufferedModel(
@@ -140,22 +164,28 @@ public class Engine {
                         mesh.getIndexes());
 
                 Model mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
+
+                modelsDemo.put(mesh.getTextureCoordinates(), mdl);
+                modelsChunkDemo.put(mesh.getTextureCoordinates(), true);
+
                 EntityAPI entityAPI = new EntityAPI(null,
                         new Vector3f(mesh.getxPos(), mesh.getyPos(), 0),
                         new Dimension((int) (mesh.getTilesPerRow() * mesh.getTileSizeX()),
                                 (int) (mesh.getTilesPerRow() * mesh.getTileSizeY())),
                         new Vector2f(0, 0));
+
                 entityAPI.setSpriteSheet(chunkManager.getSpriteSheet());
                 entityAPI.setShouldRender(mesh.shouldRender());
                 entityAPI.setUv(mesh.getTextureCoordinates());
                 entityAPI.setRenderSpriteRetroCompatibility(false);
+                toRenderChunkFromScript.add(entityAPI);
                 textureAndPlaceBackEntity(entityAPI, mdl);
             }
         }
     }
 
-    public void proceduralRendering() {
-        for (EntityAPI entity : scriptEntities) {
+    public void proceduralRendering(List<EntityAPI> entitiesToProcess) {
+        for (EntityAPI entity : entitiesToProcess) {
             Model mdl = null;
 
             float[] textureStrategy;
@@ -235,7 +265,11 @@ public class Engine {
                 entity.getScaleZ());
         entity.setLink(formerEntity.getId());
         formerEntity.setShouldRender(entity.shouldRender());
-        toRender.put(formerEntity.getId(), formerEntity);
+        if (configuration.script.chunkRendering) {
+            toRenderChunk.put(formerEntity.getId(), formerEntity);
+        } else {
+            toRender.put(formerEntity.getId(), formerEntity);
+        }
     }
 
     public void procedural3dRendering() {
@@ -267,7 +301,7 @@ public class Engine {
             lastTime = thisTime;
 
             configuration.script.update();
-            createAndUpdateFormerEntity();
+            createAndUpdateFormerEntity(scriptEntities);
             cam.move(delta);
 
             toRender.forEach((key, val) -> RenderManager.processEntity(val));
@@ -277,11 +311,16 @@ public class Engine {
         }
     }
 
-    private void createAndUpdateFormerEntity() {
+    private void createAndUpdateFormerEntity(List<EntityAPI> entitiesToProcess) {
         // @TODO - Reflect 2-ways the changes made Entity <-> EntityAPI
 
-        for (EntityAPI entity : scriptEntities) {
-            Entity former = toRender.get(entity.getLink());
+        for (EntityAPI entity : entitiesToProcess) {
+            Entity former = null;
+            if (configuration.script.chunkRendering) {
+                former = toRenderChunk.get(entity.getLink());
+            } else {
+                former = toRender.get(entity.getLink());
+            }
 
             if (former.getPosition().x != entity.getPosition().x ||
                     former.getPosition().y != entity.getPosition().y ||
@@ -320,6 +359,16 @@ public class Engine {
                 former.setModel(tmdl2);
                 entity.setEditModel(false);
             }
+        }
+    }
+
+    private void updateInnerTextureCoordinates() {
+        chunkMeshes.clear();
+        createMesh(chunkManager, chunkMeshes);
+        if (!findMatchingTextureCoordinates(chunkMeshes.get(0).getTextureCoordinates())) {
+            List<VAOManager> managers = pipe.getManagers();
+            pipe.updateTextureDataInVAO(managers.get(0).getId(), chunkMeshes.get(0).getTextureCoordinates());
+            modelsChunkDemo.clear();
         }
     }
 
@@ -397,6 +446,18 @@ public class Engine {
             }
         }
         return indexModel;
+    }
+
+    private boolean findMatchingTextureCoordinates(float[] textureCoordinates) {
+        boolean found = false;
+        for (Map.Entry<float[], Boolean> entryModel : modelsChunkDemo.entrySet()) {
+            float[] prevTexture = entryModel.getKey();
+            if (Arrays.equals(prevTexture, textureCoordinates)) {
+                found = true;
+                break;
+            }
+        }
+        return found;
     }
 
     public static float currentTimeMillis() {

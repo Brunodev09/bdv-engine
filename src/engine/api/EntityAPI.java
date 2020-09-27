@@ -7,6 +7,9 @@ import engine.texture.SpriteSheet;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class EntityAPI {
     public static int globalId = 0;
     private int id;
@@ -36,6 +39,7 @@ public class EntityAPI {
     private boolean player;
     private boolean shouldRender = false;
     private boolean renderSpriteRetroCompatibility = true;
+    private Map<Object, Object> properties = new HashMap<>();
 
     private float[] uv;
 
@@ -303,5 +307,13 @@ public class EntityAPI {
 
     public void setRenderSpriteRetroCompatibility(boolean renderSpriteRetroCompatibility) {
         this.renderSpriteRetroCompatibility = renderSpriteRetroCompatibility;
+    }
+
+    public Object getProp(Object key) {
+        return this.properties.get(key);
+    }
+
+    public void setProp(Object key, Object property) {
+        this.properties.put(key, property);
     }
 }

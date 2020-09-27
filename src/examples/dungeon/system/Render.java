@@ -14,10 +14,7 @@ import examples.dungeon.tiles.VoidTile;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class Render {
@@ -31,11 +28,13 @@ public class Render {
     private Dimension cameraDimensions;
     private Dimension tileSize;
     private List<List<Tile>> previousValidChunk = new ArrayList<>();
+    private List<List<Tile>> previousChunk = new ArrayList<>();
     private Actor previousPlayerObject;
     private boolean edges;
     private List<EntityAPI> extraLayer = new ArrayList<>();
     private Turn turn;
     private ChunkManagerAPI chunkManagerAPI;
+    private boolean preChunkWorld = false;
 
     public Render(List<EntityAPI> entities, Turn turn, Actor player, Dimension cameraDimensions, Dimension tileSize) {
         this.entities = entities;
@@ -65,9 +64,8 @@ public class Render {
     public void render() {
         try {
             if (chunkManagerAPI != null) {
-                renderChunks();
-            }
-            else renderChunkFromMap(getPlayerChunk(player), player.getCurrentLocation().getMap());
+                renderChunk(getPlayerChunk(player));
+            } else renderChunkFromMap(getPlayerChunk(player), player.getCurrentLocation().getMap());
         } catch (CloneNotSupportedException cloneNotSupportedException) {
             LOG.severe(cloneNotSupportedException.getMessage());
         }
@@ -111,49 +109,104 @@ public class Render {
                 this.entities.add(entityAPI);
 
                 if (map.get(x).get(y).getActor() != null
-                        && !map.get(x).get(y).getActor().getType().equals("light")
-                        && !map.get(x).get(y).getActor().getType().equals("camera")) {
+                        && !map.get(x).get(y).getActor().getType().equals("light")) {
                     Actor object = map.get(x).get(y).getActor();
+
                     EntityAPI entityAPIForObject = new EntityAPI(null,
                             new Vector3f(0, 0, 1),
                             new Dimension(object.getWidth(), object.getHeight()),
                             new Vector2f(0, 0));
 
+                    entityAPIForObject.setProp(object.getType(), true);
+
                     entityAPIForObject.setRenderSpriteRetroCompatibility(false);
                     object.setEntityObject(entityAPIForObject);
                     entityAPI.setRenderSpriteRetroCompatibility(false);
                     entityAPIForObject.setShouldRender(false);
-                    entityAPIForObject.setSpriteSheet(map.get(x).get(y).getActor().getSprite());
+                    if (entityAPIForObject.getProp("camera") != null) {
+                        entityAPIForObject.setSpriteSheet(map.get(x).get(y).getSprite());
+                    } else {
+                        entityAPIForObject.setSpriteSheet(map.get(x).get(y).getActor().getSprite());
+                    }
                     this.entities.add(entityAPIForObject);
                 }
             }
         }
-        if (chunkManagerAPI != null) {
+        if (chunkManagerAPI != null && preChunkWorld) {
             int pace = 0;
+            int step = 400;
+            int tilesPerColumn = 20;
+            int tilesPerColumnDivisor = tilesPerColumn;
+
             boolean done = false;
-            while (!done) {
-                List<EntityAPI> entityPicker = new ArrayList<>();
-                for (int i = pace; i < i + 400; i++) {
-                    if (i < this.entities.size()) {
-                        entityPicker.add(this.entities.get(i));
-                    } else {
-                        done = true;
-                        break;
-                    }
-                    if (entityPicker.size() % 400 == 0) {
-                        pace += 400;
-                        ChunkAPI chunkAPI = ChunkAPI.newInstance(400, entityPicker, new Dimension(tileSize.width, tileSize.height), 20);
-                        chunkAPI.setOpenGlPosition(new Vector3f(-600, -400, 0));
-                        chunkManagerAPI.addChunk(chunkAPI);
-                        entityPicker.clear();
+            Set<Integer> ids = new HashSet<>();
+            while (tilesPerColumnDivisor != map.size()) {
+                while (!done) {
+                    List<EntityAPI> entityPicker = new ArrayList<>();
+                    for (int i = pace; i < i + step; i++) {
+                        if (i < this.entities.size()) {
+                            int col = i / map.size();
+                            int mappedIndex = i - (col * map.size());
+                            if (mappedIndex / tilesPerColumnDivisor <= 0 && !ids.contains(this.entities.get(i).getId())) {
+                                entityPicker.add(this.entities.get(i));
+                                ids.add(this.entities.get(i).getId());
+                            }
+                        } else {
+                            done = true;
+                            break;
+                        }
+                        if (entityPicker.size() % step == 0 && !entityPicker.isEmpty()) {
+                            pace += step;
+                            ChunkAPI chunkAPI = ChunkAPI.newInstance(step, entityPicker, new Dimension(tileSize.width, tileSize.height), tilesPerColumn);
+                            chunkAPI.setOpenGlPosition(new Vector3f(-600, -400, 0));
+                            chunkManagerAPI.addChunk(chunkAPI);
+                            entityPicker.clear();
+                        }
                     }
                 }
+                tilesPerColumnDivisor += tilesPerColumn;
+                done = false;
             }
         }
     }
 
+    public void renderChunk(List<List<Tile>> chunkToRender) {
+        int validChunkNumber = cameraDimensions.width - 1;
+        if (chunkToRender.size() != validChunkNumber) return;
+        List<EntityAPI> entitiesToRender = new ArrayList<>();
+        chunkManagerAPI.getChunks().clear();
+        for (List<Tile> tiles : chunkToRender) {
+            for (Tile tile : tiles) {
+                if (tile.getActor() == null) entitiesToRender.add(tile.getEntityObject());
+                if (tile.getActor() != null) {
+                    tile.getActor().getEntityObject().setShouldRender(true);
+                    entitiesToRender.add(tile.getActor().getEntityObject());
+                }
+            }
+        }
+        ChunkAPI chunkAPI = ChunkAPI.newInstance(entitiesToRender.size(), entitiesToRender,
+                new Dimension(tileSize.width, tileSize.height), chunkToRender.size());
+        chunkAPI.setOpenGlPosition(new Vector3f(-700, -450, 0));
+        chunkAPI.setShouldRender(true);
+        chunkManagerAPI.addChunk(chunkAPI);
+    }
+
     public void renderChunks() {
-        chunkManagerAPI.getChunks().get(0).setShouldRender(true);
+        List<ChunkAPI> chunkToRender = new ArrayList<>();
+        boolean playerFound = false;
+        for (ChunkAPI chunk : chunkManagerAPI.getChunks()) {
+            if (playerFound) break;
+            for (EntityAPI entityAPI : chunk.getChunk()) {
+                if (entityAPI.getProp("player") != null || entityAPI.getProp("camera") != null) {
+                    chunkToRender.add(chunk);
+                    playerFound = true;
+                    break;
+                }
+            }
+        }
+        if (!chunkToRender.isEmpty()) {
+            chunkToRender.get(0).setShouldRender(true);
+        }
     }
 
     public void renderChunkFromMap(List<List<Tile>> chunkToRender, List<List<Tile>> map) {
@@ -202,31 +255,32 @@ public class Render {
             if (chunk.isEmpty()) continue;
             tilesToRender.add(chunk);
         }
-        // Adding possibly missing tiles
-        for (List<Tile> tiles : tilesToRender) {
-            if (tiles.size() < validChunkNumber) {
-                int numTiles = validChunkNumber - tiles.size();
-                for (int i = 0; i < numTiles; i++) {
-                    for (int j = 0; j < validChunkNumber; j++) {
-                        Tile voidTile = new VoidTile();
-                        tiles.add(voidTile);
+        if (this.chunkManagerAPI == null) {
+            // Adding possibly missing tiles
+            for (List<Tile> tiles : tilesToRender) {
+                if (tiles.size() < validChunkNumber) {
+                    int numTiles = validChunkNumber - tiles.size();
+                    for (int i = 0; i < numTiles; i++) {
+                        for (int j = 0; j < validChunkNumber; j++) {
+                            Tile voidTile = new VoidTile();
+                            tiles.add(voidTile);
+                        }
                     }
                 }
             }
-        }
-        // Adding possibly missing layers of tiles
-        if (tilesToRender.size() < validChunkNumber) {
-            int numLayers = validChunkNumber - tilesToRender.size();
-            for (int i = 0; i < numLayers; i++) {
-                List<Tile> newChunk = new ArrayList<>();
-                for (int j = 0; j < validChunkNumber; j++) {
-                    Tile voidTile = new VoidTile();
-                    newChunk.add(voidTile);
+            // Adding possibly missing layers of tiles
+            if (tilesToRender.size() < validChunkNumber) {
+                int numLayers = validChunkNumber - tilesToRender.size();
+                for (int i = 0; i < numLayers; i++) {
+                    List<Tile> newChunk = new ArrayList<>();
+                    for (int j = 0; j < validChunkNumber; j++) {
+                        Tile voidTile = new VoidTile();
+                        newChunk.add(voidTile);
+                    }
+                    tilesToRender.add(newChunk);
                 }
-                tilesToRender.add(newChunk);
             }
         }
-
         // Hiding all tiles
         for (List<Tile> tiles : tilesToRender) {
             for (Tile tile : tiles) {
@@ -248,28 +302,6 @@ public class Render {
             }
             return tilesToRender;
         }
-
-//        if (tilesToRender.size() == validChunkNumber) {
-//            previousPlayerObject = (Player) player.clone();
-//            if (!previousValidChunk.isEmpty()) {
-//                previousValidChunk.clear();
-//            }
-//            for (int index = 0; index < tilesToRender.size(); index++) {
-//                List<Tile> tiles = tilesToRender.get(index);
-//                List<Tile> cpList = new ArrayList<>();
-//                for (Tile tile : tiles) {
-//                    cpList.add((Tile) tile.clone());
-//                }
-//                previousValidChunk.add(new ArrayList<>(cpList));
-//            }
-//        } else if (validChunkNumber >= location.getMapWidth() / 2) {
-//            return tilesToRender;
-//        } else return renderEdges(player);
-//
-//        if (edges) {
-//            edges = false;
-//            return previousValidChunk;
-//        }
     }
 
     public Map<String, Integer> checkForDuplicateTile(List<List<Tile>> chunk) {

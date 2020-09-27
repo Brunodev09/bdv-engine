@@ -23,6 +23,8 @@ public class Pipeline {
 
     private List<Integer> TEXTURES = new ArrayList<>();
 
+    private List<VAOManager> managers = new ArrayList<>();
+
     public Model loadDataToVAO(float[] positions, int[] indexes) {
         int VID = _createVAO();
         _bindIndexBufferVBO(indexes);
@@ -34,12 +36,28 @@ public class Pipeline {
 
     public Model loadDataToVAO(float[] positions, float[] textureCoords, int[] indexes) {
         int VID = _createVAO();
+        VAOManager vaoManager = new VAOManager(VID);
+        managers.add(vaoManager);
         _bindIndexBufferVBO(indexes);
         _storeVBODataInVAOList(0, 3, positions);
         _storeVBODataInVAOList(1, 2, textureCoords);
         _unbindVAO();
 
         return new Model(VID, indexes.length);
+    }
+
+    public void updateTextureDataInVAO(int managerID, float[] textureCoords) {
+        VAOManager vaoManager = null;
+        for (VAOManager findManager : managers) {
+            if (findManager.getId() == managerID) {
+                vaoManager = findManager;
+                break;
+            }
+        }
+        if (vaoManager == null) return;
+        _usePreviouslyCreatedVAO(vaoManager.getVid());
+        _updateDataInExistingVBO(vaoManager.getVboPointers().get(1), 1, 2, textureCoords);
+        _unbindVAO();
     }
 
     public Model loadDataToVAO(float[] positions, float[] textureCoords, float[] normals, int[] indexes) {
@@ -85,38 +103,6 @@ public class Pipeline {
         return id;
     }
 
-
-    public int loadTextureOnLWJGL3(String name) {
-//        int textureID;
-//        int width, height;
-//        ByteBuffer image;
-//
-//        try (MemoryStack stack = MemoryStack.stackPush()) {
-//            IntBuffer w = stack.mallocInt(1);
-//            IntBuffer h = stack.mallocInt(1);
-//            IntBuffer comp = stack.mallocInt(1);
-//
-//            image = stbi_load("examples.res/"+ name +".png", w, h, comp, 4);
-//            if (image == null) {
-//                System.out.println("Failed to load texture file: "+path+"\n" +
-//                        stbi_failure_reason()
-//                );
-//            }
-//            width = w.get();
-//            height = h.get();
-//        }
-//
-//        textureID = glGenTextures();
-//        glBindTexture(GL_TEXTURE_2D, textureID);
-//        TEXTURES.add(textureID);
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); //sets MINIFICATION filtering to nearest
-//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); //sets MAGNIFICATION filtering to nearest
-//        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-//
-//        return textureID;
-        return 0;
-    }
-
     public void runCollector() {
         for (int VAO : VAOs) {
             GL30.glDeleteVertexArrays(VAO);
@@ -148,6 +134,8 @@ public class Pipeline {
     private void _storeVBODataInVAOList(int attrNum, int coordSize, float[] data) {
         int vboId = GL15.glGenBuffers();
 
+        managers.get(managers.size() - 1).addVbo(vboId);
+
         VBOs.add(vboId);
 
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
@@ -163,5 +151,21 @@ public class Pipeline {
         GL30.glBindVertexArray(0);
     }
 
+    private void _updateDataInExistingVBO(int vboID, int attrNum, int coordSize, float[] data) {
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboID);
+        FloatBuffer buffer = BufferOperations.convertFloatToFloatBuffer(data);
+        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+        // coordSize = 3 for 3-D vectors
+        GL20.glVertexAttribPointer(attrNum, coordSize, GL11.GL_FLOAT, false, 0, 0);
+        // unbinding VBO
+        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+    }
 
+    private void _usePreviouslyCreatedVAO(int vaoID) {
+        GL30.glBindVertexArray(vaoID);
+    }
+
+    public List<VAOManager> getManagers() {
+        return managers;
+    }
 }
