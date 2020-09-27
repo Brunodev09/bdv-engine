@@ -14,12 +14,18 @@ public class ChunkAPI {
     private final Dimension tileSize;
     private final int tilesPerRow;
     private boolean shouldRender = false;
+    private float[] rgbTileEffects;
+
+    public static int globalId = 0;
+    private int id;
 
     private ChunkAPI(int chunkSize, List<EntityAPI> chunk, Dimension tileSize, int tilesPerRow) {
         this.chunkSize = chunkSize;
         this.chunk = chunk;
         this.tileSize = tileSize;
         this.tilesPerRow = tilesPerRow;
+        globalId++;
+        this.id = globalId;
     }
 
     public static ChunkAPI newInstance(int chunkSize, List<EntityAPI> chunk, Dimension tileSize, int tilesPerColumn) {
@@ -61,5 +67,17 @@ public class ChunkAPI {
 
     public int getTilesPerRow() {
         return tilesPerRow;
+    }
+
+    public float[] getRgbTileEffects() {
+        return rgbTileEffects;
+    }
+
+    public void setRgbTileEffects(float[] rgbTileEffects) {
+        this.rgbTileEffects = rgbTileEffects;
+    }
+
+    public int getId() {
+        return id;
     }
 }

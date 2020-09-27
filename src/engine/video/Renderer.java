@@ -134,6 +134,9 @@ public class Renderer {
             _geoShader.loadToggleGlow(tmdl.getModelTexture().isToggleGlow());
             _geoShader.loadGlowColor(tmdl.getModelTexture().getGlowColor());
         }
+        if (tmdl.getModelTexture().getRgbTilesetEffects() != null) {
+            _geoShader.loadTileColors(tmdl.getModelTexture().getRgbTilesetEffects());
+        }
 
         _geoShader.loadIsPlayer(tmdl.getModelTexture().isPlayer());
 

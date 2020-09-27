@@ -1,15 +1,14 @@
 package engine.core.interfaces;
 
 import engine.math.BufferOperations;
-import examples.GL_ASTAR;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL20C;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.*;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,6 +66,16 @@ public abstract class Shader {
         m4x4.store(_floatBuffer);
         _floatBuffer.flip();
         GL20.glUniformMatrix4fv(location, false, _floatBuffer);
+    }
+
+    protected void loadIntArrayIntoUniformVariable(int location, int[] data) {
+        IntBuffer buffer = BufferOperations.convertIntToIntBuffer(data);
+        GL20.glUniform1iv(location, buffer);
+    }
+
+    protected void loadFloatArrayIntoUniformVariable(int location, float[] data) {
+        FloatBuffer buffer = BufferOperations.convertFloatToFloatBuffer(data);
+        GL20.glUniform1fv(location, buffer);
     }
 
     public void runCollector() {

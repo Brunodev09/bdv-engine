@@ -24,6 +24,7 @@ public class RectangleShader extends Shader {
     private int _variableLocation9;
     private int _variableLocation10;
     private int _variableLocation11;
+    private int _variableLocation12;
 
     public RectangleShader() {
         super(readVertexData(), readFragmentData());
@@ -50,6 +51,7 @@ public class RectangleShader extends Shader {
         _variableLocation9 = super.getUniformVariable("tick");
         _variableLocation10 = super.getUniformVariable("debugShader");
         _variableLocation11 = super.getUniformVariable("isPlayer");
+        _variableLocation12 = super.getUniformVariable("colorTileset");
     }
 
     @Override
@@ -106,5 +108,9 @@ public class RectangleShader extends Shader {
     
     public void loadIsPlayer(boolean player) {
         super.loadBinaryInUniformVariable(_variableLocation11, player);
+    }
+
+    public void loadTileColors(float[] positionsAndColors) {
+        super.loadFloatArrayIntoUniformVariable(_variableLocation12, positionsAndColors);
     }
 }

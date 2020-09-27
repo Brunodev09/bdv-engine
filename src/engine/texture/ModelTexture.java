@@ -13,6 +13,7 @@ public class ModelTexture {
     private boolean ambientLightToggle = false;
     private Vector3f glowColor;
     private boolean player;
+    private float[] rgbTilesetEffects;
 
     public ModelTexture(int id) {
         this._textureId = id;
@@ -84,6 +85,14 @@ public class ModelTexture {
 
     public void setPlayer(boolean player) {
         this.player = player;
+    }
+
+    public float[] getRgbTilesetEffects() {
+        return rgbTilesetEffects;
+    }
+
+    public void setRgbTilesetEffects(float[] rgbTilesetEffects) {
+        this.rgbTilesetEffects = rgbTilesetEffects;
     }
 }
 

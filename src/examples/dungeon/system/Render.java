@@ -175,8 +175,26 @@ public class Render {
         if (chunkToRender.size() != validChunkNumber) return;
         List<EntityAPI> entitiesToRender = new ArrayList<>();
         chunkManagerAPI.getChunks().clear();
+        int latestEffectIndex = 0;
+        float[] effects = new float[cameraDimensions.width * cameraDimensions.height * 6];
+
         for (List<Tile> tiles : chunkToRender) {
             for (Tile tile : tiles) {
+                if (tile.isHidden() || tile.isSelected()) {
+                    Vector3f color = null;
+
+                    if (tile.isHidden()) color = new Vector3f(0.2f, 0.2f, 0.2f);
+                    else if (tile.isSelected()) color = new Vector3f(1.0f, 1.0f, 0);
+
+                    effects[latestEffectIndex] = tile.getPositionX();
+                    effects[latestEffectIndex + 1] = tile.getPositionY();
+                    effects[latestEffectIndex + 2] = 0;
+                    effects[latestEffectIndex + 3] = color.x;
+                    effects[latestEffectIndex + 4] = color.y;
+                    effects[latestEffectIndex + 5] = color.z;
+                    latestEffectIndex += 6;
+
+                }
                 if (tile.getActor() == null) entitiesToRender.add(tile.getEntityObject());
                 if (tile.getActor() != null) {
                     tile.getActor().getEntityObject().setShouldRender(true);
@@ -188,6 +206,7 @@ public class Render {
                 new Dimension(tileSize.width, tileSize.height), chunkToRender.size());
         chunkAPI.setOpenGlPosition(new Vector3f(-700, -450, 0));
         chunkAPI.setShouldRender(true);
+        chunkAPI.setRgbTileEffects(effects);
         chunkManagerAPI.addChunk(chunkAPI);
     }
 

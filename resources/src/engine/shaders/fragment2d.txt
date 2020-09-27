@@ -18,6 +18,8 @@ uniform vec3 glowColor;
 
 uniform bool debugShader;
 
+uniform float colorTileset[24 * 24 * 6];
+
 vec4 applyAmbientLighting(vec4 uv, vec4 pixelColor) {
     vec4 outputFragment;
     vec2 lightPos = vec2(0.4, 0.3);
@@ -82,6 +84,8 @@ void main(void) {
                 outputColor += applyAmbientLighting(vertexPosition, pixelColor);
             }
         }
+
+
 
         out_Color = outputColor;
 }

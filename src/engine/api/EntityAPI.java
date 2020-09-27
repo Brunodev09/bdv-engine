@@ -40,6 +40,8 @@ public class EntityAPI {
     private boolean shouldRender = false;
     private boolean renderSpriteRetroCompatibility = true;
     private Map<Object, Object> properties = new HashMap<>();
+    private float[] rgbTilesetEffects;
+    private int associatedChunk = 0;
 
     private float[] uv;
 
@@ -315,5 +317,21 @@ public class EntityAPI {
 
     public void setProp(Object key, Object property) {
         this.properties.put(key, property);
+    }
+
+    public float[] getRgbTilesetEffects() {
+        return rgbTilesetEffects;
+    }
+
+    public void setRgbTilesetEffects(float[] rgbTilesetEffects) {
+        this.rgbTilesetEffects = rgbTilesetEffects;
+    }
+
+    public int getAssociatedChunk() {
+        return associatedChunk;
+    }
+
+    public void setAssociatedChunk(int associatedChunk) {
+        this.associatedChunk = associatedChunk;
     }
 }

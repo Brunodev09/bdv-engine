@@ -49,6 +49,7 @@ public class Engine {
     Map<String, Model> models = new HashMap<>();
     Map<float[], Model> modelsDemo = new HashMap<>();
     Map<float[], Boolean> modelsChunkDemo = new HashMap<>();
+    Map<Integer, Model> chunkIdToModel = new HashMap<>();
     Model rectangleModel;
     List<ChunkMesh> chunkMeshes = new ArrayList<>();
     ChunkManagerAPI chunkManager = null;
@@ -167,6 +168,7 @@ public class Engine {
 
                 modelsDemo.put(mesh.getTextureCoordinates(), mdl);
                 modelsChunkDemo.put(mesh.getTextureCoordinates(), true);
+                chunkIdToModel.put(chunkManager.getChunks().get(0).getId(), mdl);
 
                 EntityAPI entityAPI = new EntityAPI(null,
                         new Vector3f(mesh.getxPos(), mesh.getyPos(), 0),
@@ -178,13 +180,15 @@ public class Engine {
                 entityAPI.setShouldRender(mesh.shouldRender());
                 entityAPI.setUv(mesh.getTextureCoordinates());
                 entityAPI.setRenderSpriteRetroCompatibility(false);
+                entityAPI.setRgbTilesetEffects(chunkManager.getChunks().get(0).getRgbTileEffects());
+                entityAPI.setAssociatedChunk(chunkManager.getChunks().get(0).getId());
                 toRenderChunkFromScript.add(entityAPI);
                 textureAndPlaceBackEntity(entityAPI, mdl);
             }
         }
     }
 
-    public void proceduralRendering(List<EntityAPI> entitiesToProcess) {
+    private void proceduralRendering(List<EntityAPI> entitiesToProcess) {
         for (EntityAPI entity : entitiesToProcess) {
             Model mdl = null;
 
@@ -272,7 +276,7 @@ public class Engine {
         }
     }
 
-    public void procedural3dRendering() {
+    private void procedural3dRendering() {
         Camera cam = configuration.script.camera;
         Lightsource light = new Lightsource(new Vector3f(300, 300, -30), new Vector3f(1, 1, 1));
 
@@ -336,6 +340,13 @@ public class Engine {
                 former.setRotX(entity.getRotationX());
                 former.setRotY(entity.getRotationY());
                 former.setRotZ(entity.getRotationZ());
+            }
+            if (entity.getRgbTilesetEffects() != null) {
+                int textureId = getTextureId(entity);
+                ModelTexture texture2D = new ModelTexture(textureId);
+                texture2D.setRgbTilesetEffects(entity.getRgbTilesetEffects());
+                TexturedModel tmdl2 = new TexturedModel(chunkIdToModel.get(entity.getAssociatedChunk()), texture2D);
+                former.setModel(tmdl2);
             }
             if (entity.getEditModel()) {
                 int textureId = getTextureId(entity);
