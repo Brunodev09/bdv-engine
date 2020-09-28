@@ -1,5 +1,6 @@
 package engine.texture;
 
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class ModelTexture {
@@ -14,6 +15,8 @@ public class ModelTexture {
     private Vector3f glowColor;
     private boolean player;
     private float[] rgbTilesetEffects;
+    private Vector2f chunkTileSize;
+    private boolean chunkRendering = false;
 
     public ModelTexture(int id) {
         this._textureId = id;
@@ -93,6 +96,22 @@ public class ModelTexture {
 
     public void setRgbTilesetEffects(float[] rgbTilesetEffects) {
         this.rgbTilesetEffects = rgbTilesetEffects;
+    }
+
+    public Vector2f getChunkTileSize() {
+        return chunkTileSize;
+    }
+
+    public boolean isChunkRendering() {
+        return chunkRendering;
+    }
+
+    public void setChunkRendering(boolean chunkRendering) {
+        this.chunkRendering = chunkRendering;
+    }
+
+    public void setChunkTileSize(Vector2f chunkTileSize) {
+        this.chunkTileSize = chunkTileSize;
     }
 }
 

@@ -176,23 +176,41 @@ public class Render {
         List<EntityAPI> entitiesToRender = new ArrayList<>();
         chunkManagerAPI.getChunks().clear();
         int latestEffectIndex = 0;
-        float[] effects = new float[cameraDimensions.width * cameraDimensions.height * 6];
+        float[] effects = new float[cameraDimensions.width * cameraDimensions.height * 5];
+
+        int xIt = 0;
+        for (int i = -cameraDimensions.width / 2; i < cameraDimensions.width / 2; i++) {
+            int yIt = 0;
+            for (int j = -cameraDimensions.height / 2; j < cameraDimensions.height / 2; j++) {
+                if (xIt >= chunkToRender.size() || yIt >= chunkToRender.get(xIt).size()) continue;
+                Map<Object, Object> props = new HashMap<>();
+                props.put("xNormalized", (float) i);
+                props.put("yNormalized", (float) j);
+                chunkToRender.get(xIt).get(yIt).setScriptProperties(props);
+                yIt++;
+            }
+            xIt++;
+        }
 
         for (List<Tile> tiles : chunkToRender) {
             for (Tile tile : tiles) {
+
                 if (tile.isHidden() || tile.isSelected()) {
                     Vector3f color = null;
 
-                    if (tile.isHidden()) color = new Vector3f(0.2f, 0.2f, 0.2f);
-                    else if (tile.isSelected()) color = new Vector3f(1.0f, 1.0f, 0);
+                    if (tile.isHidden()) {
+                        color = new Vector3f(0.2f, 0.2f, 0.2f);
+                    }
+                    else if (tile.isSelected()) {
+                        color = new Vector3f(1.0f, 1.0f, 0);
+                    }
 
-                    effects[latestEffectIndex] = tile.getPositionX();
-                    effects[latestEffectIndex + 1] = tile.getPositionY();
-                    effects[latestEffectIndex + 2] = 0;
-                    effects[latestEffectIndex + 3] = color.x;
-                    effects[latestEffectIndex + 4] = color.y;
-                    effects[latestEffectIndex + 5] = color.z;
-                    latestEffectIndex += 6;
+                    effects[latestEffectIndex] = (float) tile.getScriptProperties().get("xNormalized");
+                    effects[latestEffectIndex + 1] = (float) tile.getScriptProperties().get("yNormalized");
+                    effects[latestEffectIndex + 2] = color.x;
+                    effects[latestEffectIndex + 3] = color.y;
+                    effects[latestEffectIndex + 4] = color.z;
+                    latestEffectIndex += 5;
 
                 }
                 if (tile.getActor() == null) entitiesToRender.add(tile.getEntityObject());
@@ -207,6 +225,7 @@ public class Render {
         chunkAPI.setOpenGlPosition(new Vector3f(-700, -450, 0));
         chunkAPI.setShouldRender(true);
         chunkAPI.setRgbTileEffects(effects);
+        chunkAPI.setCameraDimensions(cameraDimensions);
         chunkManagerAPI.addChunk(chunkAPI);
     }
 

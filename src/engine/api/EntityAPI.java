@@ -42,6 +42,7 @@ public class EntityAPI {
     private Map<Object, Object> properties = new HashMap<>();
     private float[] rgbTilesetEffects;
     private int associatedChunk = 0;
+    private Vector2f chunkTileSize;
 
     private float[] uv;
 
@@ -331,7 +332,12 @@ public class EntityAPI {
         return associatedChunk;
     }
 
-    public void setAssociatedChunk(int associatedChunk) {
+    public void setAssociatedChunk(int associatedChunk, Vector2f chunkTileSize) {
         this.associatedChunk = associatedChunk;
+        this.chunkTileSize = chunkTileSize;
+    }
+
+    public Vector2f getChunkTileSize() {
+        return chunkTileSize;
     }
 }

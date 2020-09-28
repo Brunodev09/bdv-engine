@@ -137,6 +137,12 @@ public class Renderer {
         if (tmdl.getModelTexture().getRgbTilesetEffects() != null) {
             _geoShader.loadTileColors(tmdl.getModelTexture().getRgbTilesetEffects());
         }
+        if (tmdl.getModelTexture().isChunkRendering()) {
+            _geoShader.loadIsChunkRendering(tmdl.getModelTexture().isChunkRendering());
+        }
+        if (tmdl.getModelTexture().getChunkTileSize() != null) {
+            _geoShader.loadChunkTileSize(tmdl.getModelTexture().getChunkTileSize());
+        }
 
         _geoShader.loadIsPlayer(tmdl.getModelTexture().isPlayer());
 

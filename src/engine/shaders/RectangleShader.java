@@ -5,6 +5,7 @@ import engine.entities.Camera;
 import engine.entities.Camera2D;
 import engine.math.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.InputStream;
@@ -25,6 +26,8 @@ public class RectangleShader extends Shader {
     private int _variableLocation10;
     private int _variableLocation11;
     private int _variableLocation12;
+    private int _variableLocation13;
+    private int _variableLocation14;
 
     public RectangleShader() {
         super(readVertexData(), readFragmentData());
@@ -52,6 +55,8 @@ public class RectangleShader extends Shader {
         _variableLocation10 = super.getUniformVariable("debugShader");
         _variableLocation11 = super.getUniformVariable("isPlayer");
         _variableLocation12 = super.getUniformVariable("colorTileset");
+        _variableLocation13 = super.getUniformVariable("chunkRendering");
+        _variableLocation14 = super.getUniformVariable("tileSize");
     }
 
     @Override
@@ -112,5 +117,13 @@ public class RectangleShader extends Shader {
 
     public void loadTileColors(float[] positionsAndColors) {
         super.loadFloatArrayIntoUniformVariable(_variableLocation12, positionsAndColors);
+    }
+
+    public void loadChunkTileSize(Vector2f chunkTileSize) {
+        super.loadVector2fInUniformVariable(_variableLocation14, chunkTileSize);
+    }
+
+    public void loadIsChunkRendering(boolean rendering) {
+        super.loadBinaryInUniformVariable(_variableLocation13, rendering);
     }
 }

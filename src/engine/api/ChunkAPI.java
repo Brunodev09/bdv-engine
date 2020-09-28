@@ -15,6 +15,7 @@ public class ChunkAPI {
     private final int tilesPerRow;
     private boolean shouldRender = false;
     private float[] rgbTileEffects;
+    private Dimension cameraDimensions;
 
     public static int globalId = 0;
     private int id;
@@ -79,5 +80,13 @@ public class ChunkAPI {
 
     public int getId() {
         return id;
+    }
+
+    public Dimension getCameraDimensions() {
+        return cameraDimensions;
+    }
+
+    public void setCameraDimensions(Dimension cameraDimensions) {
+        this.cameraDimensions = cameraDimensions;
     }
 }

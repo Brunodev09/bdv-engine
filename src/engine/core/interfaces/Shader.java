@@ -4,6 +4,7 @@ import engine.math.BufferOperations;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.io.*;
@@ -55,6 +56,10 @@ public abstract class Shader {
 
     protected void loadVectorInUniformVariable(int location, Vector3f vec3) {
         GL20.glUniform3f(location, vec3.x, vec3.y, vec3.z);
+    }
+
+    protected void loadVector2fInUniformVariable(int location, Vector2f vec2) {
+        GL20.glUniform2f(location, vec2.x, vec2.y);
     }
 
     protected void loadBinaryInUniformVariable(int location, boolean value) {

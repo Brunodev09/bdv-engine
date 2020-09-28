@@ -18,7 +18,13 @@ uniform vec3 glowColor;
 
 uniform bool debugShader;
 
-uniform float colorTileset[24 * 24 * 6];
+// Applying effects on chunked-tilest-based rendering
+// 24 * 24 * 5
+int sizeOfUniform = 3456;
+uniform float colorTileset[3456];
+uniform vec2 tileSize;
+uniform int numberOfTilesOnScreen;
+uniform bool chunkRendering;
 
 vec4 applyAmbientLighting(vec4 uv, vec4 pixelColor) {
     vec4 outputFragment;
@@ -85,7 +91,9 @@ void main(void) {
             }
         }
 
+        if (chunkRendering) {
 
+        }
 
         out_Color = outputColor;
 }

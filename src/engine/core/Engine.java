@@ -76,8 +76,7 @@ public class Engine {
             if (config.script.chunkRendering) {
                 chunkManager = configuration.script.chunkManager;
                 chunkBasedRendering();
-            }
-            else proceduralRendering(scriptEntities);
+            } else proceduralRendering(scriptEntities);
 
             while (!RenderManager.shouldExit()) {
 
@@ -181,7 +180,9 @@ public class Engine {
                 entityAPI.setUv(mesh.getTextureCoordinates());
                 entityAPI.setRenderSpriteRetroCompatibility(false);
                 entityAPI.setRgbTilesetEffects(chunkManager.getChunks().get(0).getRgbTileEffects());
-                entityAPI.setAssociatedChunk(chunkManager.getChunks().get(0).getId());
+                entityAPI.setAssociatedChunk(chunkManager.getChunks().get(0).getId(),
+                        new Vector2f(1f / 12f,
+                                1f / 12f));
                 toRenderChunkFromScript.add(entityAPI);
                 textureAndPlaceBackEntity(entityAPI, mdl);
             }
@@ -257,6 +258,13 @@ public class Engine {
         }
         if (entity.isPlayer()) {
             texture2D.setPlayer(true);
+        }
+        if (entity.getAssociatedChunk() != 0) {
+            texture2D.setChunkRendering(true);
+            texture2D.setChunkTileSize(entity.getChunkTileSize());
+        }
+        if (entity.getRgbTilesetEffects() != null) {
+            texture2D.setRgbTilesetEffects(entity.getRgbTilesetEffects());
         }
         TexturedModel tmdl2 = new TexturedModel(mdl, texture2D);
         Entity formerEntity = new Entity(tmdl2,
@@ -345,6 +353,8 @@ public class Engine {
                 int textureId = getTextureId(entity);
                 ModelTexture texture2D = new ModelTexture(textureId);
                 texture2D.setRgbTilesetEffects(entity.getRgbTilesetEffects());
+                texture2D.setChunkRendering(true);
+                texture2D.setChunkTileSize(entity.getChunkTileSize());
                 TexturedModel tmdl2 = new TexturedModel(chunkIdToModel.get(entity.getAssociatedChunk()), texture2D);
                 former.setModel(tmdl2);
             }
