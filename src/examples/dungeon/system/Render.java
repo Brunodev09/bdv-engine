@@ -185,7 +185,7 @@ public class Render {
                 if (xIt >= chunkToRender.size() || yIt >= chunkToRender.get(xIt).size()) continue;
                 Map<Object, Object> props = new HashMap<>();
                 props.put("xNormalized", (float) i);
-                props.put("yNormalized", (float) j);
+                props.put("yNormalized", (float) -j);
                 chunkToRender.get(xIt).get(yIt).setScriptProperties(props);
                 yIt++;
             }

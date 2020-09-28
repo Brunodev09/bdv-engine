@@ -181,8 +181,8 @@ public class Engine {
                 entityAPI.setRenderSpriteRetroCompatibility(false);
                 entityAPI.setRgbTilesetEffects(chunkManager.getChunks().get(0).getRgbTileEffects());
                 entityAPI.setAssociatedChunk(chunkManager.getChunks().get(0).getId(),
-                        new Vector2f(1f / 12f,
-                                1f / 12f));
+                        new Vector2f(1 / ((chunkManager.getChunks().get(0).getCameraDimensions().width / 2.0f)-2f),
+                                1 / ((chunkManager.getChunks().get(0).getCameraDimensions().height / 2.0f)-2f)));
                 toRenderChunkFromScript.add(entityAPI);
                 textureAndPlaceBackEntity(entityAPI, mdl);
             }
@@ -350,6 +350,7 @@ public class Engine {
                 former.setRotZ(entity.getRotationZ());
             }
             if (entity.getRgbTilesetEffects() != null) {
+                entity.setRgbTilesetEffects(chunkManager.getChunks().get(0).getRgbTileEffects());
                 int textureId = getTextureId(entity);
                 ModelTexture texture2D = new ModelTexture(textureId);
                 texture2D.setRgbTilesetEffects(entity.getRgbTilesetEffects());

@@ -92,7 +92,84 @@ void main(void) {
         }
 
         if (chunkRendering) {
+            for (int i = 0; i < 2745; i+=5) {
+                    float xOnNormalizedScreen = colorTileset[i];
+                    float yOnNormalizedScreen = colorTileset[i + 1];
 
+                    if (xOnNormalizedScreen == 0 || xOnNormalizedScreen == 0) continue;
+
+                    vec3 effectToApply = vec3(colorTileset[i + 2], colorTileset[i + 3], colorTileset[i + 4]);
+
+                    vec2 p1 = vec2(xOnNormalizedScreen * tileSize.x, yOnNormalizedScreen * tileSize.y);
+                    vec2 p2 = vec2(0, 0);
+                    vec2 p3 = vec2(0, 0);
+                    vec2 p4 = vec2(0, 0);
+
+                    if (p1.x > 0 && p1.y > 0) {
+                        p2.x = p1.x - tileSize.x;
+                        p2.y = p1.y;
+
+                        p3.x = p1.x - tileSize.x;
+                        p3.y = p1.y - tileSize.y;
+
+                        p4.x = p1.x;
+                        p4.y = p1.y - tileSize.y;
+
+                        if (vertexPosition.x > p2.x && vertexPosition.x < p1.x) {
+                            if (vertexPosition.y < p2.y && vertexPosition.y > p3.y) {
+                                outputColor = vec4(effectToApply, 1.0) * outputColor;
+                            }
+                        }
+                    }
+                    else if (p1.x < 0 && p1.y > 0) {
+                        p2.x = p1.x + tileSize.x;
+                        p2.y = p1.y;
+
+                        p3.x = p1.x + tileSize.x;
+                        p3.y = p1.y - tileSize.y;
+
+                        p4.x = p1.x;
+                        p4.y = p1.y - tileSize.y;
+
+                        if (vertexPosition.x > p1.x && vertexPosition.x < p2.x) {
+                            if (vertexPosition.y > p3.y && vertexPosition.y < p2.y) {
+                                outputColor = vec4(effectToApply, 1.0) * outputColor;
+                            }
+                        }
+                    }
+                    else if (p1.x < 0 && p1.y < 0) {
+                        p2.x = p1.x + tileSize.x;
+                        p2.y = p1.y;
+
+                        p3.x = p1.x + tileSize.x;
+                        p3.y = p1.y + tileSize.y;
+
+                        p4.x = p1.x;
+                        p4.y = p1.y + tileSize.y;
+
+                        if (vertexPosition.x > p1.x && vertexPosition.x < p2.x) {
+                            if (vertexPosition.y > p1.y && vertexPosition.y < p3.y) {
+                                outputColor = vec4(effectToApply, 1.0) * outputColor;
+                            }
+                        }
+                    }
+                    else if (p1.x > 0 && p1.y < 0) {
+                        p2.x = p1.x - tileSize.x;
+                        p2.y = p1.y;
+
+                        p3.x = p1.x - tileSize.x;
+                        p3.y = p1.y + tileSize.y;
+
+                        p4.x = p1.x;
+                        p4.y = p1.y + tileSize.y;
+
+                        if (vertexPosition.x > p3.x && vertexPosition.x < p4.x) {
+                            if (vertexPosition.y > p2.y && vertexPosition.y < p4.y) {
+                                outputColor = vec4(effectToApply, 1.0) * outputColor;
+                            }
+                        }
+                    }
+                }
         }
 
         out_Color = outputColor;
