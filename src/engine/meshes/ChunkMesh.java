@@ -3,6 +3,7 @@ package engine.meshes;
 import engine.texture.SpriteSheet;
 
 import java.awt.*;
+import java.util.List;
 
 public class ChunkMesh {
     private final float tileSizeX;
@@ -21,8 +22,10 @@ public class ChunkMesh {
     private float yPos;
 
     private boolean shouldRender = false;
+    private List<List<float[]>> effects;
+    private float[] colorPointer;
 
-    public ChunkMesh(float tileSizeX, float tileSizeY, int tilesPerRow, int numberOfTiles, float xPos, float yPos, SpriteSheet[] sprites, boolean shouldRender) {
+    public ChunkMesh(float tileSizeX, float tileSizeY, int tilesPerRow, int numberOfTiles, float xPos, float yPos, SpriteSheet[] sprites, boolean shouldRender, List<List<float[]>> effects) {
         this.tileSizeX = tileSizeX;
         this.tileSizeY = tileSizeY;
         this.tilesPerRow = tilesPerRow;
@@ -31,6 +34,7 @@ public class ChunkMesh {
         this.numberOfTiles = numberOfTiles;
         this.spriteSheets = sprites;
         this.shouldRender = shouldRender;
+        this.effects = effects;
         this.generate();
     }
 
@@ -38,11 +42,11 @@ public class ChunkMesh {
         mesh = new float[numberOfTiles * numberOfCoordinatesPerPoint * numberOfPointsPerSquare];
         indexes = new int[numberOfTiles * 6];
         textureCoordinates = new float[numberOfTiles * 8];
+        colorPointer = new float[numberOfTiles * 3 * numberOfPointsPerSquare];
 
         float startX = 0;
         float startY = 0;
         int tilesInRow = 0;
-
         for (int i = 0; i < mesh.length - 11; i += 12) {
             float[] points = new float[]{
                     startX, startY, 0,
@@ -62,6 +66,28 @@ public class ChunkMesh {
                 tilesInRow++;
             }
         }
+
+        int counter = 0;
+        int itt = 0;
+        for (int x = 0; x < effects.size(); x++) {
+            for (int y = 0; y < effects.get(x).size(); y++) {
+                float r = effects.get(x).get(y)[0];
+                float g = effects.get(x).get(y)[1];
+                float b = effects.get(x).get(y)[2];
+
+                while (counter < (numberOfPointsPerSquare)) {
+                    if (itt >= colorPointer.length) break;
+                    colorPointer[itt] = r;
+                    colorPointer[itt + 1] = g;
+                    colorPointer[itt + 2] = b;
+                    counter++;
+                    itt+=3;
+                }
+                counter = 0;
+            }
+        }
+
+
         int it = 0;
         for (int i = 0; i < indexes.length - 5; i += 6) {
             indexes[i] = it;
@@ -70,7 +96,7 @@ public class ChunkMesh {
             indexes[i + 3] = it + 3;
             indexes[i + 4] = it + 1;
             indexes[i + 5] = it + 2;
-            it+=4;
+            it += 4;
         }
         int it2 = 0;
         for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
@@ -135,5 +161,9 @@ public class ChunkMesh {
 
     public void setShouldRender(boolean shouldRender) {
         this.shouldRender = shouldRender;
+    }
+
+    public float[] getColorPointer() {
+        return colorPointer;
     }
 }

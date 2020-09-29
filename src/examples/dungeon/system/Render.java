@@ -192,7 +192,9 @@ public class Render {
             xIt++;
         }
 
+        List<List<float[]>> effectsPerTileX = new ArrayList<>();
         for (List<Tile> tiles : chunkToRender) {
+            List<float[]> effectsPerTileY = new ArrayList<>();
             for (Tile tile : tiles) {
 
                 if (tile.isHidden() || tile.isSelected()) {
@@ -200,9 +202,11 @@ public class Render {
 
                     if (tile.isHidden()) {
                         color = new Vector3f(0.2f, 0.2f, 0.2f);
+                        effectsPerTileY.add(new float[] {0.2f, 0.2f, 0.2f});
                     }
-                    else if (tile.isSelected()) {
+                    if (tile.isSelected()) {
                         color = new Vector3f(1.0f, 1.0f, 0);
+                        effectsPerTileY.add(new float[] { 1.0f, 1.0f, 0f});
                     }
 
                     effects[latestEffectIndex] = (float) tile.getScriptProperties().get("xNormalized");
@@ -212,6 +216,8 @@ public class Render {
                     effects[latestEffectIndex + 4] = color.z;
                     latestEffectIndex += 5;
 
+                } else {
+                    effectsPerTileY.add(new float[] {1f,1f,1f});
                 }
                 if (tile.getActor() == null) entitiesToRender.add(tile.getEntityObject());
                 if (tile.getActor() != null) {
@@ -219,6 +225,7 @@ public class Render {
                     entitiesToRender.add(tile.getActor().getEntityObject());
                 }
             }
+            effectsPerTileX.add(effectsPerTileY);
         }
         ChunkAPI chunkAPI = ChunkAPI.newInstance(entitiesToRender.size(), entitiesToRender,
                 new Dimension(tileSize.width, tileSize.height), chunkToRender.size());
@@ -226,6 +233,7 @@ public class Render {
         chunkAPI.setShouldRender(true);
         chunkAPI.setRgbTileEffects(effects);
         chunkAPI.setCameraDimensions(cameraDimensions);
+        chunkAPI.setEffectsPerTile(effectsPerTileX);
         chunkManagerAPI.addChunk(chunkAPI);
     }
 

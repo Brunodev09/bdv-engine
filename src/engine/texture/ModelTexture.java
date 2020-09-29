@@ -17,6 +17,7 @@ public class ModelTexture {
     private float[] rgbTilesetEffects;
     private Vector2f chunkTileSize;
     private boolean chunkRendering = false;
+    private float[] colorPointer;
 
     public ModelTexture(int id) {
         this._textureId = id;
@@ -112,6 +113,14 @@ public class ModelTexture {
 
     public void setChunkTileSize(Vector2f chunkTileSize) {
         this.chunkTileSize = chunkTileSize;
+    }
+
+    public float[] getColorPointer() {
+        return colorPointer;
+    }
+
+    public void setColorPointer(float[] colorPointer) {
+        this.colorPointer = colorPointer;
     }
 }
 

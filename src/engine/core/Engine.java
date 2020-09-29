@@ -147,7 +147,8 @@ public class Engine {
                     chunk.getOpenGlPosition().x,
                     chunk.getOpenGlPosition().y,
                     spriteSheets,
-                    chunk.shouldRender());
+                    chunk.shouldRender(),
+                    chunk.getEffectsPerTile());
             chunkMeshes.add(chunkMesh);
         }
     }
@@ -163,7 +164,7 @@ public class Engine {
                         mesh.getTextureCoordinates(),
                         mesh.getIndexes());
 
-                Model mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes());
+                Model mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes(), mesh.getColorPointer());
 
                 modelsDemo.put(mesh.getTextureCoordinates(), mdl);
                 modelsChunkDemo.put(mesh.getTextureCoordinates(), true);
@@ -183,6 +184,7 @@ public class Engine {
                 entityAPI.setAssociatedChunk(chunkManager.getChunks().get(0).getId(),
                         new Vector2f(1 / ((chunkManager.getChunks().get(0).getCameraDimensions().width / 2.0f)-2f),
                                 1 / ((chunkManager.getChunks().get(0).getCameraDimensions().height / 2.0f)-2f)));
+                entityAPI.setFlatColorMap(mesh.getColorPointer());
                 toRenderChunkFromScript.add(entityAPI);
                 textureAndPlaceBackEntity(entityAPI, mdl);
             }
@@ -356,6 +358,7 @@ public class Engine {
                 texture2D.setRgbTilesetEffects(entity.getRgbTilesetEffects());
                 texture2D.setChunkRendering(true);
                 texture2D.setChunkTileSize(entity.getChunkTileSize());
+                texture2D.setColorPointer(entity.getFlatColorMap());
                 TexturedModel tmdl2 = new TexturedModel(chunkIdToModel.get(entity.getAssociatedChunk()), texture2D);
                 former.setModel(tmdl2);
             }
@@ -389,7 +392,8 @@ public class Engine {
         createMesh(chunkManager, chunkMeshes);
         if (!findMatchingTextureCoordinates(chunkMeshes.get(0).getTextureCoordinates())) {
             List<VAOManager> managers = pipe.getManagers();
-            pipe.updateTextureDataInVAO(managers.get(0).getId(), chunkMeshes.get(0).getTextureCoordinates());
+            pipe.updateTextureDataInVAO(managers.get(0).getId(), chunkMeshes.get(0).getTextureCoordinates(),
+                    chunkMeshes.get(0).getColorPointer());
             modelsChunkDemo.clear();
         }
     }

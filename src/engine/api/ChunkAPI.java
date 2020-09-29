@@ -16,6 +16,7 @@ public class ChunkAPI {
     private boolean shouldRender = false;
     private float[] rgbTileEffects;
     private Dimension cameraDimensions;
+    private List<List<float[]>> effectsPerTile = new ArrayList<>();
 
     public static int globalId = 0;
     private int id;
@@ -88,5 +89,13 @@ public class ChunkAPI {
 
     public void setCameraDimensions(Dimension cameraDimensions) {
         this.cameraDimensions = cameraDimensions;
+    }
+
+    public List<List<float[]>> getEffectsPerTile() {
+        return effectsPerTile;
+    }
+
+    public void setEffectsPerTile(List<List<float[]>> effectsPerTile) {
+        this.effectsPerTile = effectsPerTile;
     }
 }

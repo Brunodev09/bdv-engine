@@ -43,6 +43,7 @@ public class EntityAPI {
     private float[] rgbTilesetEffects;
     private int associatedChunk = 0;
     private Vector2f chunkTileSize;
+    private float[] flatColorMap;
 
     private float[] uv;
 
@@ -339,5 +340,13 @@ public class EntityAPI {
 
     public Vector2f getChunkTileSize() {
         return chunkTileSize;
+    }
+
+    public float[] getFlatColorMap() {
+        return flatColorMap;
+    }
+
+    public void setFlatColorMap(float[] flatColorMap) {
+        this.flatColorMap = flatColorMap;
     }
 }

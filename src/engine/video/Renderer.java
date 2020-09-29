@@ -1,17 +1,21 @@
 package engine.video;
 
 import engine.entities.Entity;
+import engine.math.BufferOperations;
 import engine.math.MatrixUtils;
 import engine.models.Model;
 import engine.models.TexturedModel;
 import engine.shaders.DefaultShader;
 import engine.shaders.RectangleShader;
 import engine.texture.ModelTexture;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.*;
 import org.lwjgl.util.vector.Matrix4f;
 
 import java.util.List;
 import java.util.Map;
+
+import static org.lwjgl.opengl.GL11.GL_INT;
 
 public class Renderer {
 
@@ -23,7 +27,6 @@ public class Renderer {
     private boolean debugShader;
 
     public Renderer() {
-
     }
 
     public Renderer(DefaultShader shader, Matrix4f projectionMatrix) {
@@ -122,6 +125,9 @@ public class Renderer {
         GL30.glBindVertexArray(mdl.getVAOID());
         GL20.glEnableVertexAttribArray(0);
         GL20.glEnableVertexAttribArray(1);
+        if (tmdl.getModelTexture().getColorPointer() != null) {
+            GL20.glEnableVertexAttribArray(2);
+        }
 
         if (tmdl.getModelTexture().getColorOffset() != null) {
             _geoShader.loadColorOffset(tmdl.getModelTexture().getColorOffset());
@@ -169,6 +175,7 @@ public class Renderer {
     private void _unbindTexture2D() {
         GL20.glDisableVertexAttribArray(0);
         GL20.glDisableVertexAttribArray(1);
+        GL20.glEnableVertexAttribArray(2);
 
         GL30.glBindVertexArray(0);
     }

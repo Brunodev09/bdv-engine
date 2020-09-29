@@ -3,9 +3,11 @@
 layout(location = 0) in vec3 position;
 
 in vec2 textureCoordinates;
+in vec3 colorPointer;
 
 out vec2 passTextureCoordinates;
 out vec4 vertexPosition;
+out vec3 colorPointerVertex;
 
 uniform mat4 transformation;
 uniform mat4 projection;
@@ -13,6 +15,8 @@ uniform mat4 view;
 uniform bool isPlayer;
 
 void main(void) {
+    colorPointerVertex = colorPointer;
+
     if (!isPlayer) {
         gl_Position = projection * view * transformation * vec4(position.xy, 0.0, 1.0);
     } else gl_Position = projection * transformation * vec4(position.xy, 0.0, 1.0);

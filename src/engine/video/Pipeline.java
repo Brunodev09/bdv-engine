@@ -46,7 +46,20 @@ public class Pipeline {
         return new Model(VID, indexes.length);
     }
 
-    public void updateTextureDataInVAO(int managerID, float[] textureCoords) {
+    public Model loadDataToVAO(float[] positions, float[] textureCoords, int[] indexes, float[] colorPointer) {
+        int VID = _createVAO();
+        VAOManager vaoManager = new VAOManager(VID);
+        managers.add(vaoManager);
+        _bindIndexBufferVBO(indexes);
+        _storeVBODataInVAOList(0, 3, positions);
+        _storeVBODataInVAOList(1, 2, textureCoords);
+        _storeVBODataInVAOList(2, 3, colorPointer);
+        _unbindVAO();
+
+        return new Model(VID, indexes.length);
+    }
+
+    public void updateTextureDataInVAO(int managerID, float[] textureCoords, float[] colorPointer) {
         VAOManager vaoManager = null;
         for (VAOManager findManager : managers) {
             if (findManager.getId() == managerID) {
@@ -57,6 +70,7 @@ public class Pipeline {
         if (vaoManager == null) return;
         _usePreviouslyCreatedVAO(vaoManager.getVid());
         _updateDataInExistingVBO(vaoManager.getVboPointers().get(1), 1, 2, textureCoords);
+        _updateDataInExistingVBO(vaoManager.getVboPointers().get(2), 2, 3, colorPointer);
         _unbindVAO();
     }
 

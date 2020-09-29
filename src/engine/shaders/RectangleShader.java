@@ -63,6 +63,7 @@ public class RectangleShader extends Shader {
     protected void _bindAttr() {
         super._bind(0, "position");
         super._bind(1, "textureCoordinates");
+        super._bind(2, "vertexColor");
     }
 
     public void loadTransformationMatrix(Matrix4f m4x4) {
