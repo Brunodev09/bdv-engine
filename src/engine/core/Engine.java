@@ -168,25 +168,29 @@ public class Engine {
 
                 modelsDemo.put(mesh.getTextureCoordinates(), mdl);
                 modelsChunkDemo.put(mesh.getTextureCoordinates(), true);
-                chunkIdToModel.put(chunkManager.getChunks().get(0).getId(), mdl);
 
-                EntityAPI entityAPI = new EntityAPI(null,
-                        new Vector3f(mesh.getxPos(), mesh.getyPos(), 0),
-                        new Dimension((int) (mesh.getTilesPerRow() * mesh.getTileSizeX()),
-                                (int) (mesh.getTilesPerRow() * mesh.getTileSizeY())),
-                        new Vector2f(0, 0));
+                for (int i = 0; i < chunkManager.getChunks().size(); i++) {
+                    chunkIdToModel.put(chunkManager.getChunks().get(i).getId(), mdl);
 
-                entityAPI.setSpriteSheet(chunkManager.getSpriteSheet());
-                entityAPI.setShouldRender(mesh.shouldRender());
-                entityAPI.setUv(mesh.getTextureCoordinates());
-                entityAPI.setRenderSpriteRetroCompatibility(false);
-                entityAPI.setRgbTilesetEffects(chunkManager.getChunks().get(0).getRgbTileEffects());
-                entityAPI.setAssociatedChunk(chunkManager.getChunks().get(0).getId(),
-                        new Vector2f(1 / ((chunkManager.getChunks().get(0).getCameraDimensions().width / 2.0f)-2f),
-                                1 / ((chunkManager.getChunks().get(0).getCameraDimensions().height / 2.0f)-2f)));
-                entityAPI.setFlatColorMap(mesh.getColorPointer());
-                toRenderChunkFromScript.add(entityAPI);
-                textureAndPlaceBackEntity(entityAPI, mdl);
+                    EntityAPI entityAPI = new EntityAPI(null,
+                            new Vector3f(mesh.getxPos(), mesh.getyPos(), 0),
+                            new Dimension((int) (mesh.getTilesPerRow() * mesh.getTileSizeX()),
+                                    (int) (mesh.getTilesPerRow() * mesh.getTileSizeY())),
+                            new Vector2f(0, 0));
+
+                    entityAPI.setSpriteSheet(chunkManager.getSpriteSheet());
+                    entityAPI.setShouldRender(mesh.shouldRender());
+                    entityAPI.setUv(mesh.getTextureCoordinates());
+                    entityAPI.setRenderSpriteRetroCompatibility(false);
+                    entityAPI.setRgbTilesetEffects(chunkManager.getChunks().get(i).getRgbTileEffects());
+                    entityAPI.setAssociatedChunk(chunkManager.getChunks().get(i).getId(),
+                            new Vector2f(1 / ((chunkManager.getChunks().get(i).getCameraDimensions().width / 2.0f)-2f),
+                                    1 / ((chunkManager.getChunks().get(i).getCameraDimensions().height / 2.0f)-2f)));
+                    entityAPI.setFlatColorMap(mesh.getColorPointer());
+                    toRenderChunkFromScript.add(entityAPI);
+                    textureAndPlaceBackEntity(entityAPI, mdl);
+                }
+
             }
         }
     }
@@ -352,15 +356,17 @@ public class Engine {
                 former.setRotZ(entity.getRotationZ());
             }
             if (entity.getRgbTilesetEffects() != null) {
-                entity.setRgbTilesetEffects(chunkManager.getChunks().get(0).getRgbTileEffects());
-                int textureId = getTextureId(entity);
-                ModelTexture texture2D = new ModelTexture(textureId);
-                texture2D.setRgbTilesetEffects(entity.getRgbTilesetEffects());
-                texture2D.setChunkRendering(true);
-                texture2D.setChunkTileSize(entity.getChunkTileSize());
-                texture2D.setColorPointer(entity.getFlatColorMap());
-                TexturedModel tmdl2 = new TexturedModel(chunkIdToModel.get(entity.getAssociatedChunk()), texture2D);
-                former.setModel(tmdl2);
+                for (int i = 0; i < chunkManager.getChunks().size(); i++) {
+                    entity.setRgbTilesetEffects(chunkManager.getChunks().get(i).getRgbTileEffects());
+                    int textureId = getTextureId(entity);
+                    ModelTexture texture2D = new ModelTexture(textureId);
+                    texture2D.setRgbTilesetEffects(entity.getRgbTilesetEffects());
+                    texture2D.setChunkRendering(true);
+                    texture2D.setChunkTileSize(entity.getChunkTileSize());
+                    texture2D.setColorPointer(entity.getFlatColorMap());
+                    TexturedModel tmdl2 = new TexturedModel(chunkIdToModel.get(entity.getAssociatedChunk()), texture2D);
+                    former.setModel(tmdl2);
+                }
             }
             if (entity.getEditModel()) {
                 int textureId = getTextureId(entity);
@@ -390,11 +396,13 @@ public class Engine {
     private void updateInnerTextureCoordinates() {
         chunkMeshes.clear();
         createMesh(chunkManager, chunkMeshes);
-        if (!findMatchingTextureCoordinates(chunkMeshes.get(0).getTextureCoordinates())) {
-            List<VAOManager> managers = pipe.getManagers();
-            pipe.updateTextureDataInVAO(managers.get(0).getId(), chunkMeshes.get(0).getTextureCoordinates(),
-                    chunkMeshes.get(0).getColorPointer());
-            modelsChunkDemo.clear();
+        for (int i = 0; i < chunkMeshes.size(); i++) {
+            if (!findMatchingTextureCoordinates(chunkMeshes.get(i).getTextureCoordinates())) {
+                List<VAOManager> managers = pipe.getManagers();
+                pipe.updateTextureDataInVAO(managers.get(i).getId(), chunkMeshes.get(i).getTextureCoordinates(),
+                        chunkMeshes.get(i).getColorPointer());
+                modelsChunkDemo.clear();
+            }
         }
     }
 
