@@ -3,7 +3,6 @@ package examples.dungeon.objects;
 import engine.texture.SpriteSheet;
 import examples.dungeon.generation.Location;
 import examples.dungeon.generation.WorldManager;
-import examples.dungeon.objects.Actor;
 import examples.dungeon.tiles.Tile;
 
 import java.awt.*;

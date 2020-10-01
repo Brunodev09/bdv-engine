@@ -241,7 +241,7 @@ public class Dungeon extends Location {
         List<List<Tile>> map = WorldManager.getMapFromLocation(this.getXGlobal(), this.getYGlobal(), this.getZGlobal());
         List<Tile> tilesToUpdate = new ArrayList<>();
         List<Tile> visitedTiles = new ArrayList<>();
-        Stack<Tile> stack = new Stack<>();
+        Deque<Tile> stack = new LinkedList<>();
 
         Tile initialTile = WorldManager.findRandomFreeTileOnMap(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), 100);
         Tile evenTile = map.get((initialTile.getPositionX() / 2) * 2).get((initialTile.getPositionY() / 2) * 2);
