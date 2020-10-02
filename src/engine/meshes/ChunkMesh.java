@@ -12,6 +12,7 @@ public class ChunkMesh {
     private final int numberOfCoordinatesPerPoint = 3;
     private final int numberOfPointsPerSquare = 4;
     private final int tilesPerRow;
+    private final int chunkManagerId;
     private SpriteSheet[] spriteSheets;
 
     private float[] mesh;
@@ -25,7 +26,7 @@ public class ChunkMesh {
     private List<List<float[]>> effects;
     private float[] colorPointer;
 
-    public ChunkMesh(float tileSizeX, float tileSizeY, int tilesPerRow, int numberOfTiles, float xPos, float yPos, SpriteSheet[] sprites, boolean shouldRender, List<List<float[]>> effects) {
+    public ChunkMesh(int chunkManagerId, float tileSizeX, float tileSizeY, int tilesPerRow, int numberOfTiles, float xPos, float yPos, SpriteSheet[] sprites, boolean shouldRender, List<List<float[]>> effects) {
         this.tileSizeX = tileSizeX;
         this.tileSizeY = tileSizeY;
         this.tilesPerRow = tilesPerRow;
@@ -35,6 +36,7 @@ public class ChunkMesh {
         this.spriteSheets = sprites;
         this.shouldRender = shouldRender;
         this.effects = effects;
+        this.chunkManagerId = chunkManagerId;
         this.generate();
     }
 
@@ -68,6 +70,13 @@ public class ChunkMesh {
         }
 
         int counter = 0;
+        if (effects.isEmpty()) {
+            int cc = 0;
+            while (cc < colorPointer.length) {
+                colorPointer[cc] = 1.0f;
+                cc++;
+            }
+        }
         int itt = 0;
         for (int x = 0; x < effects.size(); x++) {
             for (int y = 0; y < effects.get(x).size(); y++) {
@@ -165,5 +174,9 @@ public class ChunkMesh {
 
     public float[] getColorPointer() {
         return colorPointer;
+    }
+
+    public int getChunkManagerId() {
+        return chunkManagerId;
     }
 }

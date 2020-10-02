@@ -10,6 +10,7 @@ import examples.dungeon.objects.Actor;
 import examples.dungeon.objects.Camera;
 import examples.dungeon.objects.Player;
 import examples.dungeon.tiles.Tile;
+import examples.dungeon.tiles.TransparentTile;
 import examples.dungeon.tiles.VoidTile;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -33,7 +34,8 @@ public class Render {
     private boolean edges;
     private List<EntityAPI> extraLayer = new ArrayList<>();
     private Turn turn;
-    private ChunkManagerAPI chunkManagerAPI;
+    private List<ChunkManagerAPI> chunkManagersAPI;
+    private List<Actor> actors = new ArrayList<>();
     private boolean preChunkWorld = false;
 
     public Render(List<EntityAPI> entities, Turn turn, Actor player, Dimension cameraDimensions, Dimension tileSize) {
@@ -44,13 +46,13 @@ public class Render {
         this.turn = turn;
     }
 
-    public Render(List<EntityAPI> entities, ChunkManagerAPI chunkManagerAPI, Turn turn, Actor player, Dimension cameraDimensions, Dimension tileSize) {
+    public Render(List<EntityAPI> entities, List<ChunkManagerAPI> chunkManagerAPI, Turn turn, Actor player, Dimension cameraDimensions, Dimension tileSize) {
         this.entities = entities;
         this.player = player;
         this.cameraDimensions = cameraDimensions;
         this.tileSize = tileSize;
         this.turn = turn;
-        this.chunkManagerAPI = chunkManagerAPI;
+        this.chunkManagersAPI = chunkManagerAPI;
     }
 
     public void setCameraDimensions(Dimension cameraDimensions) {
@@ -63,8 +65,11 @@ public class Render {
 
     public void render() {
         try {
-            if (chunkManagerAPI != null) {
-                renderChunk(getPlayerChunk(player));
+            if (chunkManagersAPI != null) {
+                // rendering tiles batch
+                renderChunk(getPlayerChunk(player), chunkManagersAPI.get(0));
+                // rendering mobs batch
+                renderActors(actors, chunkManagersAPI.get(1));
             } else renderChunkFromMap(getPlayerChunk(player), player.getCurrentLocation().getMap());
         } catch (CloneNotSupportedException cloneNotSupportedException) {
             LOG.severe(cloneNotSupportedException.getMessage());
@@ -132,7 +137,7 @@ public class Render {
                 }
             }
         }
-        if (chunkManagerAPI != null && preChunkWorld) {
+        if (chunkManagersAPI != null && preChunkWorld) {
             int pace = 0;
             int step = 400;
             int tilesPerColumn = 20;
@@ -159,7 +164,7 @@ public class Render {
                             pace += step;
                             ChunkAPI chunkAPI = ChunkAPI.newInstance(step, entityPicker, new Dimension(tileSize.width, tileSize.height), tilesPerColumn);
                             chunkAPI.setOpenGlPosition(new Vector3f(-600, -400, 0));
-                            chunkManagerAPI.addChunk(chunkAPI);
+                            chunkManagersAPI.get(0).addChunk(chunkAPI);
                             entityPicker.clear();
                         }
                     }
@@ -170,11 +175,11 @@ public class Render {
         }
     }
 
-    public void renderChunk(List<List<Tile>> chunkToRender) {
+    public void renderChunk(List<List<Tile>> chunkToRender, ChunkManagerAPI manager) {
         int validChunkNumber = cameraDimensions.width - 1;
         if (chunkToRender.size() != validChunkNumber) return;
         List<EntityAPI> entitiesToRender = new ArrayList<>();
-        chunkManagerAPI.getChunks().clear();
+        manager.getChunks().clear();
         int latestEffectIndex = 0;
         float[] effects = new float[cameraDimensions.width * cameraDimensions.height * 5];
 
@@ -202,11 +207,11 @@ public class Render {
 
                     if (tile.isHidden()) {
                         color = new Vector3f(0.2f, 0.2f, 0.2f);
-                        effectsPerTileY.add(new float[] {0.2f, 0.2f, 0.2f});
+                        effectsPerTileY.add(new float[]{0.2f, 0.2f, 0.2f});
                     }
                     if (tile.isSelected()) {
                         color = new Vector3f(1.0f, 1.0f, 0);
-                        effectsPerTileY.add(new float[] { 1.0f, 1.0f, 0f});
+                        effectsPerTileY.add(new float[]{1.0f, 1.0f, 0f});
                     }
 
                     effects[latestEffectIndex] = (float) tile.getScriptProperties().get("xNormalized");
@@ -217,12 +222,17 @@ public class Render {
                     latestEffectIndex += 5;
 
                 } else {
-                    effectsPerTileY.add(new float[] {1f,1f,1f});
+                    effectsPerTileY.add(new float[]{1f, 1f, 1f});
                 }
-                if (tile.getActor() == null) entitiesToRender.add(tile.getEntityObject());
-                if (tile.getActor() != null) {
+                if (tile.getActor() == null ) {
+                    entitiesToRender.add(tile.getEntityObject());
+                }
+                else if (tile.getActor().getType().equals("torch")) {
                     tile.getActor().getEntityObject().setShouldRender(true);
                     entitiesToRender.add(tile.getActor().getEntityObject());
+                } else if (!actors.contains(tile.getActor())) {
+                    tile.getActor().getEntityObject().setShouldRender(true);
+                    actors.add(tile.getActor());
                 }
             }
             effectsPerTileX.add(effectsPerTileY);
@@ -234,13 +244,62 @@ public class Render {
         chunkAPI.setRgbTileEffects(effects);
         chunkAPI.setCameraDimensions(cameraDimensions);
         chunkAPI.setEffectsPerTile(effectsPerTileX);
-        chunkManagerAPI.addChunk(chunkAPI);
+        manager.addChunk(chunkAPI);
     }
 
-    public void renderChunks() {
+    public void renderActors(List<Actor> actors, ChunkManagerAPI manager) {
+        manager.getChunks().clear();
+        int numberOfRows = cameraDimensions.width - 1;
+        List<EntityAPI> entitiesToRender = new ArrayList<>();
+        int smallestX = 1000;
+        int biggestX = 0;
+        int smallestY = 1000;
+        int biggestY = 0;
+        for (Actor actor : actors) {
+            if (actor.getCurrentTile().getPositionX() > biggestX) biggestX = actor.getCurrentTile().getPositionX();
+            if (actor.getCurrentTile().getPositionY() > biggestY) biggestY = actor.getCurrentTile().getPositionY();
+
+            if (actor.getCurrentTile().getPositionX() < smallestX) smallestX = actor.getCurrentTile().getPositionX();
+            if (actor.getCurrentTile().getPositionY() < smallestY) smallestY = actor.getCurrentTile().getPositionY();
+        }
+        for (int x = smallestX; x < biggestX; x++) {
+            for (int y = smallestY; y < biggestY; y++) {
+                boolean actorHere = false;
+                for (Actor actor : actors) {
+                    if (actor.getCurrentTile().getPositionX() == x && actor.getCurrentTile().getPositionY() == y) {
+                        actorHere = true;
+                        entitiesToRender.add(actor.getEntityObject());
+                    }
+                }
+                if (!actorHere) {
+                    TransparentTile tile = new TransparentTile();
+                    EntityAPI entityAPI = new EntityAPI(null,
+                            new Vector3f(0, 0, 1),
+                            new Dimension(tileSize.width, tileSize.height),
+                            new Vector2f(0, 0));
+
+                    entityAPI.setRenderSpriteRetroCompatibility(false);
+                    entityAPI.setShouldRender(true);
+                    entityAPI.setSpriteSheet(tile.getSprite());
+
+                    entitiesToRender.add(entityAPI);
+                }
+            }
+        }
+        ChunkAPI chunkAPI = ChunkAPI.newInstance(entitiesToRender.size(), entitiesToRender,
+                new Dimension(tileSize.width, tileSize.height), numberOfRows);
+        chunkAPI.setOpenGlPosition(new Vector3f(smallestX, smallestY, 1));
+        chunkAPI.setShouldRender(true);
+//        chunkAPI.setRgbTileEffects(effects);
+        chunkAPI.setCameraDimensions(cameraDimensions);
+//        chunkAPI.setEffectsPerTile(effectsPerTileX);
+        manager.addChunk(chunkAPI);
+    }
+
+    public void renderChunks(ChunkManagerAPI manager) {
         List<ChunkAPI> chunkToRender = new ArrayList<>();
         boolean playerFound = false;
-        for (ChunkAPI chunk : chunkManagerAPI.getChunks()) {
+        for (ChunkAPI chunk : manager.getChunks()) {
             if (playerFound) break;
             for (EntityAPI entityAPI : chunk.getChunk()) {
                 if (entityAPI.getProp("player") != null || entityAPI.getProp("camera") != null) {
@@ -301,7 +360,7 @@ public class Render {
             if (chunk.isEmpty()) continue;
             tilesToRender.add(chunk);
         }
-        if (this.chunkManagerAPI == null) {
+        if (this.chunkManagersAPI == null) {
             // Adding possibly missing tiles
             for (List<Tile> tiles : tilesToRender) {
                 if (tiles.size() < validChunkNumber) {

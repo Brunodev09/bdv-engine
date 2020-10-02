@@ -10,8 +10,12 @@ public class ChunkManagerAPI {
     private final SpriteSheet spriteSheet;
     private final List<EntityAPI> unChunkedEntities = new ArrayList<>();
     private boolean updateChunk = false;
+    private static int globalId = 0;
+    private final int id;
 
     public ChunkManagerAPI(SpriteSheet spriteSheet) {
+        globalId++;
+        this.id = globalId;
         this.spriteSheet = spriteSheet;
     }
 
@@ -45,5 +49,9 @@ public class ChunkManagerAPI {
 
     public void setUpdateChunk(boolean updateChunk) {
         this.updateChunk = updateChunk;
+    }
+
+    public int getId() {
+        return id;
     }
 }

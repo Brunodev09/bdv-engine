@@ -2,6 +2,7 @@ package examples.dungeon.objects;
 
 import engine.texture.SpriteSheet;
 import examples.dungeon.generation.Location;
+import examples.dungeon.mob.FactionTypes;
 import examples.dungeon.tiles.Tile;
 import org.lwjgl.util.vector.Vector3f;
 

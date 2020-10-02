@@ -52,7 +52,8 @@ public class Engine {
     Map<Integer, Model> chunkIdToModel = new HashMap<>();
     Model rectangleModel;
     List<ChunkMesh> chunkMeshes = new ArrayList<>();
-    ChunkManagerAPI chunkManager = null;
+    List<ChunkManagerAPI> chunkManager = null;
+    Map<Integer, ChunkMesh> meshControl = new HashMap<>();
     double lastTime;
     double lastUpdate;
     int frames = 0;
@@ -74,7 +75,7 @@ public class Engine {
             Camera2D cam2d = config.script.camera2d == null ? new Camera2D() : config.script.camera2d;
 
             if (config.script.chunkRendering) {
-                chunkManager = configuration.script.chunkManager;
+                chunkManager = configuration.script.chunkManagers;
                 chunkBasedRendering();
             } else proceduralRendering(scriptEntities);
 
@@ -85,8 +86,10 @@ public class Engine {
                 else {
                     createAndUpdateFormerEntity(toRenderChunkFromScript);
                     updateInnerTextureCoordinates();
-                    if (!configuration.script.chunkManager.getUnChunkedEntities().isEmpty()) {
-                        createAndUpdateFormerEntity(configuration.script.chunkManager.getUnChunkedEntities());
+                    for (ChunkManagerAPI manager : configuration.script.chunkManagers) {
+                        if (!manager.getUnChunkedEntities().isEmpty()) {
+                            createAndUpdateFormerEntity(manager.getUnChunkedEntities());
+                        }
                     }
                 }
 
@@ -140,6 +143,7 @@ public class Engine {
             }
 
             ChunkMesh chunkMesh = new ChunkMesh(
+                    chunkManager.getId(),
                     chunk.getTileSize().width,
                     chunk.getTileSize().height,
                     chunk.getTilesPerRow(),
@@ -149,48 +153,68 @@ public class Engine {
                     spriteSheets,
                     chunk.shouldRender(),
                     chunk.getEffectsPerTile());
-            chunkMeshes.add(chunkMesh);
+            if (meshControl.get(chunkManager.getId()) == null) {
+                chunkMeshes.add(chunkMesh);
+                meshControl.put(chunkManager.getId(), chunkMesh);
+            } else {
+                int indexToReplace = 0;
+                int it = 0;
+                boolean found = false;
+                for (ChunkMesh mesh : chunkMeshes) {
+                    if (mesh.getChunkManagerId() == chunkManager.getId()) {
+                        indexToReplace = it;
+                        found = true;
+                        break;
+                    }
+                    it++;
+                }
+                if (found) {
+                    chunkMeshes.set(indexToReplace, chunkMesh);
+                }
+            }
         }
     }
 
     private void chunkBasedRendering() {
-        if (!chunkManager.getChunks().isEmpty()) {
+        if (!chunkManager.isEmpty()) {
+            for (ChunkManagerAPI manager : chunkManager) {
+                if (!manager.getChunks().isEmpty()) {
+                    createMesh(manager, chunkMeshes);
+                    ChunkMesh mesh = chunkMeshes.get(chunkMeshes.size() - 1);
 
-            createMesh(chunkManager, chunkMeshes);
+                    BufferedModel defaultData2D = new BufferedModel(
+                            mesh.getMesh(),
+                            mesh.getTextureCoordinates(),
+                            mesh.getIndexes());
 
-            for (ChunkMesh mesh : chunkMeshes) {
-                BufferedModel defaultData2D = new BufferedModel(
-                        mesh.getMesh(),
-                        mesh.getTextureCoordinates(),
-                        mesh.getIndexes());
+                    Model mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes(), mesh.getColorPointer());
 
-                Model mdl = pipe.loadDataToVAO(defaultData2D.getVertices(), defaultData2D.getTextures(), defaultData2D.getIndexes(), mesh.getColorPointer());
+                    modelsDemo.put(mesh.getTextureCoordinates(), mdl);
+                    modelsChunkDemo.put(mesh.getTextureCoordinates(), true);
 
-                modelsDemo.put(mesh.getTextureCoordinates(), mdl);
-                modelsChunkDemo.put(mesh.getTextureCoordinates(), true);
+                    for (int i = 0; i < manager.getChunks().size(); i++) {
+                        chunkIdToModel.put(manager.getChunks().get(i).getId(), mdl);
 
-                for (int i = 0; i < chunkManager.getChunks().size(); i++) {
-                    chunkIdToModel.put(chunkManager.getChunks().get(i).getId(), mdl);
+                        EntityAPI entityAPI = new EntityAPI(null,
+                                new Vector3f(mesh.getxPos(), mesh.getyPos(), manager.getId()),
+                                new Dimension((int) (mesh.getTilesPerRow() * mesh.getTileSizeX()),
+                                        (int) (mesh.getTilesPerRow() * mesh.getTileSizeY())),
+                                new Vector2f(0, 0));
+                        entityAPI.setSpriteSheet(manager.getSpriteSheet());
+                        entityAPI.setShouldRender(mesh.shouldRender());
+                        entityAPI.setUv(mesh.getTextureCoordinates());
+                        entityAPI.setRenderSpriteRetroCompatibility(false);
+                        entityAPI.setRgbTilesetEffects(manager.getChunks().get(i).getRgbTileEffects());
+                        // normalizing game coordinates to OpenGL coordinates (-1.0, 1.0)
+                        entityAPI.setAssociatedChunk(manager.getChunks().get(i).getId(),
+                                new Vector2f(1 / ((manager.getChunks().get(i).getCameraDimensions().width / 2.0f) - 2f),
+                                        1 / ((manager.getChunks().get(i).getCameraDimensions().height / 2.0f) - 2f)));
+                        entityAPI.setFlatColorMap(mesh.getColorPointer());
+                        toRenderChunkFromScript.add(entityAPI);
+                        textureAndPlaceBackEntity(entityAPI, mdl);
+                    }
 
-                    EntityAPI entityAPI = new EntityAPI(null,
-                            new Vector3f(mesh.getxPos(), mesh.getyPos(), 0),
-                            new Dimension((int) (mesh.getTilesPerRow() * mesh.getTileSizeX()),
-                                    (int) (mesh.getTilesPerRow() * mesh.getTileSizeY())),
-                            new Vector2f(0, 0));
-
-                    entityAPI.setSpriteSheet(chunkManager.getSpriteSheet());
-                    entityAPI.setShouldRender(mesh.shouldRender());
-                    entityAPI.setUv(mesh.getTextureCoordinates());
-                    entityAPI.setRenderSpriteRetroCompatibility(false);
-                    entityAPI.setRgbTilesetEffects(chunkManager.getChunks().get(i).getRgbTileEffects());
-                    entityAPI.setAssociatedChunk(chunkManager.getChunks().get(i).getId(),
-                            new Vector2f(1 / ((chunkManager.getChunks().get(i).getCameraDimensions().width / 2.0f)-2f),
-                                    1 / ((chunkManager.getChunks().get(i).getCameraDimensions().height / 2.0f)-2f)));
-                    entityAPI.setFlatColorMap(mesh.getColorPointer());
-                    toRenderChunkFromScript.add(entityAPI);
-                    textureAndPlaceBackEntity(entityAPI, mdl);
                 }
-
             }
         }
     }
@@ -356,16 +380,18 @@ public class Engine {
                 former.setRotZ(entity.getRotationZ());
             }
             if (entity.getRgbTilesetEffects() != null) {
-                for (int i = 0; i < chunkManager.getChunks().size(); i++) {
-                    entity.setRgbTilesetEffects(chunkManager.getChunks().get(i).getRgbTileEffects());
-                    int textureId = getTextureId(entity);
-                    ModelTexture texture2D = new ModelTexture(textureId);
-                    texture2D.setRgbTilesetEffects(entity.getRgbTilesetEffects());
-                    texture2D.setChunkRendering(true);
-                    texture2D.setChunkTileSize(entity.getChunkTileSize());
-                    texture2D.setColorPointer(entity.getFlatColorMap());
-                    TexturedModel tmdl2 = new TexturedModel(chunkIdToModel.get(entity.getAssociatedChunk()), texture2D);
-                    former.setModel(tmdl2);
+                for (ChunkManagerAPI managerAPI : chunkManager) {
+                    for (int i = 0; i < managerAPI.getChunks().size(); i++) {
+                        entity.setRgbTilesetEffects(managerAPI.getChunks().get(i).getRgbTileEffects());
+                        int textureId = getTextureId(entity);
+                        ModelTexture texture2D = new ModelTexture(textureId);
+                        texture2D.setRgbTilesetEffects(entity.getRgbTilesetEffects());
+                        texture2D.setChunkRendering(true);
+                        texture2D.setChunkTileSize(entity.getChunkTileSize());
+                        texture2D.setColorPointer(entity.getFlatColorMap());
+                        TexturedModel tmdl2 = new TexturedModel(chunkIdToModel.get(entity.getAssociatedChunk()), texture2D);
+                        former.setModel(tmdl2);
+                    }
                 }
             }
             if (entity.getEditModel()) {
@@ -395,13 +421,16 @@ public class Engine {
 
     private void updateInnerTextureCoordinates() {
         chunkMeshes.clear();
-        createMesh(chunkManager, chunkMeshes);
-        for (int i = 0; i < chunkMeshes.size(); i++) {
-            if (!findMatchingTextureCoordinates(chunkMeshes.get(i).getTextureCoordinates())) {
-                List<VAOManager> managers = pipe.getManagers();
-                pipe.updateTextureDataInVAO(managers.get(i).getId(), chunkMeshes.get(i).getTextureCoordinates(),
-                        chunkMeshes.get(i).getColorPointer());
-                modelsChunkDemo.clear();
+        meshControl.clear();
+        for (ChunkManagerAPI chunkManagerAPI : chunkManager) {
+            createMesh(chunkManagerAPI, chunkMeshes);
+            for (int i = 0; i < chunkMeshes.size(); i++) {
+                if (!findMatchingTextureCoordinates(chunkMeshes.get(i).getTextureCoordinates())) {
+                    List<VAOManager> managers = pipe.getManagers();
+                    pipe.updateTextureDataInVAO(managers.get(i).getId(), chunkMeshes.get(i).getTextureCoordinates(),
+                            chunkMeshes.get(i).getColorPointer());
+                    modelsChunkDemo.clear();
+                }
             }
         }
     }

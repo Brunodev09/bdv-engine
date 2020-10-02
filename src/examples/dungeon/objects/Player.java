@@ -37,6 +37,7 @@ public class Player extends Actor {
             int yCoordToChunk = (int) latestCursorY / tilesizeY;
 
             if (mouseSelectedTile != null) {
+                // unselecting previous tile
                 mouseSelectedTile.setSelected(false);
             }
 
@@ -46,7 +47,7 @@ public class Player extends Actor {
                 // @TODO - Treat me!
             }
 
-
+            // selecting new tile
             if (mouseSelectedTile != null)
                 mouseSelectedTile.setSelected(true);
             return true;

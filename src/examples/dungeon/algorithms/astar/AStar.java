@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// @TODO - Make obstacles a list
 public class AStar {
     private final int rows;
     private final int cols;

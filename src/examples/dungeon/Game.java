@@ -46,7 +46,9 @@ public class Game extends BdvScriptGL {
     boolean firstTime = true;
 
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
+    private static final String SPRITESHEET_FILE_PATH2 = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
     protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0, new Rectangle(783, 783));
+    protected SpriteSheet sprite2 = new SpriteSheet(SPRITESHEET_FILE_PATH2, new Rectangle(39, 39), 0, 0, new Rectangle(783, 393));
 
     public Game() {
         this.camera2d = new Camera2D();
@@ -60,7 +62,9 @@ public class Game extends BdvScriptGL {
         this.logFps = true;
 
         this.chunkRendering = true;
-        this.chunkManager = new ChunkManagerAPI(sprite);
+        this.chunkManagers = new ArrayList<>();
+        this.chunkManagers.add(new ChunkManagerAPI(sprite));
+        this.chunkManagers.add(new ChunkManagerAPI(sprite2));
         this.init(this.entities, this.resolution, this.background);
     }
 
@@ -94,7 +98,7 @@ public class Game extends BdvScriptGL {
 
         Tile knightSpawnTile = WorldManager.getMapFromLocation(0, 0, -1)
                 .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2) + 10)
-                .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 5);
+                .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 15);
         Knight knight = new Knight(WorldManager.getLocationAtIndex(0, 0, -1), knightSpawnTile, 50, 50);
 
         turn.addToJobQueue(camera);
@@ -114,8 +118,9 @@ public class Game extends BdvScriptGL {
 
         InputManager.newInstance(keyboard, mouse);
 
-        if (this.chunkRendering) renderer = new Render(entities, chunkManager, turn,  camera, cameraDimensions, tileSize);
-        else renderer = new Render(entities, turn,  camera, cameraDimensions, tileSize);
+        if (this.chunkRendering)
+            renderer = new Render(entities, chunkManagers, turn, camera, cameraDimensions, tileSize);
+        else renderer = new Render(entities, turn, camera, cameraDimensions, tileSize);
         // ==============================
 
         renderer.initRender(WorldManager.getLocationAtIndex(0, 0, -1).getMap());

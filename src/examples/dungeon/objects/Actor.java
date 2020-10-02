@@ -4,6 +4,7 @@ import engine.api.EntityAPI;
 import engine.texture.SpriteSheet;
 import examples.dungeon.generation.Location;
 import examples.dungeon.generation.WorldManager;
+import examples.dungeon.mob.FactionTypes;
 import examples.dungeon.tiles.Tile;
 
 import java.awt.*;
@@ -30,6 +31,7 @@ public abstract class Actor implements Cloneable {
     private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
     protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0, new Rectangle(783, 393));
     protected EntityAPI entityObject;
+    protected FactionTypes faction = FactionTypes.OBJECT;
 
     protected List<Actor> subActors = new ArrayList<>();
 
@@ -371,6 +373,10 @@ public abstract class Actor implements Cloneable {
 
     public boolean isMob() {
         return mob;
+    }
+
+    public FactionTypes getFaction() {
+        return faction;
     }
 
     @Override
