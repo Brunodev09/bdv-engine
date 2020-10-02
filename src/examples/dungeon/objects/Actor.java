@@ -28,8 +28,8 @@ public abstract class Actor implements Cloneable {
     protected int fov = 20;
     protected boolean mob = false;
 
-    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0, new Rectangle(783, 393));
+    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/assetsComplete").getAbsolutePath();
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0, new Rectangle(783, 1176));
     protected EntityAPI entityObject;
     protected FactionTypes faction = FactionTypes.OBJECT;
 
@@ -68,7 +68,7 @@ public abstract class Actor implements Cloneable {
     }
 
     public void setCurrentTile(Tile tile) {
-        if (tile.getActor() != null) {
+        if (tile.getActor() == null) {
             tile.setActor(this);
         }
         this.currentTile = tile;
@@ -193,6 +193,9 @@ public abstract class Actor implements Cloneable {
         int xG = this.getCurrentLocation().getXGlobal();
         int yG = this.getCurrentLocation().getYGlobal();
         int zG = this.getCurrentLocation().getZGlobal();
+
+        Tile currentActorTile = WorldManager.tryGetTile(xG, yG, zG, rayOriginX, rayOriginY);
+        if (currentActorTile != null) currentActorTile.setHidden(false);
 
         boolean cast2pi = true;
         boolean castPi2 = true;

@@ -39,16 +39,14 @@ public class Game extends BdvScriptGL {
     private final Random random = new Random();
     public InputAPI inputAPI;
     Render renderer;
-    Dimension cameraDimensions = new Dimension(50, 50);
+    Dimension cameraDimensions = new Dimension(24, 24);
     Player player;
     Camera camera;
     Turn turn = new Turn();
     boolean firstTime = true;
 
-    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
-    private static final String SPRITESHEET_FILE_PATH2 = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0, new Rectangle(783, 783));
-    protected SpriteSheet sprite2 = new SpriteSheet(SPRITESHEET_FILE_PATH2, new Rectangle(39, 39), 0, 0, new Rectangle(783, 393));
+    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/assetsComplete").getAbsolutePath();
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 0, new Rectangle(783, 1176));
 
     public Game() {
         this.camera2d = new Camera2D();
@@ -64,7 +62,6 @@ public class Game extends BdvScriptGL {
         this.chunkRendering = true;
         this.chunkManagers = new ArrayList<>();
         this.chunkManagers.add(new ChunkManagerAPI(sprite));
-        this.chunkManagers.add(new ChunkManagerAPI(sprite2));
         this.init(this.entities, this.resolution, this.background);
     }
 
@@ -82,9 +79,9 @@ public class Game extends BdvScriptGL {
         Tile playerSpawnTile = WorldManager.getMapFromLocation(0, 0, -1).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2);
-        camera = new Camera(WorldManager.getLocationAtIndex(0, 0, -1), playerSpawnTile, 50, 50);
+        player = new Player(WorldManager.getLocationAtIndex(0, 0, -1), playerSpawnTile, 50, 50);
 
-        camera.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
+        player.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
 
         WorldManager.generateDungeonLocationLayout(0, 0, -1, 0,
                 numberOfRooms,
@@ -101,15 +98,15 @@ public class Game extends BdvScriptGL {
                 .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 15);
         Knight knight = new Knight(WorldManager.getLocationAtIndex(0, 0, -1), knightSpawnTile, 50, 50);
 
-        turn.addToJobQueue(camera);
+        turn.addToJobQueue(player);
         turn.addToJobQueue(torch);
         turn.addToJobQueue(knight);
 
         // Setting up input and renderer
         // ==============================
-        camera.setTileSizeForMouseCursor(this.tileSize.width, this.tileSize.height);
-        Keyboard keyboard = new Keyboard(camera);
-        Mouse mouse = new Mouse(camera);
+        player.setTileSizeForMouseCursor(this.tileSize.width, this.tileSize.height);
+        Keyboard keyboard = new Keyboard(player);
+        Mouse mouse = new Mouse(player);
 
         inputAPI = new InputAPI();
 
@@ -119,8 +116,8 @@ public class Game extends BdvScriptGL {
         InputManager.newInstance(keyboard, mouse);
 
         if (this.chunkRendering)
-            renderer = new Render(entities, chunkManagers, turn, camera, cameraDimensions, tileSize);
-        else renderer = new Render(entities, turn, camera, cameraDimensions, tileSize);
+            renderer = new Render(entities, chunkManagers, turn, player, cameraDimensions, tileSize);
+        else renderer = new Render(entities, turn, player, cameraDimensions, tileSize);
         // ==============================
 
         renderer.initRender(WorldManager.getLocationAtIndex(0, 0, -1).getMap());

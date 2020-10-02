@@ -53,7 +53,7 @@ public class EntityAPI {
 
     }
 
-    public static EntityAPI _doNotUse() {
+    public static EntityAPI _emptyInstance() {
         return new EntityAPI();
     }
 

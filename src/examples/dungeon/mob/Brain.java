@@ -7,9 +7,9 @@ import examples.dungeon.generation.WorldManager;
 import examples.dungeon.objects.Actor;
 import examples.dungeon.tiles.Stone;
 import examples.dungeon.tiles.Tile;
+import examples.dungeon.tiles.Wall;
 
 import java.util.ArrayList;
-import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class Brain {
         Tile target = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), (location.getMapWidth() / 2) + 5, (location.getMapHeight() / 2) + 5);
         if (target == null) return;
         decision = new Action(ActionTypes.MOVE, target);
-        aStar = new AStar(location.getMap(), location.getMapWidth(), location.getMapHeight(), brainOwner.getCurrentTile(), target, new Stone());
+        aStar = new AStar(location.getMap(), location.getMapWidth(), location.getMapHeight(), brainOwner.getCurrentTile(), target, new ArrayList<>(){{add(new Stone()); add(new Wall());}});
     }
 
     public Tile getNextTile() {
@@ -46,10 +46,12 @@ public class Brain {
         }
         if (!aStar.isStuck() && !aStar.getCurrentNode().isEndNode()) {
             AStarNode node = aStar.computeNext(aStar.getCurrentNode());
+            if (node == null) return brainOwner.getCurrentTile();
             nextTile = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), node.getPosition().getX(), node.getPosition().getY());
             if (nextTile == null) return null;
+            if (nextTile.getActor() != null) return brainOwner.getCurrentTile();
             aStar.setCurrentNode(node);
-        }
+        } else return brainOwner.getCurrentTile();
         return nextTile;
     }
 }

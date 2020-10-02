@@ -28,11 +28,11 @@ public class AStar {
     private AStarNode endNode;
     private AStarNode currentNode;
     private List<List<Tile>> matrix;
-    private Tile obstacle;
+    private List<Tile> obstacles;
 
-    public AStar(List<List<Tile>> map, int rows, int cols, Tile tileStart, Tile tileEnd, Tile obstacle) {
+    public AStar(List<List<Tile>> map, int rows, int cols, Tile tileStart, Tile tileEnd, List<Tile> obstacles) {
         this.matrix = map;
-        this.obstacle = obstacle;
+        this.obstacles = obstacles;
         this.rows = rows;
         this.cols = cols;
         this.tileStart = tileStart;
@@ -61,16 +61,22 @@ public class AStar {
                     this.endNode = node;
                     allNodesList.add(node);
                 }
-                else if (this.matrix.get(i).get(j).getType() == obstacle.getType()) {
-                    AStarNode node = new AStarNode();
-                    node.setPosition(new Vector2i(i, j));
-                    node.setWall(true);
-                    allNodesList.add(node);
-                }
                 else {
-                    AStarNode node = new AStarNode();
-                    node.setPosition(new Vector2i(i, j));
-                    allNodesList.add(node);
+                    boolean obstacleFound = false;
+                    for (Tile tile : obstacles) {
+                        if (this.matrix.get(i).get(j).getType() == tile.getType()) {
+                            obstacleFound = true;
+                            AStarNode node = new AStarNode();
+                            node.setPosition(new Vector2i(i, j));
+                            node.setWall(true);
+                            allNodesList.add(node);
+                        }
+                    }
+                    if (!obstacleFound) {
+                        AStarNode node = new AStarNode();
+                        node.setPosition(new Vector2i(i, j));
+                        allNodesList.add(node);
+                    }
                 }
             }
         }
@@ -160,29 +166,29 @@ public class AStar {
         AStarNode nextNode = null;
         Vector2i position = node.getPosition();
 
-        if (position.getX() != rows - 1 && this.matrix.get(position.getX() + 1) != null && this.matrix.get(position.getX() + 1).get(position.getY()).getType() != obstacle.getType()) {
+        if (position.getX() != rows - 1 && this.matrix.get(position.getX() + 1) != null && !isObstacle(this.matrix.get(position.getX() + 1).get(position.getY()))) {
             this.addToOpenList(findNode(new Vector2i(position.getX() + 1, position.getY())));
         }
-        if (position.getX() != 0 && this.matrix.get(position.getX() - 1) != null && this.matrix.get(position.getX() - 1).get(position.getY()).getType() != obstacle.getType()) {
+        if (position.getX() != 0 && this.matrix.get(position.getX() - 1) != null && !isObstacle(this.matrix.get(position.getX() - 1).get(position.getY()))) {
             this.addToOpenList(findNode(new Vector2i(position.getX() - 1, position.getY())));
         }
-        if (position.getY() != cols - 1 && this.matrix.get(position.getX()) != null && this.matrix.get(position.getX()).get(position.getY() + 1).getType() != obstacle.getType()) {
+        if (position.getY() != cols - 1 && this.matrix.get(position.getX()) != null && !isObstacle(this.matrix.get(position.getX()).get(position.getY() + 1))) {
             this.addToOpenList(findNode(new Vector2i(position.getX(), position.getY() + 1)));
         }
-        if (position.getY() != 0 && this.matrix.get(position.getX()) != null && this.matrix.get(position.getX()).get(position.getY() - 1).getType() != obstacle.getType()) {
+        if (position.getY() != 0 && this.matrix.get(position.getX()) != null && !isObstacle(this.matrix.get(position.getX()).get(position.getY() - 1))) {
             this.addToOpenList(findNode(new Vector2i(position.getX(), position.getY() - 1)));
         }
         if (this.allowDiagonal) {
-            if (position.getY() != cols - 1 && position.getX() != 0 && this.matrix.get(position.getX() - 1) != null && this.matrix.get(position.getX() - 1).get(position.getY() + 1).getType() != obstacle.getType()) {
+            if (position.getY() != cols - 1 && position.getX() != 0 && this.matrix.get(position.getX() - 1) != null && !isObstacle(this.matrix.get(position.getX() - 1).get(position.getY() + 1))) {
                 this.addToOpenList(findNode(new Vector2i(position.getX() - 1, position.getY() + 1)));
             }
-            if (position.getX() != rows - 1 && position.getY() != cols - 1 && this.matrix.get(position.getX() + 1) != null && this.matrix.get(position.getX() + 1).get(position.getY() + 1).getType() != obstacle.getType()) {
+            if (position.getX() != rows - 1 && position.getY() != cols - 1 && this.matrix.get(position.getX() + 1) != null && !isObstacle(this.matrix.get(position.getX() + 1).get(position.getY() + 1))) {
                 this.addToOpenList(findNode(new Vector2i(position.getX() + 1, position.getY() + 1)));
             }
-            if (position.getY() != 0 && position.getX() != 0 && this.matrix.get(position.getX() - 1) != null && this.matrix.get(position.getX() - 1).get(position.getY() - 1).getType() != obstacle.getType()) {
+            if (position.getY() != 0 && position.getX() != 0 && this.matrix.get(position.getX() - 1) != null && !isObstacle(this.matrix.get(position.getX() - 1).get(position.getY() - 1))) {
                 this.addToOpenList(findNode(new Vector2i(position.getX() - 1, position.getY() - 1)));
             }
-            if (position.getX() != rows - 1 && position.getY() != 0 && this.matrix.get(position.getX() + 1) != null && this.matrix.get(position.getX() + 1).get(position.getY() - 1).getType() != obstacle.getType()) {
+            if (position.getX() != rows - 1 && position.getY() != 0 && this.matrix.get(position.getX() + 1) != null && !isObstacle(this.matrix.get(position.getX() + 1).get(position.getY() - 1))) {
                 this.addToOpenList(findNode(new Vector2i(position.getX() + 1, position.getY() - 1)));
             }
         }
@@ -198,6 +204,17 @@ public class AStar {
         this.openList.remove(0);
 
         return nextNode;
+    }
+
+    public boolean isObstacle(Tile tile) {
+        boolean isObstacle = false;
+        for (Tile obstacle : obstacles) {
+            if (tile.getType() == obstacle.getType()) {
+                isObstacle = true;
+                break;
+            }
+        }
+        return isObstacle;
     }
 
     public AStarNode getCurrentNode() {
@@ -276,8 +293,8 @@ public class AStar {
         return matrix;
     }
 
-    public Tile getObstacle() {
-        return obstacle;
+    public List<Tile> getObstacle() {
+        return obstacles;
     }
 
     public boolean isAllowDiagonal() {

@@ -10,8 +10,8 @@ import java.awt.*;
 import java.io.File;
 
 public class Knight extends Actor {
-    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 1, new Rectangle(783, 393));
+    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/assetsComplete").getAbsolutePath();
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 0, 21, new Rectangle(783, 1176));
 
     private final Brain brain;
 
@@ -35,9 +35,9 @@ public class Knight extends Actor {
     }
 
     private void moveKnight(Tile newTile) {
-        Tile currentPlayerTile = this.getCurrentTile();
+        Tile currTile = this.getCurrentTile();
         if (!newTile.isSolid()) {
-            this.setPreviousTile(currentPlayerTile);
+            this.setPreviousTile(currTile);
             this.setCurrentTile(newTile);
             this.setNextTile(null);
         }

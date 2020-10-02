@@ -403,7 +403,7 @@ public class Dungeon extends Location {
                 // @TODO - Find out why this is coming as null in some rooms
                 if (found >= 2 || door == null || doorToConnect == null) continue;
 
-                AStar aStar = new AStar(map, rows, cols, door, doorToConnect, new Wall());
+                AStar aStar = new AStar(map, rows, cols, door, doorToConnect, new ArrayList<>(){{add(new Wall());}});
                 while (!aStar.isStuck() && !aStar.getCurrentNode().isEndNode()) {
                     aStar.setCurrentNode(aStar.computeNext(aStar.getCurrentNode()));
                 }

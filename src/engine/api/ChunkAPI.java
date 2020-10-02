@@ -33,7 +33,7 @@ public class ChunkAPI {
     public static ChunkAPI newInstance(int chunkSize, List<EntityAPI> chunk, Dimension tileSize, int tilesPerColumn) {
         if (chunk.size() != chunkSize) return null;
         List<EntityAPI> listClone = new ArrayList<>();
-        while (listClone.size() != chunk.size()) listClone.add(EntityAPI._doNotUse());
+        while (listClone.size() != chunk.size()) listClone.add(EntityAPI._emptyInstance());
         Collections.copy(listClone, chunk);
         int indexTilesPerTurn = tilesPerColumn - 1;
         return new ChunkAPI(chunkSize, listClone, tileSize, indexTilesPerTurn);

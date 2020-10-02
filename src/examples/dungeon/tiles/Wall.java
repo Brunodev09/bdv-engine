@@ -7,8 +7,8 @@ import java.awt.*;
 import java.io.File;
 
 public class Wall extends Tile {
-    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 5, 3, new Rectangle(783, 783));
+    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/assetsComplete").getAbsolutePath();
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 5, 3, new Rectangle(783, 1176));
     protected boolean isSolid = true;
 
     public Wall() {

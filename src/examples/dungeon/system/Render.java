@@ -10,7 +10,6 @@ import examples.dungeon.objects.Actor;
 import examples.dungeon.objects.Camera;
 import examples.dungeon.objects.Player;
 import examples.dungeon.tiles.Tile;
-import examples.dungeon.tiles.TransparentTile;
 import examples.dungeon.tiles.VoidTile;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
@@ -37,6 +36,7 @@ public class Render {
     private List<ChunkManagerAPI> chunkManagersAPI;
     private List<Actor> actors = new ArrayList<>();
     private boolean preChunkWorld = false;
+    private int extraTilesCounter = 0;
 
     public Render(List<EntityAPI> entities, Turn turn, Actor player, Dimension cameraDimensions, Dimension tileSize) {
         this.entities = entities;
@@ -68,8 +68,6 @@ public class Render {
             if (chunkManagersAPI != null) {
                 // rendering tiles batch
                 renderChunk(getPlayerChunk(player), chunkManagersAPI.get(0));
-                // rendering mobs batch
-                renderActors(actors, chunkManagersAPI.get(1));
             } else renderChunkFromMap(getPlayerChunk(player), player.getCurrentLocation().getMap());
         } catch (CloneNotSupportedException cloneNotSupportedException) {
             LOG.severe(cloneNotSupportedException.getMessage());
@@ -181,7 +179,7 @@ public class Render {
         List<EntityAPI> entitiesToRender = new ArrayList<>();
         manager.getChunks().clear();
         int latestEffectIndex = 0;
-        float[] effects = new float[cameraDimensions.width * cameraDimensions.height * 5];
+        float[] effects = new float[(cameraDimensions.width * cameraDimensions.height * 5) + extraTilesCounter];
 
         int xIt = 0;
         for (int i = -cameraDimensions.width / 2; i < cameraDimensions.width / 2; i++) {
@@ -205,34 +203,35 @@ public class Render {
                 if (tile.isHidden() || tile.isSelected()) {
                     Vector3f color = null;
 
-                    if (tile.isHidden()) {
-                        color = new Vector3f(0.2f, 0.2f, 0.2f);
-                        effectsPerTileY.add(new float[]{0.2f, 0.2f, 0.2f});
-                    }
                     if (tile.isSelected()) {
                         color = new Vector3f(1.0f, 1.0f, 0);
                         effectsPerTileY.add(new float[]{1.0f, 1.0f, 0f});
                     }
+                    else if (tile.isHidden() && tile.getType() == TileMapping.ROOM.getTile()) {
+                        color = new Vector3f(0.2f, 0.2f, 0.2f);
+                        effectsPerTileY.add(new float[]{0.0f, 0.0f, 0.0f});
+                    } else if (tile.isHidden()) {
+                        color = new Vector3f(0.2f, 0.2f, 0.2f);
+                        effectsPerTileY.add(new float[]{0.4f, 0.4f, 0.4f});
+                    }
 
-                    effects[latestEffectIndex] = (float) tile.getScriptProperties().get("xNormalized");
-                    effects[latestEffectIndex + 1] = (float) tile.getScriptProperties().get("yNormalized");
-                    effects[latestEffectIndex + 2] = color.x;
-                    effects[latestEffectIndex + 3] = color.y;
-                    effects[latestEffectIndex + 4] = color.z;
-                    latestEffectIndex += 5;
-
+                    if (tile.getScriptProperties().get("xNormalized") != null && tile.getScriptProperties().get("yNormalized") != null) {
+                        effects[latestEffectIndex] = (float) tile.getScriptProperties().get("xNormalized");
+                        effects[latestEffectIndex + 1] = (float) tile.getScriptProperties().get("yNormalized");
+                        effects[latestEffectIndex + 2] = color.x;
+                        effects[latestEffectIndex + 3] = color.y;
+                        effects[latestEffectIndex + 4] = color.z;
+                        latestEffectIndex += 5;
+                    }
                 } else {
                     effectsPerTileY.add(new float[]{1f, 1f, 1f});
                 }
-                if (tile.getActor() == null ) {
+                if (tile.getActor() == null) {
                     entitiesToRender.add(tile.getEntityObject());
-                }
-                else if (tile.getActor().getType().equals("torch")) {
+                } else {
                     tile.getActor().getEntityObject().setShouldRender(true);
                     entitiesToRender.add(tile.getActor().getEntityObject());
-                } else if (!actors.contains(tile.getActor())) {
-                    tile.getActor().getEntityObject().setShouldRender(true);
-                    actors.add(tile.getActor());
+                    if (!actors.contains(tile.getActor())) actors.add(tile.getActor());
                 }
             }
             effectsPerTileX.add(effectsPerTileY);
@@ -244,55 +243,6 @@ public class Render {
         chunkAPI.setRgbTileEffects(effects);
         chunkAPI.setCameraDimensions(cameraDimensions);
         chunkAPI.setEffectsPerTile(effectsPerTileX);
-        manager.addChunk(chunkAPI);
-    }
-
-    public void renderActors(List<Actor> actors, ChunkManagerAPI manager) {
-        manager.getChunks().clear();
-        int numberOfRows = cameraDimensions.width - 1;
-        List<EntityAPI> entitiesToRender = new ArrayList<>();
-        int smallestX = 1000;
-        int biggestX = 0;
-        int smallestY = 1000;
-        int biggestY = 0;
-        for (Actor actor : actors) {
-            if (actor.getCurrentTile().getPositionX() > biggestX) biggestX = actor.getCurrentTile().getPositionX();
-            if (actor.getCurrentTile().getPositionY() > biggestY) biggestY = actor.getCurrentTile().getPositionY();
-
-            if (actor.getCurrentTile().getPositionX() < smallestX) smallestX = actor.getCurrentTile().getPositionX();
-            if (actor.getCurrentTile().getPositionY() < smallestY) smallestY = actor.getCurrentTile().getPositionY();
-        }
-        for (int x = smallestX; x < biggestX; x++) {
-            for (int y = smallestY; y < biggestY; y++) {
-                boolean actorHere = false;
-                for (Actor actor : actors) {
-                    if (actor.getCurrentTile().getPositionX() == x && actor.getCurrentTile().getPositionY() == y) {
-                        actorHere = true;
-                        entitiesToRender.add(actor.getEntityObject());
-                    }
-                }
-                if (!actorHere) {
-                    TransparentTile tile = new TransparentTile();
-                    EntityAPI entityAPI = new EntityAPI(null,
-                            new Vector3f(0, 0, 1),
-                            new Dimension(tileSize.width, tileSize.height),
-                            new Vector2f(0, 0));
-
-                    entityAPI.setRenderSpriteRetroCompatibility(false);
-                    entityAPI.setShouldRender(true);
-                    entityAPI.setSpriteSheet(tile.getSprite());
-
-                    entitiesToRender.add(entityAPI);
-                }
-            }
-        }
-        ChunkAPI chunkAPI = ChunkAPI.newInstance(entitiesToRender.size(), entitiesToRender,
-                new Dimension(tileSize.width, tileSize.height), numberOfRows);
-        chunkAPI.setOpenGlPosition(new Vector3f(smallestX, smallestY, 1));
-        chunkAPI.setShouldRender(true);
-//        chunkAPI.setRgbTileEffects(effects);
-        chunkAPI.setCameraDimensions(cameraDimensions);
-//        chunkAPI.setEffectsPerTile(effectsPerTileX);
         manager.addChunk(chunkAPI);
     }
 
@@ -330,6 +280,7 @@ public class Render {
     }
 
     public List<List<Tile>> getPlayerChunk(Actor player) throws CloneNotSupportedException {
+        extraTilesCounter = 0;
         Location location = player.getCurrentLocation();
         Tile playerTile = player.getCurrentTile();
         List<List<Tile>> tilesToRender = new ArrayList<>();
@@ -360,30 +311,36 @@ public class Render {
             if (chunk.isEmpty()) continue;
             tilesToRender.add(chunk);
         }
-        if (this.chunkManagersAPI == null) {
-            // Adding possibly missing tiles
-            for (List<Tile> tiles : tilesToRender) {
-                if (tiles.size() < validChunkNumber) {
-                    int numTiles = validChunkNumber - tiles.size();
-                    for (int i = 0; i < numTiles; i++) {
-                        for (int j = 0; j < validChunkNumber; j++) {
-                            Tile voidTile = new VoidTile();
-                            tiles.add(voidTile);
-                        }
-                    }
+        // Adding possibly missing tiles
+        for (List<Tile> tiles : tilesToRender) {
+            if (tiles.size() < validChunkNumber) {
+                int numTiles = validChunkNumber - tiles.size();
+                for (int i = 0; i < numTiles; i++) {
+                    Tile voidTile = new VoidTile();
+                    EntityAPI entityAPI = EntityAPI._emptyInstance();
+                    entityAPI.setShouldRender(false);
+                    entityAPI.setSpriteSheet(voidTile.getSprite());
+                    voidTile.setEntityObject(entityAPI);
+                    extraTilesCounter++;
+                    tiles.add(voidTile);
                 }
             }
-            // Adding possibly missing layers of tiles
-            if (tilesToRender.size() < validChunkNumber) {
-                int numLayers = validChunkNumber - tilesToRender.size();
-                for (int i = 0; i < numLayers; i++) {
-                    List<Tile> newChunk = new ArrayList<>();
-                    for (int j = 0; j < validChunkNumber; j++) {
-                        Tile voidTile = new VoidTile();
-                        newChunk.add(voidTile);
-                    }
-                    tilesToRender.add(newChunk);
+        }
+        // Adding possibly missing layers of tiles
+        if (tilesToRender.size() < validChunkNumber) {
+            int numLayers = validChunkNumber - tilesToRender.size();
+            for (int i = 0; i < numLayers; i++) {
+                List<Tile> newChunk = new ArrayList<>();
+                for (int j = 0; j < validChunkNumber; j++) {
+                    Tile voidTile = new VoidTile();
+                    EntityAPI entityAPI = EntityAPI._emptyInstance();
+                    entityAPI.setShouldRender(false);
+                    entityAPI.setSpriteSheet(voidTile.getSprite());
+                    voidTile.setEntityObject(entityAPI);
+                    newChunk.add(voidTile);
+                    extraTilesCounter++;
                 }
+                tilesToRender.add(newChunk);
             }
         }
         // Hiding all tiles

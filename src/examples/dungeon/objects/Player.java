@@ -12,8 +12,8 @@ import java.util.Objects;
 
 public class Player extends Actor {
 
-    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/basic2").getAbsolutePath();
-    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 1, 1, new Rectangle(783, 393));
+    private static final String SPRITESHEET_FILE_PATH = new File("src/examples/dungeon/assets/assetsComplete").getAbsolutePath();
+    protected SpriteSheet sprite = new SpriteSheet(SPRITESHEET_FILE_PATH, new Rectangle(39, 39), 1, 8, new Rectangle(783, 1176));
     private String lastKeyPressed;
     private String lastKeyReleased;
     private boolean leftClicked;
