@@ -57,7 +57,7 @@ public class MATRIX_TEMPLATE extends BdvScript {
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTime) {
 
         angle += 0.01;
         for (Entity point : entities) {

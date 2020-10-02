@@ -49,8 +49,8 @@ public class Bdv {
             this.bdvWin.frame.setLocationRelativeTo(null);
             this.bdvWin.frame.setVisible(true);
 
-            this.bdvWin.start();
             this.bdvWin.setTemplate(pureInstanceConversion);
+            this.bdvWin.start();
         } else if (instanceConversionGL != null) {
             instanceConversionGL.FPS = instanceConversionGL.FPS == 0 ? 60 : instanceConversionGL.FPS;
             instanceConversionGL.windowTitle = instanceConversionGL.windowTitle == null ? "Default Bdv Window" : instanceConversionGL.windowTitle;

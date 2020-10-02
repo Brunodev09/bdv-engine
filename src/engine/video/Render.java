@@ -6,7 +6,6 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.util.Arrays;
 
 public class Render {
 
@@ -16,9 +15,6 @@ public class Render {
     private int _height;
     private int[] pixels;
     private int background;
-
-    public Render() {
-    }
 
     public Render(RenderQueue queue, int width, int height) {
         _width = width;
@@ -46,16 +42,19 @@ public class Render {
 
     public void render(BufferStrategy buffer) {
 
-        Arrays.fill(pixels, this.background);
-        Graphics display = buffer.getDrawGraphics();
-        display.drawImage(image, 0, 0, _width, _height, null);
+//        Arrays.fill(pixels, this.background);
 
-        if (this._queue.getRenderQueue().size() > 0) {
+        Graphics display = buffer.getDrawGraphics();
+        display.setColor(new Color(background));
+        display.fillRect(0, 0, _width, _height);
+//        display.drawImage(image, 0, 0, _width, _height, null);
+
+        if (!this._queue.getRenderQueue().isEmpty()) {
             for (Entity renderable : this._queue.getRenderQueue()) {
                 switch (renderable.getMdl()) {
                     case TEXTURE:
-                        break;
-                    case SPRITESHEET:
+                        display.drawImage(renderable.getImage(), (int) renderable.getPosition().x, (int) renderable.getPosition().y,
+                                renderable.getDimension().width, renderable.getDimension().height, null);
                         break;
                     case ARC:
                         break;

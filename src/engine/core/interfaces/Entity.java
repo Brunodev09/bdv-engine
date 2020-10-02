@@ -4,7 +4,9 @@ import engine.math.RGBA;
 import engine.math.Vector2f;
 import engine.math.Vector3f;
 import engine.texture.Texture;
+import engine.video.TextureCache;
 
+import java.awt.*;
 
 public class Entity {
     public static int _c = 0;
@@ -18,6 +20,7 @@ public class Entity {
     private RGBA color;
     private Texture texture;
     private boolean player;
+    private Image image;
 
     public Entity() {
         this.id = ++_c;
@@ -31,6 +34,15 @@ public class Entity {
         this.speed = speed;
         this.dimension = dimension;
         this.color = color;
+    }
+
+    public Entity(Vector3f position, Vector2f speed, Dimension dimension, Model primitive) {
+        this.id = ++_c;
+        this.mdl = primitive;
+        this.position = new Vector3f(position.x, position.y, position.z);
+        this.initialPosition = new Vector3f(position.x, position.y, position.z);
+        this.speed = speed;
+        this.dimension = dimension;
     }
 
     public Entity(Vector3f position, Vector2f speed, Dimension dimension, RGBA color, Model primitive) {
@@ -125,6 +137,14 @@ public class Entity {
 
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+
+    public void loadImage(String absPath) {
+        this.image = TextureCache.loadImage(absPath);
+    }
+
+    public Image getImage() {
+        return image;
     }
 
 }

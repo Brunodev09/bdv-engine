@@ -14,5 +14,5 @@ public abstract class BdvScript {
     public String windowTitle;
 
     public abstract void init(List<Entity> entities, Dimension resolution, RGBA background);
-    public abstract void update();
+    public abstract void update(double deltaTime);
 }

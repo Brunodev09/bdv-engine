@@ -26,17 +26,18 @@ public class BdvRuntime extends Canvas implements Runnable {
     public static int scale;
     public static String title;
     public int background = 0x892D6F;
+    public int fpsCap = 60;
 
     public JFrame frame;
     private boolean running = false;
 
 
-    private final RenderQueue queue;
-    private final Render render;
+    private final RenderQueue queue = new RenderQueue();
+    private Render render;
 
     private BdvScript script;
 
-    private int fps = 60;
+    private int fps = 0;
 
     private ExecutorService exec;
 
@@ -44,8 +45,6 @@ public class BdvRuntime extends Canvas implements Runnable {
         Dimension size = new Dimension(width * scale, height * scale);
 
         setPreferredSize(size);
-        this.queue = new RenderQueue();
-        this.render = new Render();
 
         load();
     }
@@ -63,19 +62,18 @@ public class BdvRuntime extends Canvas implements Runnable {
     }
 
     public void setTemplate(BdvScript script) {
+        render = new Render(this.queue, script.resolution.width, script.resolution.height);
         this.script = script;
         this.resizeFrame(script.resolution.width, script.resolution.height);
         this.setupRenderQueue();
         render.setBackground(this.background);
-        render.replaceQueue(this.queue);
         render.setDimensions(script.resolution.width, script.resolution.height);
-        render.init();
+//        render.init();
     }
 
     private void load() {
         frame = new JFrame();
     }
-
 
     public void start() {
         running = true;
@@ -89,12 +87,10 @@ public class BdvRuntime extends Canvas implements Runnable {
             LOGGER.info("Attempting to shutdown thread.");
             this.exec.shutdown();
             this.exec.awaitTermination(5, TimeUnit.SECONDS);
-        }
-        catch (InterruptedException e) {
+        } catch (InterruptedException e) {
             LOGGER.log(Level.SEVERE, e.toString(), e);
             LOGGER.info("Thread interrupted.");
-        }
-        finally {
+        } finally {
             if (!this.exec.isTerminated()) {
                 LOGGER.info("Cancel non finished tasks in thread.");
             }
@@ -105,37 +101,41 @@ public class BdvRuntime extends Canvas implements Runnable {
 
     public void run() {
 
-        long timer = System.currentTimeMillis();
-        long lastTime = System.nanoTime();
-        final double ns = 1000000000.0 / this.fps;
-        double delta = 0;
+//        long lastTime = System.nanoTime();
+//        final double ns = 1000000000.0 / 60.0;
+//        double delta = 0;
+
+        long lastTimeFps = System.currentTimeMillis();
+        long nowFps = System.currentTimeMillis();
         requestFocus();
-        int counter = 0;
 
         while (running) {
-            long now = System.nanoTime();
-            delta += (now - lastTime) / ns;
-            lastTime = now;
-            while (delta >= 1) {
-                update();
+//            long now = System.nanoTime();
+
+            while ((nowFps - lastTimeFps) < 1000) {
+                if (fps >= fpsCap) break;
+                fps++;
+                update(Math.abs((nowFps - lastTimeFps) / 1000.0) > 0.05 ? Math.abs((nowFps - lastTimeFps) / 1000.0) : 0.05);
                 render();
-                delta--;
-                counter++;
+                nowFps = System.currentTimeMillis();
             }
+            lastTimeFps = nowFps;
+            frame.setTitle(title + " | " + fps + " FPS | " + "By BrunoDev");
+            fps = 0;
 
-            if (System.currentTimeMillis() - timer > 1000) {
-                timer += 1000;
-                frame.setTitle(title + " | " + counter + " FPS | " + "By BrunoDev");
-                counter = 0;
-            }
-
+//            delta += (now - lastTime) / ns;
+//            lastTime = now;
+//            while (delta >= 1) {
+//
+//                delta--;
+//            }
         }
         stop();
     }
 
-    public void update() {
+    public void update(double deltaTime) {
         if (this.script == null) return;
-        this.script.update();
+        this.script.update(deltaTime);
     }
 
     public void render() {

@@ -5,6 +5,11 @@ import engine.models.TexturedModel;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+
 public class Entity {
     private TexturedModel _model;
     private Model _model_primitive;
