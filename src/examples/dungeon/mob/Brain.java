@@ -45,7 +45,8 @@ public class Brain {
             decide();
         }
         if (!aStar.isStuck() && !aStar.getCurrentNode().isEndNode()) {
-            AStarNode node = aStar.computeNext(aStar.getCurrentNode());
+            AStarNode node = null;
+            node = aStar.computeNext(aStar.getCurrentNode());
             if (node == null) return brainOwner.getCurrentTile();
             nextTile = WorldManager.tryGetTile(location.getXGlobal(), location.getYGlobal(), location.getZGlobal(), node.getPosition().getX(), node.getPosition().getY());
             if (nextTile == null) return null;

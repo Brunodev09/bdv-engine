@@ -35,6 +35,8 @@ public abstract class Actor implements Cloneable {
 
     protected List<Actor> subActors = new ArrayList<>();
 
+    protected boolean emitsLight = false;
+
     public Actor(Tile tile) {
         this.currentTile = tile;
         tile.setActor(this);
@@ -380,6 +382,14 @@ public abstract class Actor implements Cloneable {
 
     public FactionTypes getFaction() {
         return faction;
+    }
+
+    public boolean isEmitsLight() {
+        return emitsLight;
+    }
+
+    public void setEmitsLight(boolean emitsLight) {
+        this.emitsLight = emitsLight;
     }
 
     @Override

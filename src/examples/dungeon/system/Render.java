@@ -353,6 +353,10 @@ public class Render {
 
         if (player.getType().equals("player")) {
             ((Player) player).setChunk(tilesToRender);
+            for (Actor actor : turn.getJobs()) {
+                if (actor.isEmitsLight())
+                    actor.applyFOV(tilesToRender);
+            }
             return player.rayCastingFOV(tilesToRender);
         }
         // if free camera-mode

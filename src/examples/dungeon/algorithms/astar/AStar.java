@@ -52,16 +52,14 @@ public class AStar {
                     this.startNode = node;
                     this.currentNode = node;
                     allNodesList.add(node);
-                }
-                else if (this.matrix.get(i).get(j).getPositionX() == tileEnd.getPositionX() && this.matrix.get(i).get(j).getPositionY() == tileEnd.getPositionY()) {
+                } else if (this.matrix.get(i).get(j).getPositionX() == tileEnd.getPositionX() && this.matrix.get(i).get(j).getPositionY() == tileEnd.getPositionY()) {
                     AStarNode node = new AStarNode();
                     node.setPosition(new Vector2i(i, j));
                     node.setEndNode(true);
 
                     this.endNode = node;
                     allNodesList.add(node);
-                }
-                else {
+                } else {
                     boolean obstacleFound = false;
                     for (Tile tile : obstacles) {
                         if (this.matrix.get(i).get(j).getType() == tile.getType()) {
