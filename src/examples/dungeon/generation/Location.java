@@ -1,5 +1,6 @@
 package examples.dungeon.generation;
 
+import examples.dungeon.tiles.Stone;
 import examples.dungeon.tiles.Tile;
 import examples.dungeon.tiles.VoidTile;
 
@@ -51,7 +52,7 @@ public abstract class Location {
         for (int i = 0; i < width; i++) {
             List<Tile> tiles = new ArrayList<>();
             for (int j = 0; j < height; j++) {
-                tiles.add(new VoidTile(i, j));
+                tiles.add(new Stone(i, j));
             }
             map.add(tiles);
         }

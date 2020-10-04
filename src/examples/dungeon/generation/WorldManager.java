@@ -22,7 +22,7 @@ public class WorldManager {
         world.put(key, location);
     }
 
-    public static void generateDungeonLocationLayout(
+    public static void generateDungeonLocationLayoutDFS(
             int x,
             int y,
             int z,
@@ -33,7 +33,18 @@ public class WorldManager {
             int roomMinWidth,
             int roomMinHeight) {
         Dungeon dungeon = (Dungeon) world.get(generateHashKey(x, y, z));
-        dungeon.generateDungeon(dungeon, playerLevel, numberOfRooms, roomMaxWidth, roomMaxHeight, roomMinWidth, roomMinHeight);
+        dungeon.generateDungeonDFS(dungeon, playerLevel, numberOfRooms, roomMaxWidth, roomMaxHeight, roomMinWidth, roomMinHeight);
+    }
+
+    public static void generateDungeonLocationLayoutRandomWalk(
+            int x,
+            int y,
+            int z,
+            int playerLevel,
+            int maxTunnels,
+            int maxTunnelLength) {
+        Dungeon dungeon = (Dungeon) world.get(generateHashKey(x, y, z));
+        dungeon.generateDungeonRandomWalk(dungeon, playerLevel, maxTunnels,maxTunnelLength);
     }
 
     public static Location getLocationAtIndex(int x, int y, int z) {
@@ -60,6 +71,15 @@ public class WorldManager {
             randomPointOnWorldX = random.nextInt(numberOfFreeLines);
             randomPointOnWorldY = random.nextInt(numberOfFreeLines);
         }
+        return map.get(randomPointOnWorldX).get(randomPointOnWorldY);
+    }
+
+    public static Tile findRandomTile(int x, int y, int z, int numberOfFreeLines) {
+        Location location = world.get(generateHashKey(x, y, z));
+        List<List<Tile>> map = location.getMap();
+        int randomPointOnWorldX = random.nextInt(numberOfFreeLines);
+        int randomPointOnWorldY = random.nextInt(numberOfFreeLines);
+
         return map.get(randomPointOnWorldX).get(randomPointOnWorldY);
     }
 

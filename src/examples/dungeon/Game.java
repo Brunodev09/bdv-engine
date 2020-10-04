@@ -39,7 +39,7 @@ public class Game extends BdvScriptGL {
     private final Random random = new Random();
     public InputAPI inputAPI;
     Render renderer;
-    Dimension cameraDimensions = new Dimension(24, 24);
+    Dimension cameraDimensions = new Dimension(100, 100);
     Player player;
     Camera camera;
     Turn turn = new Turn();
@@ -83,10 +83,11 @@ public class Game extends BdvScriptGL {
 
         player.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
 
-        WorldManager.generateDungeonLocationLayout(0, 0, -1, 0,
-                numberOfRooms,
-                roomMaxWidth, roomMaxHeight,
-                roomMinWidth, roomMinHeight);
+//        WorldManager.generateDungeonLocationLayoutDFS(0, 0, -1, 0,
+//                numberOfRooms,
+//                roomMaxWidth, roomMaxHeight,
+//                roomMinWidth, roomMinHeight);
+        WorldManager.generateDungeonLocationLayoutRandomWalk(0, 0, -1, 0, 2000, 10);
 
         Tile torchSpawnTile = WorldManager.getMapFromLocation(0, 0, -1)
                 .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2) + 5)

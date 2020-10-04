@@ -1,5 +1,6 @@
 package examples.dungeon.generation;
 
+import engine.math.Dimension;
 import examples.dungeon.algorithms.astar.AStar;
 import examples.dungeon.algorithms.astar.AStarNode;
 import examples.dungeon.system.TileMapping;
@@ -26,13 +27,27 @@ public class Dungeon extends Location {
         return rooms;
     }
 
-    public void generateDungeon(Dungeon dungeon,
-                                int playerLevel,
-                                int numberOfRooms,
-                                int roomMaxWidth,
-                                int roomMaxHeight,
-                                int roomMinWidth,
-                                int roomMinHeight) {
+    public void generateDungeonRandomWalk(Dungeon dungeon,
+                                          int playerLevel,
+                                          int maxTunnels,
+                                          int maxLength) {
+        this.dungeon = dungeon;
+        List<Tile> toUpdate = generateMazeRandomWalk(maxTunnels, maxLength);
+        for (Tile tile : toUpdate) {
+            if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()) == null ||
+                    WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getActor() != null)
+                continue;
+            WorldManager.trySetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY(), new VoidTile(tile.getPositionX(), tile.getPositionY()));
+        }
+    }
+
+    public void generateDungeonDFS(Dungeon dungeon,
+                                   int playerLevel,
+                                   int numberOfRooms,
+                                   int roomMaxWidth,
+                                   int roomMaxHeight,
+                                   int roomMinWidth,
+                                   int roomMinHeight) {
         this.dungeon = dungeon;
 
         List<List<Tile>> world = dungeon.getMap();
@@ -116,7 +131,7 @@ public class Dungeon extends Location {
             }
         }
 
-        List<Tile> toUpdate = generateMaze();
+        List<Tile> toUpdate = generateMazeDFS();
         for (Tile tile : toUpdate) {
             if (WorldManager.tryGetTile(dungeon.getXGlobal(), dungeon.getYGlobal(), dungeon.getZGlobal(), tile.getPositionX(), tile.getPositionY()).getActor() != null)
                 continue;
@@ -222,7 +237,7 @@ public class Dungeon extends Location {
         return false;
     }
 
-    public List<Tile> generateMaze() {
+    public List<Tile> generateMazeDFS() {
 //                          Depth first search
 //        Choose the initial cell, mark it as visited and push it to the stack
 //        While the stack is not empty
@@ -403,7 +418,9 @@ public class Dungeon extends Location {
                 // @TODO - Find out why this is coming as null in some rooms
                 if (found >= 2 || door == null || doorToConnect == null) continue;
 
-                AStar aStar = new AStar(map, rows, cols, door, doorToConnect, new ArrayList<>(){{add(new Wall());}});
+                AStar aStar = new AStar(map, rows, cols, door, doorToConnect, new ArrayList<>() {{
+                    add(new Wall());
+                }});
                 while (!aStar.isStuck() && !aStar.getCurrentNode().isEndNode()) {
                     aStar.setCurrentNode(aStar.computeNext(aStar.getCurrentNode()));
                 }
@@ -426,6 +443,76 @@ public class Dungeon extends Location {
                 }
             }
             i++;
+        }
+        return tilesToUpdate;
+    }
+
+//    Dimensions: the width and height of the map.
+//    MaxTunnels: the greatest number of turns the algorithm can take while making the map.
+//    MaxLength: the greatest length of each tunnel the algorithm will choose before making a horizontal or vertical turn.
+
+    //    Makes a two dimensional map of walls
+//    Chooses a random starting point on the map
+//    While the number of tunnels is not zero
+//    Chooses a random length from maximum allowed length
+//    Chooses a random direction to turn to (right, left, up, down)
+//    Draws a tunnel in that direction while avoiding the edges of the map
+//    Decrements the number of tunnels and repeats the while loop
+//    Returns the map with the changes
+    public List<Tile> generateMazeRandomWalk(int maxTunnels, int maxLength) {
+        List<Tile> tilesToUpdate = new ArrayList<>();
+        Tile initialTile = WorldManager.findRandomTile(this.getXGlobal(), this.getYGlobal(), this.getZGlobal(), getMapWidth());
+        Tile currentTile = initialTile;
+        int[] prevDir = new int[]{0, 0};
+        while (maxTunnels != 0) {
+            int len = random.nextInt(maxLength);
+            int dir = random.nextInt(5);
+            while (dir == 0 || (dir == -prevDir[0] && dir == -prevDir[1]) || (dir == prevDir[0] && dir == prevDir[1])) {
+                dir = random.nextInt(5);
+            }
+            while (len == 0) len = random.nextInt(maxLength);
+
+            int xDirOffset = 1;
+            int yDirOffset = 1;
+
+            switch (dir) {
+                case 1:
+                    yDirOffset = 1;
+                    xDirOffset = 0;
+                    break;
+                case 2:
+                    yDirOffset = -1;
+                    xDirOffset = 0;
+                    break;
+                case 3:
+                    xDirOffset = 1;
+                    yDirOffset = 0;
+                    break;
+                case 4:
+                    xDirOffset = -1;
+                    yDirOffset = 0;
+                    break;
+            }
+            int counter = 1;
+            int carverCounter = 0;
+            while (carverCounter <= maxLength && counter <= len) {
+                Tile tile = WorldManager.tryGetTile(getXGlobal(), getYGlobal(), getZGlobal(),
+                        currentTile.getPositionX() + xDirOffset,
+                        currentTile.getPositionY() + yDirOffset);
+                if (tile == null) {
+                    break;
+                } else {
+                    tilesToUpdate.add(tile);
+                    currentTile = tile;
+                    carverCounter++;
+                    counter++;
+                }
+            }
+            if (carverCounter > 0) {
+                prevDir[0] = xDirOffset;
+                prevDir[1] = yDirOffset;
+                maxTunnels--;
+            }
         }
         return tilesToUpdate;
     }
