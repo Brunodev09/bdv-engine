@@ -451,7 +451,7 @@ public class Dungeon extends Location {
 //    MaxTunnels: the greatest number of turns the algorithm can take while making the map.
 //    MaxLength: the greatest length of each tunnel the algorithm will choose before making a horizontal or vertical turn.
 
-    //    Makes a two dimensional map of walls
+//    Makes a two dimensional map of walls
 //    Chooses a random starting point on the map
 //    While the number of tunnels is not zero
 //    Chooses a random length from maximum allowed length

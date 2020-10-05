@@ -1,6 +1,7 @@
 package examples.dungeon.generation;
 
 import examples.dungeon.system.TileMapping;
+import examples.dungeon.tiles.GrassTile;
 import examples.dungeon.tiles.Tile;
 
 import java.util.*;
@@ -20,6 +21,13 @@ public class WorldManager {
         Dungeon location = new Dungeon(x, y, z, width, height);
         String key = generateHashKey(x, y, z);
         world.put(key, location);
+    }
+
+    public static void newEmptyFieldLocation(int x, int y, int z, int width, int height, Class<GrassTile> GrassTileClass) {
+        EmptyField location = new EmptyField(x, y, z, width, height, GrassTileClass);
+        String key = generateHashKey(x, y, z);
+        world.put(key, location);
+        location.generate();
     }
 
     public static void generateDungeonLocationLayoutDFS(
@@ -46,6 +54,7 @@ public class WorldManager {
         Dungeon dungeon = (Dungeon) world.get(generateHashKey(x, y, z));
         dungeon.generateDungeonRandomWalk(dungeon, playerLevel, maxTunnels,maxTunnelLength);
     }
+
 
     public static Location getLocationAtIndex(int x, int y, int z) {
         return world.get(generateHashKey(x, y, z));

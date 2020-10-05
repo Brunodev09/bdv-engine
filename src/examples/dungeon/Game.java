@@ -20,6 +20,7 @@ import examples.dungeon.objects.Torch;
 import examples.dungeon.objects.Player;
 import examples.dungeon.system.Render;
 import examples.dungeon.system.Turn;
+import examples.dungeon.tiles.GrassTile;
 import examples.dungeon.tiles.Tile;
 
 import java.awt.*;
@@ -39,7 +40,7 @@ public class Game extends BdvScriptGL {
     private final Random random = new Random();
     public InputAPI inputAPI;
     Render renderer;
-    Dimension cameraDimensions = new Dimension(100, 100);
+    Dimension cameraDimensions = new Dimension(25, 25);
     Player player;
     Camera camera;
     Turn turn = new Turn();
@@ -67,27 +68,30 @@ public class Game extends BdvScriptGL {
 
     @Override
     public void init(List<EntityAPI> entities, Dimension resolution, RGBAf background) {
-        // formula to calculate how many rooms to generate based on the player level
-        final int numberOfRooms = 50;
-        final int roomMaxWidth = 11;
-        final int roomMaxHeight = 11;
-        final int roomMinWidth = 3;
-        final int roomMinHeight = 3;
+//        // formula to calculate how many rooms to generate based on the player level
+//        final int numberOfRooms = 50;
+//        final int roomMaxWidth = 11;
+//        final int roomMaxHeight = 11;
+//        final int roomMinWidth = 3;
+//        final int roomMinHeight = 3;
 
-        WorldManager.newDungeonLocation(0, 0, -1, 100, 100);
+//        WorldManager.newDungeonLocation(0, 0, -1, 100, 100);
+//
+//
+////        WorldManager.generateDungeonLocationLayoutDFS(0, 0, -1, 0,
+////                numberOfRooms,
+////                roomMaxWidth, roomMaxHeight,
+////                roomMinWidth, roomMinHeight);
+//        WorldManager.generateDungeonLocationLayoutRandomWalk(0, 0, -1, 0, 2000, 10);
+
+        WorldManager.newEmptyFieldLocation(0,0, -1, 100, 100, GrassTile.class);
 
         Tile playerSpawnTile = WorldManager.getMapFromLocation(0, 0, -1).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2).get(
                 WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2);
-        player = new Player(WorldManager.getLocationAtIndex(0, 0, -1), playerSpawnTile, 50, 50);
+        camera = new Camera(WorldManager.getLocationAtIndex(0, 0, -1), playerSpawnTile, 50, 50);
 
-        player.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
-
-//        WorldManager.generateDungeonLocationLayoutDFS(0, 0, -1, 0,
-//                numberOfRooms,
-//                roomMaxWidth, roomMaxHeight,
-//                roomMinWidth, roomMinHeight);
-        WorldManager.generateDungeonLocationLayoutRandomWalk(0, 0, -1, 0, 2000, 10);
+        camera.setCurrentLocation(WorldManager.getLocationAtIndex(0, 0, -1));
 
         Tile torchSpawnTile = WorldManager.getMapFromLocation(0, 0, -1)
                 .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapWidth() / 2) + 5)
@@ -99,15 +103,15 @@ public class Game extends BdvScriptGL {
                 .get((WorldManager.getLocationAtIndex(0, 0, -1).getMapHeight() / 2) + 15);
         Knight knight = new Knight(WorldManager.getLocationAtIndex(0, 0, -1), knightSpawnTile, 50, 50);
 
-        turn.addToJobQueue(player);
+        turn.addToJobQueue(camera);
         turn.addToJobQueue(torch);
         turn.addToJobQueue(knight);
 
         // Setting up input and renderer
         // ==============================
-        player.setTileSizeForMouseCursor(this.tileSize.width, this.tileSize.height);
-        Keyboard keyboard = new Keyboard(player);
-        Mouse mouse = new Mouse(player);
+        camera.setTileSizeForMouseCursor(this.tileSize.width, this.tileSize.height);
+        Keyboard keyboard = new Keyboard(camera);
+        Mouse mouse = new Mouse(camera);
 
         inputAPI = new InputAPI();
 
@@ -117,8 +121,8 @@ public class Game extends BdvScriptGL {
         InputManager.newInstance(keyboard, mouse);
 
         if (this.chunkRendering)
-            renderer = new Render(entities, chunkManagers, turn, player, cameraDimensions, tileSize);
-        else renderer = new Render(entities, turn, player, cameraDimensions, tileSize);
+            renderer = new Render(entities, chunkManagers, turn, camera, cameraDimensions, tileSize);
+        else renderer = new Render(entities, turn, camera, cameraDimensions, tileSize);
         // ==============================
 
         renderer.initRender(WorldManager.getLocationAtIndex(0, 0, -1).getMap());
