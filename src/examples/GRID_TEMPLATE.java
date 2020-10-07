@@ -30,8 +30,8 @@ public class GRID_TEMPLATE extends BdvScript {
 
     @Override
     public void init(List<Entity> entities, Dimension resolution, RGBA background) {
-        int rows = 200;
-        int cols = 200;
+        int rows = 100;
+        int cols = 100;
         Dimension tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {

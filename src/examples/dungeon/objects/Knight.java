@@ -46,7 +46,8 @@ public class Knight extends Actor {
     @Override
     public boolean move() {
         Tile nTile = brain.getNextTile();
-        if (currentTile != null && (Math.abs(nTile.getPositionX() - currentTile.getPositionX()) > 2 ||  Math.abs(nTile.getPositionY() - currentTile.getPositionY()) > 2)) {
+        if (currentTile != null && (Math.abs(nTile.getPositionX() - currentTile.getPositionX()) > 2 ||
+                Math.abs(nTile.getPositionY() - currentTile.getPositionY()) > 2)) {
             nTile = currentTile;
         }
         moveKnight(nTile);

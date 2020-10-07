@@ -70,6 +70,20 @@ public class EntityAPI {
         model = null;
     }
 
+    public EntityAPI(SpriteSheet file) {
+        globalId++;
+        this.id = globalId;
+        this.spriteSheet = file;
+        position = new Vector3f(0, 0, 0);
+        speed = new Vector2f(0, 0);
+        rotX = 0; rotY = 0; rotZ = 0;
+        scaleX = 1;
+        scaleY = 1;
+        scaleZ = 1;
+        model = null;
+        this.switchModel = true;
+    }
+
     public EntityAPI(String file, Vector3f position, Vector2f speed) {
         globalId++;
         this.id = globalId;
@@ -98,6 +112,22 @@ public class EntityAPI {
         model = null;
     }
 
+    public EntityAPI(SpriteSheet file, Vector3f position, Dimension dimension, Vector2f speed) {
+        globalId++;
+        this.id = globalId;
+        this.spriteSheet = file;
+        this.position = position;
+        this.speed = speed;
+        this.width = dimension.width;
+        this.height = dimension.height;
+        rotX = 0; rotY = 0; rotZ = 0;
+        scaleX = 1;
+        scaleY = 1;
+        scaleZ = 1;
+        model = null;
+        this.switchModel = true;
+    }
+
     public EntityAPI(String file, int[] indexes, float[] vertexes, float[] textureCoords) {
         globalId++;
         this.id = globalId;
@@ -113,6 +143,7 @@ public class EntityAPI {
         scaleZ = 1;
         model = null;
     }
+
 
     public Vector2f getSpeed() {
         return speed;

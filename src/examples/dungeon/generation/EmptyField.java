@@ -1,7 +1,5 @@
 package examples.dungeon.generation;
 
-import examples.dungeon.tiles.Tile;
-
 import java.util.logging.Logger;
 
 public class EmptyField extends Location {

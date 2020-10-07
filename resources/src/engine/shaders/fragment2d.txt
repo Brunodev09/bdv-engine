@@ -61,6 +61,13 @@ vec3 shaderPlay(vec4 uv) {
 
 void main(void) {
 
+    bool specificShader = true;
+    vec4 newColorPointerVertex = vec4(1.0, 1.0, 1.0, 1.0);
+
+    if (colorPointerVertex.x == 0.0 && colorPointerVertex.y == 0.0 && colorPointerVertex.z == 0.0) {
+        specificShader = false;
+    }
+
     if (debugShader) {
         out_Color = vec4(shaderPlay(vertexPosition), 1.0);
         return;
@@ -85,7 +92,7 @@ void main(void) {
                 outputColor += applyAmbientLighting(vertexPosition, pixelColor);
             }
         }
-
-        out_Color = outputColor * vec4(colorPointerVertex, 1.0);
+        if (!specificShader) out_Color = outputColor * newColorPointerVertex;
+        else out_Color = outputColor * vec4(colorPointerVertex, 1.0);
 }
 

@@ -37,18 +37,17 @@ public class GL_TEST_GRID extends BdvScriptGL {
     @Override
     public void init(List<EntityAPI> entities, Dimension resolution, RGBAf background) {
         // In OpenGL, the default viewport sets the origin (0,0,0) at the center of the screen
-        int rows = 200;
-        int cols = 200;
+        int rows = 100;
+        int cols = 100;
         Dimension tileSize = new Dimension(this.resolution.width / rows, this.resolution.height / cols);
         for (int i = -rows / 2; i < rows / 2; i++) {
             for (int j = -cols / 2; j < cols / 2; j++) {
-                EntityAPI entityAPI = new EntityAPI(null,
+                EntityAPI entityAPI = new EntityAPI(tile1,
                         new Vector3f(
                                 (float) tileSize.width * i,
                                 (float) tileSize.height * j, 0),
                         new Dimension(tileSize.width, tileSize.height),
                         new Vector2f(0, 0));
-                entityAPI.setSpriteSheet(tile1);
                 entityAPI.setShouldRender(true);
 //                entityAPI.setAmbientLightOn(true);w
 //                entityAPI.setAmbientLight(new Vector3f(random.nextFloat(), random.nextFloat(), random.nextFloat()));

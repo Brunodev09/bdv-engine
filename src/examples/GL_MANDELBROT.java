@@ -71,22 +71,19 @@ public class GL_MANDELBROT extends BdvScriptGL {
             ptrJ = 0;
             for (int j = -cols / 2; j < cols / 2; j++) {
                 if (matrix[ptrI][ptrJ] == 255) {
-                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
+                    EntityAPI entitAPI = new EntityAPI(red, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
                             new Dimension(tileSize.width, tileSize.height),
                             new Vector2f(0, 0));
-                    entitAPI.setSpriteSheet(red);
                     entities.add(entitAPI);
                 } else if (matrix[ptrI][ptrJ] == 0) {
-                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
+                    EntityAPI entitAPI = new EntityAPI(green, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
                             new Dimension(tileSize.width, tileSize.height),
                             new Vector2f(0, 0));
-                    entitAPI.setSpriteSheet(green);
                     entities.add(entitAPI);
                 } else {
-                    EntityAPI entitAPI = new EntityAPI(null, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
+                    EntityAPI entitAPI = new EntityAPI(blue, new Vector3f(tileSize.width * i, tileSize.height * j, 0),
                             new Dimension(tileSize.width, tileSize.height),
                             new Vector2f(0, 0));
-                    entitAPI.setSpriteSheet(blue);
                     entities.add(entitAPI);
                 }
                 ptrJ++;

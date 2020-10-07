@@ -12,7 +12,8 @@ public class ChunkMesh {
     private final int numberOfCoordinatesPerPoint = 3;
     private final int numberOfPointsPerSquare = 4;
     private final int tilesPerRow;
-    private final int chunkManagerId;
+    private int chunkManagerId;
+    private int batchId;
     private SpriteSheet[] spriteSheets;
 
     private float[] mesh;
@@ -179,4 +180,5 @@ public class ChunkMesh {
     public int getChunkManagerId() {
         return chunkManagerId;
     }
+
 }

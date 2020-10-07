@@ -3,11 +3,13 @@ package engine.texture;
 import java.awt.*;
 
 public class SpriteSheet {
-    private final String file;
-    private final Rectangle tile;
-    private final int tileX;
-    private final int tileY;
+    private String file;
+    private Rectangle tile;
+    private int tileX;
+    private int tileY;
     private Rectangle fullImageSize;
+
+    public SpriteSheet() {}
 
     public SpriteSheet(String file, Rectangle tile, int tileX, int tileY) {
         this.file = file;

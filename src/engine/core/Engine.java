@@ -77,7 +77,9 @@ public class Engine {
             if (config.script.chunkRendering) {
                 chunkManager = configuration.script.chunkManagers;
                 chunkBasedRendering();
-            } else proceduralRendering(scriptEntities);
+            } else {
+                proceduralRendering(scriptEntities);
+            }
 
             while (!RenderManager.shouldExit()) {
 
@@ -195,12 +197,11 @@ public class Engine {
                     for (int i = 0; i < manager.getChunks().size(); i++) {
                         chunkIdToModel.put(manager.getChunks().get(i).getId(), mdl);
 
-                        EntityAPI entityAPI = new EntityAPI(null,
+                        EntityAPI entityAPI = new EntityAPI(manager.getSpriteSheet(),
                                 new Vector3f(mesh.getxPos(), mesh.getyPos(), manager.getId()),
                                 new Dimension((int) (mesh.getTilesPerRow() * mesh.getTileSizeX()),
                                         (int) (mesh.getTilesPerRow() * mesh.getTileSizeY())),
                                 new Vector2f(0, 0));
-                        entityAPI.setSpriteSheet(manager.getSpriteSheet());
                         entityAPI.setShouldRender(mesh.shouldRender());
                         entityAPI.setUv(mesh.getTextureCoordinates());
                         entityAPI.setRenderSpriteRetroCompatibility(false);

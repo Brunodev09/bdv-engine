@@ -4,6 +4,7 @@ import engine.api.ChunkAPI;
 import engine.api.ChunkManagerAPI;
 import engine.api.EntityAPI;
 import engine.math.Dimension;
+import engine.texture.SpriteSheet;
 import examples.dungeon.generation.Location;
 import examples.dungeon.generation.WorldManager;
 import examples.dungeon.objects.Actor;
@@ -100,7 +101,7 @@ public class Render {
     public void initRender(List<List<Tile>> map) {
         for (int x = 0; x < map.size(); x++) {
             for (int y = 0; y < map.get(x).size(); y++) {
-                EntityAPI entityAPI = new EntityAPI(null,
+                EntityAPI entityAPI = new EntityAPI(map.get(x).get(y).getSprite(),
                         new Vector3f(0, 0, 0),
                         new Dimension(tileSize.width, tileSize.height),
                         new Vector2f(0, 0));
@@ -108,14 +109,13 @@ public class Render {
                 entityAPI.setRenderSpriteRetroCompatibility(false);
                 map.get(x).get(y).setEntityObject(entityAPI);
                 entityAPI.setShouldRender(false);
-                entityAPI.setSpriteSheet(map.get(x).get(y).getSprite());
                 this.entities.add(entityAPI);
 
                 if (map.get(x).get(y).getActor() != null
                         && !map.get(x).get(y).getActor().getType().equals("light")) {
                     Actor object = map.get(x).get(y).getActor();
 
-                    EntityAPI entityAPIForObject = new EntityAPI(null,
+                    EntityAPI entityAPIForObject = new EntityAPI(new SpriteSheet(),
                             new Vector3f(0, 0, 1),
                             new Dimension(object.getWidth(), object.getHeight()),
                             new Vector2f(0, 0));
