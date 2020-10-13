@@ -1,0 +1,13 @@
+#version 400 core
+
+in vec3 colorPrimitive;
+in vec2 passTextureCoordinatesPrimitive;
+
+layout(location = 0) out vec4 out_Color;
+uniform sampler2D textureSampler;
+uniform vec3 colorOffset;
+
+void main(void) {
+    out_Color = vec4(colorOffset, 1.0) * texture(textureSampler, passTextureCoordinatesPrimitive);
+    // out_Color = vec4(colorPrimitive, 1.0) * texture(textureSampler, passTextureCoordinatesPrimitive);
+}

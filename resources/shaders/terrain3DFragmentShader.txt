@@ -1,0 +1,33 @@
+#version 400 core
+
+in vec2 passTextureCoordinates;
+in vec3 normalVectorFromVertex;
+in vec3 vectorFromVertexToLightSource;
+in vec3 vectorFromVertexToCamera;
+
+layout(location = 0) out vec4 out_Color;
+
+uniform sampler2D textureSampler;
+uniform vec3 lightColor;
+uniform float shineDamper;
+uniform float reflectivity;
+
+void main(void) {
+    vec3 versor1 = normalize(normalVectorFromVertex);
+    vec3 versor2 = normalize(vectorFromVertexToLightSource);
+
+    float dotProduct = dot(versor1, versor2);
+    float lighting = max(dotProduct, 0.2);
+    vec3 finalLight = lighting * lightColor;
+
+    vec3 versor3 = normalize(vectorFromVertexToCamera);
+    vec3 versor4 = -versor2;
+    vec3 reflectedLightThanksGLSLDirection = reflect(versor4, versor1);
+
+    float factor = dot(reflectedLightThanksGLSLDirection, versor3);
+    factor = max(factor, 0.0);
+    float dampedFactor = pow(factor, shineDamper);
+    vec3 finalSpecularCalculation = dampedFactor * reflectivity * lightColor;
+
+    out_Color = vec4(finalLight, 1.0) * texture(textureSampler, passTextureCoordinates) + vec4(finalSpecularCalculation, 1.0);
+}

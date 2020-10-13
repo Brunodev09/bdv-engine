@@ -1,0 +1,14 @@
+#version 400 core
+
+layout(location = 0) in vec3 positionPrimitive;
+
+out vec3 colorPrimitive;
+
+uniform mat4 transformationPrimitive;
+uniform mat4 projectionPrimitive;
+uniform mat4 viewPrimitive;
+
+void main(void) {
+    gl_Position = viewPrimitive * vec4(positionPrimitive.xy, 0.0, 1.0);
+    colorPrimitive = vec3(positionPrimitive.x - 0.5, (positionPrimitive.x / positionPrimitive.y) + 1.0, positionPrimitive.y + 0.5);
+}
