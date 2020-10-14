@@ -29,5 +29,8 @@ public class Game {
     private void openglRender() {
         OpenGLRenderManagerComponent.createRender(this.script.getWidth(), this.script.getHeight(), this.script.getWindowTitle());
 
+        while (!OpenGLRenderManagerComponent.shouldExit()) {
+
+        }
     }
 }
