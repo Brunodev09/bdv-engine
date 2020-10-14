@@ -1,5 +1,10 @@
 package com.bdv.api;
 
+import com.bdv.ECS.Entity;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class BdvScript {
     private int width;
     private int height;
@@ -8,6 +13,7 @@ public abstract class BdvScript {
     private boolean debugShader = false;
     private boolean logFps;
     private RendererAPI rendererAPI;
+    private List<Entity> entities = new ArrayList<>();
 
     public abstract void init();
     public abstract void update();
@@ -55,5 +61,9 @@ public abstract class BdvScript {
 
     public RendererAPI getRendererAPI() {
         return rendererAPI;
+    }
+
+    public List<Entity> getEntities() {
+        return entities;
     }
 }
