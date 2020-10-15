@@ -11,10 +11,10 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.util.List;
 
-public class OpenGLTerrainRenderer {
+public class OpenGLTerrainRendererComponent {
     private Terrain3DShader shader;
 
-    public OpenGLTerrainRenderer(Terrain3DShader shader, Matrix4f projectionMatrix) {
+    public OpenGLTerrainRendererComponent(Terrain3DShader shader, Matrix4f projectionMatrix) {
         this.shader = shader;
         shader.init();
         shader.loadProjectionMatrix(projectionMatrix);

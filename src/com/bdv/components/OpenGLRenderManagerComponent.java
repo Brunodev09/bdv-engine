@@ -34,7 +34,7 @@ public class OpenGLRenderManagerComponent {
     private static final float FAR_PLANE = 1000;
 
     private static OpenGLRendererComponent mainRenderer;
-    private static OpenGLTerrainRenderer terrainRenderer;
+    private static OpenGLTerrainRendererComponent terrainRenderer;
 
     private static long window;
     private static int windowWidth;
@@ -102,7 +102,7 @@ public class OpenGLRenderManagerComponent {
 
         if (projection == null) projection = MatrixUtils.createProjectionMatrix(windowWidth, windowHeight, FOV, NEAR_PLANE, FAR_PLANE);
         if (mainRenderer == null) mainRenderer = new OpenGLRendererComponent(meshShader, projection);
-        if (terrainRenderer == null) terrainRenderer = new OpenGLTerrainRenderer(meshShaderTerrain, projection);
+        if (terrainRenderer == null) terrainRenderer = new OpenGLTerrainRendererComponent(meshShaderTerrain, projection);
     }
 
     public static void init2DRender() {
