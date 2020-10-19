@@ -25,6 +25,18 @@ public class MatrixUtils {
         return mResult;
     }
 
+    public static float[][] Multiplication(float[][] matrix, float scalar) {
+        float[][] newMatrix = new float[matrix.length][matrix[0].length];
+
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[0].length; j++) {
+                newMatrix[i][j] = scalar * matrix[i][j];
+            }
+        }
+
+        return newMatrix;
+    }
+
     public static float[][] CreateTranslationMatrix(float tx, float ty) {
         return new float[][]{
                 {1, 0, tx},

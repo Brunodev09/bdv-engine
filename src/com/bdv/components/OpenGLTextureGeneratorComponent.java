@@ -20,7 +20,7 @@ public class OpenGLTextureGeneratorComponent {
     public OpenGLTextureGeneratorComponent(String path) {
     }
 
-    public OpenGLTextureGeneratorComponent(String path, OpenGLTextureGeneratorComponent sprite, int width, int height) {
+    public OpenGLTextureGeneratorComponent(String path, SpriteComponent sprite, int width, int height) {
     }
 
 }
