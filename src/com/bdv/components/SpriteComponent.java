@@ -17,7 +17,7 @@ public class SpriteComponent {
     private int width;
     private int height;
 
-    // Used as mask to eliminate the leftover 24 bits from a 32bits integer as 255 is a 8bit value
+    // Used as mask to eliminate the leftover 24 bits from a 32bits integer as 0-255 is within the range of 8bits.
     private final int EIGHT_BIT_MASK = 0xff;
 
     public enum effect {NORMAL, SEPIA, REDISH, GRAYSCALE, NEGATIVE, DECAY}
@@ -150,7 +150,7 @@ public class SpriteComponent {
             for (int y = 0; y < height; y++) {
                 int p = pixels[x + y * width];
 
-                // Bit-packing the effect for each pixel
+                // Bit-packing the effect for each pixel with bit-shifting and masks
                 // alpha
                 int a = (p >> 24) & EIGHT_BIT_MASK;
 
