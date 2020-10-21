@@ -9,9 +9,9 @@ public class SpriteComponent {
 
     public BufferedImage image;
 
-//  The TYPE_INT_ARGB represents Color as an int (4 bytes, 32bits) with alpha channel in bits 24-31,
-//  red channels in 16-23, green in 8-15 and blue in 0-7.
-    private int[] pixels;
+    //  The TYPE_INT_ARGB represents Color as an int (4 bytes, 32bits) with alpha channel in bits 24-31,
+    //  red channels in 16-23, green in 8-15 and blue in 0-7.
+    public int[] pixels;
     private int[] ogpixels;
 
     private int width;

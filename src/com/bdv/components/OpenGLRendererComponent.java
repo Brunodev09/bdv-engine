@@ -89,7 +89,6 @@ public class OpenGLRendererComponent {
     }
 
     public void renderEntities2D(Map<OpenGLTexturedModelComponent, List<Entity>> entities) {
-        // @TODO - Reduce the number of draw calls into one big VAO - one big mesh
         for (OpenGLTexturedModelComponent key : entities.keySet()) {
             this.modelSetup2D(key);
             List<Entity> entitiesToLoadFromModel = entities.get(key);
