@@ -1,12 +1,12 @@
 package com.bdv.api;
 
-public enum RendererAPI {
-    SWING_RENDERER("SWING_RENDERER"),
-    OPENGL_RENDERER("OPENGL_RENDERER");
+public enum ProjectDimensionNumber {
+    TwoDimensions("2D"),
+    ThreeDimensions("3D");
 
     private final String description;
 
-    RendererAPI(String description) {
+    ProjectDimensionNumber(String description) {
         this.description = description;
     }
 

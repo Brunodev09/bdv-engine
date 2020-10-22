@@ -6,6 +6,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import java.util.Objects;
 
 public class SpriteSheetComponent {
 
@@ -81,9 +82,9 @@ public class SpriteSheetComponent {
     private BufferedImage loadSprite(String file) {
         BufferedImage sprite = null;
         try {
-            sprite = ImageIO.read(getClass().getClassLoader().getResourceAsStream(file));
+            sprite = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file)));
         } catch (Exception e) {
-            System.out.println("ERROR: could not load file: " + file);
+            System.out.println("ERROR: Could not load file: " + file);
         }
         return sprite;
     }
@@ -134,9 +135,9 @@ public class SpriteSheetComponent {
         float x = pos.x;
         float y = pos.y;
 
-        for (int i = 0; i < img.size(); i++) {
-            if (img.get(i) != null) {
-                g.drawImage(img.get(i).image, (int) x, (int) y, width, height, null);
+        for (SpriteComponent spriteComponent : img) {
+            if (spriteComponent != null) {
+                g.drawImage(spriteComponent.image, (int) x, (int) y, width, height, null);
             }
 
             x += xOffset;

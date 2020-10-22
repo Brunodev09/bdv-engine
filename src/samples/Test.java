@@ -18,7 +18,7 @@ public class Test extends BdvScript {
     }
 
     @Override
-    public void update() {
+    public void update(double deltaTime) {
 
     }
 

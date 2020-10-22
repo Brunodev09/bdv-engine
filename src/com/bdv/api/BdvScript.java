@@ -14,9 +14,10 @@ public abstract class BdvScript {
     private boolean logFps;
     private RendererAPI rendererAPI;
     private List<Entity> entities = new ArrayList<>();
+    private ProjectDimensionNumber projectDimensionNumber;
 
     public abstract void init();
-    public abstract void update();
+    public abstract void update(double deltaTime);
     public abstract void render();
 
     public int getFPS() {
@@ -65,5 +66,9 @@ public abstract class BdvScript {
 
     public List<Entity> getEntities() {
         return entities;
+    }
+
+    public ProjectDimensionNumber getProjectDimensionNumber() {
+        return projectDimensionNumber;
     }
 }
