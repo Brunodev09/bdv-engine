@@ -20,7 +20,7 @@ public class Main {
         T instance = constructor.newInstance();
 
         if (!(instance instanceof BdvScript)) {
-            throw new InvalidInstance();
+            throw new InvalidInstance(BdvScript.class.getName());
         }
         this.game = new Game((BdvScript) instance);
     }

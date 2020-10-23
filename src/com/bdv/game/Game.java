@@ -4,9 +4,16 @@ import com.bdv.api.BdvScript;
 import com.bdv.api.ProjectDimensionNumber;
 import com.bdv.components.OpenGLRenderManagerComponent;
 import com.bdv.components.RenderManagerComponent;
+import com.bdv.exceptions.InvalidInstance;
+import com.bdv.systems.RenderSystem;
+
+import javax.swing.*;
+import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Logger;
 
 public class Game {
     private final BdvScript script;
+    private static final Logger log = Logger.getLogger(Game.class.getName());
 
     public Game(BdvScript script) {
         this.script = script;
@@ -25,7 +32,21 @@ public class Game {
     }
 
     private void swingRender() {
-        RenderManagerComponent renderManagerComponent = new RenderManagerComponent(script);
+        try {
+            this.script.manager.addSystem(RenderSystem.class);
+            RenderManagerComponent renderManagerComponent = new RenderManagerComponent(script);
+            renderManagerComponent.frame.setResizable(false);
+            renderManagerComponent.frame.setTitle(this.script.getWindowTitle());
+            renderManagerComponent.frame.add(renderManagerComponent);
+            renderManagerComponent.frame.pack();
+            renderManagerComponent.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            renderManagerComponent.frame.setLocationRelativeTo(null);
+            renderManagerComponent.frame.setVisible(true);
+            renderManagerComponent.start();
+        } catch (InvalidInstance | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void openglRender() {

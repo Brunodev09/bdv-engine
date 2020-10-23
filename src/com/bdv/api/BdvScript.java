@@ -1,24 +1,23 @@
 package com.bdv.api;
 
-import com.bdv.ECS.Entity;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.bdv.ECS.SystemManager;
 
 public abstract class BdvScript {
-    private int width;
-    private int height;
-    private String windowTitle;
-    private int fps = 0;
+    private int width = 800;
+    private int height = 600;
+    private String windowTitle = "Unnamed window";
+    private int fps = 60;
     private boolean debugShader = false;
-    private boolean logFps;
-    private RendererAPI rendererAPI;
-    private List<Entity> entities = new ArrayList<>();
-    private ProjectDimensionNumber projectDimensionNumber;
+    private boolean logFps = false;
+    private RendererAPI rendererAPI = RendererAPI.SWING_RENDERER;
+    private ProjectDimensionNumber projectDimensionNumber = ProjectDimensionNumber.TwoDimensions;
+    public final SystemManager manager = new SystemManager();
+
+    protected BdvScript() {
+    }
 
     public abstract void init();
     public abstract void update(double deltaTime);
-    public abstract void render();
 
     public int getFPS() {
         return fps;
@@ -62,10 +61,6 @@ public abstract class BdvScript {
 
     public RendererAPI getRendererAPI() {
         return rendererAPI;
-    }
-
-    public List<Entity> getEntities() {
-        return entities;
     }
 
     public ProjectDimensionNumber getProjectDimensionNumber() {

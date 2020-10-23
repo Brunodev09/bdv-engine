@@ -1,6 +1,7 @@
 package com.bdv.components;
 
 import com.bdv.api.BdvScript;
+import com.bdv.systems.RenderSystem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,10 +14,12 @@ import java.util.logging.Logger;
 
 public class RenderManagerComponent extends Canvas implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(RenderManagerComponent.class.getName());
+    public JFrame frame;
 
     private ExecutorService exec;
-    private JFrame frame;
-    private RenderComponent renderComponent;
+    private RenderSystem renderComponent;
+    private RenderSystem renderSystem;
+
     private boolean running = false;
     private final int fpsCap;
     private final String windowTitle;
@@ -69,11 +72,15 @@ public class RenderManagerComponent extends Canvas implements Runnable {
     @Override
     public void run() {
 
-        renderComponent = new RenderComponent(width, height);
+        renderComponent = new RenderSystem(width, height);
+        renderSystem = (RenderSystem) this.script.manager.getSystem(RenderSystem.class);
 
         long lastTimeFps = System.currentTimeMillis();
         long nowFps = System.currentTimeMillis();
+
         requestFocus();
+
+        this.script.init();
 
         while (running) {
             while ((nowFps - lastTimeFps) < 1000) {
@@ -83,8 +90,9 @@ public class RenderManagerComponent extends Canvas implements Runnable {
                 render();
                 nowFps = System.currentTimeMillis();
             }
+
             lastTimeFps = nowFps;
-            frame.setTitle(windowTitle + " | " + fps + " FPS | " + "By BrunoDev");
+            frame.setTitle("[SWING] - " + windowTitle + " | " + fps + " FPS");
             fps = 0;
         }
         stop();
@@ -92,6 +100,7 @@ public class RenderManagerComponent extends Canvas implements Runnable {
 
     private void update(double deltaTime) {
         this.script.update(deltaTime);
+        this.script.manager.update();
     }
 
     private void render() {
@@ -100,7 +109,7 @@ public class RenderManagerComponent extends Canvas implements Runnable {
             createBufferStrategy(3);
             return;
         }
-        this.renderComponent.render(buffer);
+        this.renderComponent.render(buffer, renderSystem.getEntities());
     }
 
 }

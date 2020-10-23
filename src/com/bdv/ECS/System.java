@@ -1,13 +1,16 @@
 package com.bdv.ECS;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class System {
     private Signature signature;
-    private List<Entity> entities;
+    private List<Entity> entities = new ArrayList<>();
 
     public System() {}
+
+    public abstract void update(Object... objects);
 
     public void addEntity(Entity entity) {
         entities.add(entity);
