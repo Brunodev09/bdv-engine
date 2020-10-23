@@ -25,10 +25,6 @@ public class SystemManager {
 
         if (freeIds.isEmpty()) {
             entityId = totalEntities++;
-
-            if (entityId > entityComponentSignatures.size()) {
-                entityComponentSignatures.add(new Signature());
-            }
         } else {
             entityId = freeIds.getFirst();
             freeIds.pop();
@@ -79,20 +75,15 @@ public class SystemManager {
     }
 
     public void addEntityToSystems(Entity entity) {
-        try {
-            Signature compSign = this.getComponentSignature(entity);
-            for (Map.Entry<String, Object> entry : systems.entrySet()) {
-                final Signature sysSignature = ((System) entry.getValue()).getSignature();
-                boolean isSimilar = compSign.equals(sysSignature);
+        Signature compSign = this.getComponentSignature(entity);
+        for (Map.Entry<String, Object> entry : systems.entrySet()) {
+            final Signature sysSignature = ((System) entry.getValue()).getSignature();
+            boolean isSimilar = compSign.equals(sysSignature);
 
-                if (isSimilar) {
-                    ((System) entry.getValue()).addEntity(entity);
-                }
+            if (isSimilar) {
+                ((System) entry.getValue()).addEntity(entity);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
-
     }
 
     public <T> void addComponent(Entity entity, Class<T> type) throws InstantiationException,
