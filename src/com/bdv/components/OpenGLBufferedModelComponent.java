@@ -1,6 +1,8 @@
 package com.bdv.components;
 
-public class OpenGLBufferedModelComponent {
+import com.bdv.ECS.Component;
+
+public class OpenGLBufferedModelComponent extends Component<OpenGLBufferedModelComponent> {
     private final float[] VERTICES;
     private final float[] TEXTURES;
     private final float[] NORMALS;

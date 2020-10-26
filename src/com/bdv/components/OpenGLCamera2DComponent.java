@@ -1,21 +1,18 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
 import org.lwjgl.util.vector.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
-public class OpenGLCamera2DComponent {
+public class OpenGLCamera2DComponent extends Component<OpenGLCamera2DComponent> {
     private Vector3f position = new Vector3f(0, 0, 0);
     private float pitch;
     private float yaw;
     private float roll;
 
     private float speed = 10.0f;
-
-    public OpenGLCamera2DComponent() {
-
-    }
 
     public void move() {
         long windowContext = OpenGLRenderManagerComponent.getWindow();

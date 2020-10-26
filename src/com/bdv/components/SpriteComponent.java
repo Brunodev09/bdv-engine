@@ -1,11 +1,15 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
 import com.bdv.helpers.MatrixUtils;
 
-import java.awt.*;
+import javax.imageio.ImageIO;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.util.Objects;
 
-public class SpriteComponent {
+public class SpriteComponent extends Component<SpriteComponent> {
 
     public BufferedImage image;
 
@@ -59,6 +63,21 @@ public class SpriteComponent {
                     {0.000f, 0.000f, 0.000f}};
 
     private float[][] currentEffect = id;
+
+    public SpriteComponent() {
+    }
+
+    public SpriteComponent(String file) {
+        try {
+            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file)));
+        } catch (Exception e) {
+            logger.info("ERROR: Could not load file: " + file);
+        }
+        this.width = image.getWidth();
+        this.height = image.getHeight();
+        ogpixels = image.getRGB(0, 0, width, height, ogpixels, 0, width);
+        pixels = ogpixels;
+    }
 
     public SpriteComponent(BufferedImage image) {
         this.image = image;

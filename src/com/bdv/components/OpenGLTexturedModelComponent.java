@@ -1,6 +1,8 @@
 package com.bdv.components;
 
-public class OpenGLTexturedModelComponent {
+import com.bdv.ECS.Component;
+
+public class OpenGLTexturedModelComponent extends Component<OpenGLTexturedModelComponent> {
     private final OpenGLModelComponent mdl;
     private final OpenGLTextureCustomComponent tmdl;
 

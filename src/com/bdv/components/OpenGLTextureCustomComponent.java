@@ -1,9 +1,10 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
-public class OpenGLTextureCustomComponent {
+public class OpenGLTextureCustomComponent extends Component<OpenGLTextureCustomComponent> {
 
     private final int textureId;
     private float shineDamper = 1;
@@ -23,7 +24,7 @@ public class OpenGLTextureCustomComponent {
         this.textureId = id;
     }
 
-    public int getId() {
+    public int getTextureId() {
         return this.textureId;
     }
 

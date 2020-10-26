@@ -1,5 +1,6 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
 import com.bdv.ECS.Entity;
 import com.bdv.helpers.MatrixUtils;
 import com.bdv.renders.opengl.MeshShader;
@@ -13,16 +14,13 @@ import org.lwjgl.util.vector.Matrix4f;
 import java.util.List;
 import java.util.Map;
 
-public class OpenGLRendererComponent {
+public class OpenGLRendererComponent extends Component<OpenGLRendererComponent> {
     private Matrix4f projection;
     private MeshShader shader;
     private RectangleShader rectangleShader;
     private int previousBoundTexture = 0;
 
     private boolean debugShader;
-
-    public OpenGLRendererComponent() {
-    }
 
     public OpenGLRendererComponent(MeshShader shader, Matrix4f projectionMatrix) {
         this.shader = shader;

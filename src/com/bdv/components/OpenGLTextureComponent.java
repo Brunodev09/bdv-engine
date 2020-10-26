@@ -1,20 +1,22 @@
 package com.bdv.components;
 
-public class OpenGLTextureComponent {
-    private final int id;
+import com.bdv.ECS.Component;
+
+public class OpenGLTextureComponent extends Component<OpenGLTextureComponent> {
+    private final int textureId;
     private String path;
 
     public OpenGLTextureComponent(int id) {
-        this.id = id;
+        this.textureId = id;
     }
 
     public OpenGLTextureComponent(int id, String path) {
-        this.id = id;
+        this.textureId = id;
         this.path = path;
     }
 
-    public int getId() {
-        return id;
+    public int getTextureId() {
+        return textureId;
     }
 
     public String getPath() {

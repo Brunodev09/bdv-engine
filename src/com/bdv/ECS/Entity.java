@@ -26,7 +26,12 @@ public class Entity {
 
     public <T> void addComponent(Class<T> type) throws InvocationTargetException,
             NoSuchMethodException, InstantiationException, IllegalAccessException {
-        manager.<T>addComponent(this, type);
+        try {
+            manager.<T>addComponent(this, type);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public <T> T getComponent() {

@@ -2,6 +2,8 @@ package com.bdv.api;
 
 import com.bdv.ECS.SystemManager;
 
+import java.lang.reflect.InvocationTargetException;
+
 public abstract class BdvScript {
     private int width = 800;
     private int height = 600;
@@ -16,7 +18,7 @@ public abstract class BdvScript {
     protected BdvScript() {
     }
 
-    public abstract void init();
+    public abstract void init() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException;
     public abstract void update(double deltaTime);
 
     public int getFPS() {

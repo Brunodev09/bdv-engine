@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Pool <T> {
-    private List<T> data;
+    private List<T> data = new ArrayList<>();
 
     public Pool() {
         data = new ArrayList<>();
@@ -23,6 +23,9 @@ public class Pool <T> {
     }
 
     public void set(int index, T object) {
+        while (data.size() < index + 1) {
+            data.add(null);
+        }
         data.set(index, object);
     }
 

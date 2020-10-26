@@ -1,5 +1,6 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
 import org.lwjgl.util.vector.Vector2f;
 
 import javax.imageio.ImageIO;
@@ -8,7 +9,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Objects;
 
-public class SpriteSheetComponent {
+public class SpriteSheetComponent extends Component<SpriteSheetComponent> {
 
     private SpriteComponent SPRITESHEET = null;
     private SpriteComponent[][] spriteArray;

@@ -1,9 +1,12 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 
-public class FontComponent {
+public class FontComponent extends Component<FontComponent> {
+
     private BufferedImage FONTSHEET = null;
     private BufferedImage[][] spriteArray;
     private final int TILE_SIZE = 32;

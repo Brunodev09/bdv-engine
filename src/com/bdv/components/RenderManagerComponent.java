@@ -6,6 +6,7 @@ import com.bdv.systems.RenderSystem;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -80,7 +81,11 @@ public class RenderManagerComponent extends Canvas implements Runnable {
 
         requestFocus();
 
-        this.script.init();
+        try {
+            this.script.init();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            e.printStackTrace();
+        }
 
         while (running) {
             while ((nowFps - lastTimeFps) < 1000) {

@@ -1,8 +1,9 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
 import org.lwjgl.util.vector.Vector3f;
 
-public class TransformComponent {
+public class TransformComponent extends Component<TransformComponent> {
     public Vector3f position;
     public Vector3f rotation;
     public Vector3f scale;

@@ -1,5 +1,6 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
 import com.bdv.helpers.MatrixUtils;
 import com.bdv.renders.opengl.Terrain3DShader;
 import org.lwjgl.opengl.GL11;
@@ -11,7 +12,7 @@ import org.lwjgl.util.vector.Vector3f;
 
 import java.util.List;
 
-public class OpenGLTerrainRendererComponent {
+public class OpenGLTerrainRendererComponent extends Component<OpenGLTerrainRendererComponent> {
     private Terrain3DShader shader;
 
     public OpenGLTerrainRendererComponent(Terrain3DShader shader, Matrix4f projectionMatrix) {

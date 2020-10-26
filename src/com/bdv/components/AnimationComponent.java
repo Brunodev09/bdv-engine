@@ -1,4 +1,6 @@
 package com.bdv.components;
 
-public class AnimationComponent {
+import com.bdv.ECS.Component;
+
+public class AnimationComponent extends Component<AnimationComponent> {
 }

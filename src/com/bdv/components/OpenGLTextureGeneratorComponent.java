@@ -1,5 +1,7 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
+
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -7,7 +9,7 @@ import java.util.logging.Logger;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class OpenGLTextureGeneratorComponent {
+public class OpenGLTextureGeneratorComponent extends Component<OpenGLTextureGeneratorComponent> {
     private static Logger LOG = Logger.getLogger(OpenGLTextureGeneratorComponent.class.getName());
 
     private final int width, height;

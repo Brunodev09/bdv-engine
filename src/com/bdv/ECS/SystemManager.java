@@ -1,5 +1,6 @@
 package com.bdv.ECS;
 
+import com.bdv.components.SpriteComponent;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.pool.Pool;
 
@@ -24,16 +25,21 @@ public class SystemManager {
         int entityId;
 
         if (freeIds.isEmpty()) {
-            entityId = totalEntities++;
+            entityId = ++totalEntities;
         } else {
             entityId = freeIds.getFirst();
             freeIds.pop();
+        }
+
+        while (entityComponentSignatures.size() < entityId + 1) {
+            entityComponentSignatures.add(null);
         }
 
         Entity entity = new Entity(entityId);
         entity.manager = this;
 
         createdEntities.add(entity);
+        entityComponentSignatures.set(entityId, new Signature());
 
         log.info("[SYSTEM_MANAGER] Created Entity with ID " + entity + " (total = " + totalEntities + ")");
 
@@ -86,12 +92,19 @@ public class SystemManager {
         }
     }
 
-    public <T> void addComponent(Entity entity, Class<T> type) throws InstantiationException,
-            IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public <T> void addComponent(Entity entity, Class<T> type)
+            throws InstantiationException,
+            IllegalAccessException,
+            NoSuchMethodException,
+            InvocationTargetException {
+
         final int componentId = Component.<T>getId();
         final int entityId = entity.getId();
 
-        if (componentPools.get(componentId) == null) {
+        if (componentId > componentPools.size()) {
+            while (componentPools.size() != componentId + 1) {
+                componentPools.add(null);
+            }
             Pool<T> newComponentPool = new Pool<>();
             componentPools.set(componentId, (Pool<Object>) newComponentPool);
         }
@@ -128,7 +141,10 @@ public class SystemManager {
     }
 
     public <T> void addSystem(Class<T> system) throws InvalidInstance,
-            NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+            NoSuchMethodException,
+            IllegalAccessException,
+            InvocationTargetException,
+            InstantiationException {
 
         Constructor<T> constructor = system.getConstructor();
         T instance = constructor.newInstance();

@@ -1,11 +1,12 @@
 package com.bdv.components;
 
+import com.bdv.ECS.Component;
 import org.lwjgl.util.vector.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
-public class OpenGLCameraComponent {
+public class OpenGLCameraComponent extends Component<OpenGLCameraComponent> {
     private Vector3f position = new Vector3f(0, 4, 0);
     private float pitch;
     private float yaw;

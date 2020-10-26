@@ -1,6 +1,8 @@
 package com.bdv.components;
 
-public class OpenGLModelComponent {
+import com.bdv.ECS.Component;
+
+public class OpenGLModelComponent extends Component<OpenGLModelComponent> {
     public final int vaoId;
     public final int vertexCount;
 

@@ -1,6 +1,8 @@
 package com.bdv.components;
 
-public class OpenGLTerrainComponent {
+import com.bdv.ECS.Component;
+
+public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
     private static final float TILE_SIZE = 800;
     private static final int VERTEX_COUNT = 128;
 
