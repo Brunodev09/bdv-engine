@@ -9,7 +9,6 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
-import java.util.List;
 
 public class RenderSystem extends System  {
     private BufferedImage image;
@@ -47,12 +46,12 @@ public class RenderSystem extends System  {
 
     }
 
-    public void render(BufferStrategy buffer, List<Entity> entities) {
+    public void render(BufferStrategy buffer) {
         Graphics display = buffer.getDrawGraphics();
         display.setColor(new Color(background));
         display.fillRect(0, 0, width, height);
 
-        for (Entity entity : entities) {
+        for (Entity entity : getEntities()) {
 
             SpriteComponent spriteComponent = entity.getComponent();
             TransformComponent transformComponent = entity.getComponent();

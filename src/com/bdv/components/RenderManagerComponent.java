@@ -18,7 +18,6 @@ public class RenderManagerComponent extends Canvas implements Runnable {
     public JFrame frame;
 
     private ExecutorService exec;
-    private RenderSystem renderComponent;
     private RenderSystem renderSystem;
 
     private boolean running = false;
@@ -73,7 +72,6 @@ public class RenderManagerComponent extends Canvas implements Runnable {
     @Override
     public void run() {
 
-        renderComponent = new RenderSystem(width, height);
         renderSystem = (RenderSystem) this.script.manager.getSystem(RenderSystem.class);
 
         long lastTimeFps = System.currentTimeMillis();
@@ -114,7 +112,7 @@ public class RenderManagerComponent extends Canvas implements Runnable {
             createBufferStrategy(3);
             return;
         }
-        this.renderComponent.render(buffer, renderSystem.getEntities());
+        this.renderSystem.render(buffer);
     }
 
 }

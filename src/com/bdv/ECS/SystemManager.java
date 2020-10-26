@@ -4,8 +4,10 @@ import com.bdv.components.SpriteComponent;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.pool.Pool;
 
+import java.awt.image.BufferedImage;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -92,11 +94,12 @@ public class SystemManager {
         }
     }
 
-    public <T> void addComponent(Entity entity, Class<T> type)
+    public <T> void addComponent(Entity entity, Class<T> type, Object... args)
             throws InstantiationException,
             IllegalAccessException,
             NoSuchMethodException,
-            InvocationTargetException {
+            InvocationTargetException,
+            ClassNotFoundException {
 
         final int componentId = Component.<T>getId();
         final int entityId = entity.getId();
@@ -110,7 +113,10 @@ public class SystemManager {
         }
 
         Pool<T> componentPool = (Pool<T>) componentPools.get(componentId);
-        T component = getInstanceOfT(type);
+
+        T component;
+        if (args.length == 0) component = getInstanceOfT(type);
+        else component = getInstanceOfT(type, args);
 
         componentPool.set(entityId, component);
         entityComponentSignatures.get(entityId).getSet().set(componentId);
@@ -119,6 +125,35 @@ public class SystemManager {
     public <T> T getInstanceOfT(Class<T> aClass) throws IllegalAccessException,
             InstantiationException, NoSuchMethodException, InvocationTargetException {
         return aClass.getDeclaredConstructor().newInstance();
+    }
+
+    public <T> T getInstanceOfT(Class<T> aClass, Object... args)
+            throws IllegalAccessException,
+            InstantiationException,
+            NoSuchMethodException,
+            InvocationTargetException,
+            ClassNotFoundException {
+
+        Class<?>[] paramSignature = new Class[args.length];
+
+        for (int i = 0; i < args.length; i++) {
+            if (args[i] instanceof Integer) {
+                paramSignature[i] = Integer.TYPE;
+            } else if (args[i] instanceof String) {
+                paramSignature[i] = String.class;
+            } else if (args[i] instanceof BufferedImage) {
+                paramSignature[i] = BufferedImage.class;
+            }
+        }
+
+        String methodName = "invoke";
+        String className = aClass.getName();
+        Class<?> _class = Class.forName(className);
+        Object _instance = _class.newInstance();
+        Method myMethod = _class.getDeclaredMethod(methodName, paramSignature);
+        Object returnedInstance = myMethod.invoke(_instance, args);
+
+        return (T) returnedInstance;
     }
 
     public <T> void removeComponent(Entity entity) {
@@ -140,7 +175,8 @@ public class SystemManager {
         return entityComponentSignatures.get(entityId).getSet().get(componentId);
     }
 
-    public <T> void addSystem(Class<T> system) throws InvalidInstance,
+    public <T> void addSystem(Class<T> system)
+            throws InvalidInstance,
             NoSuchMethodException,
             IllegalAccessException,
             InvocationTargetException,

@@ -24,10 +24,10 @@ public class Entity {
         return id;
     }
 
-    public <T> void addComponent(Class<T> type) throws InvocationTargetException,
+    public <T> void addComponent(Class<T> type, Object... args) throws InvocationTargetException,
             NoSuchMethodException, InstantiationException, IllegalAccessException {
         try {
-            manager.<T>addComponent(this, type);
+            manager.<T>addComponent(this, type, args);
 
         } catch (Exception e) {
             e.printStackTrace();

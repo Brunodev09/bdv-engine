@@ -18,7 +18,8 @@ public abstract class BdvScript {
     protected BdvScript() {
     }
 
-    public abstract void init() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException;
+    public abstract void init()
+            throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException;
     public abstract void update(double deltaTime);
 
     public int getFPS() {

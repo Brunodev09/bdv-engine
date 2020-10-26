@@ -17,9 +17,14 @@ public class Test extends BdvScript {
     }
 
     @Override
-    public void init() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
+    public void init()
+            throws NoSuchMethodException,
+            InstantiationException,
+            IllegalAccessException,
+            InvocationTargetException {
+
         Entity base = manager.createEntity();
-        base.addComponent(SpriteComponent.class);
+        base.addComponent(SpriteComponent.class, "images/assetsComplete.png");
         System.out.println();
     }
 

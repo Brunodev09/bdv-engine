@@ -8,6 +8,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class SpriteComponent extends Component<SpriteComponent> {
 
@@ -64,27 +65,31 @@ public class SpriteComponent extends Component<SpriteComponent> {
 
     private float[][] currentEffect = id;
 
-    public SpriteComponent() {
+    public static SpriteComponent invoke(BufferedImage image) {
+        SpriteComponent component = new SpriteComponent();
+        component.image = image;
+        component.width = image.getWidth();
+        component.height = image.getHeight();
+        component.ogpixels = image.getRGB(0, 0, component.width, component.height, component.ogpixels, 0, component.width);
+        component.pixels = component.ogpixels;
+
+        return component;
     }
 
-    public SpriteComponent(String file) {
+    public static SpriteComponent invoke(String file) {
+        SpriteComponent component = new SpriteComponent();
+
         try {
-            this.image = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file)));
+            component.image = ImageIO.read(Objects.requireNonNull(SpriteComponent.class.getClassLoader().getResourceAsStream(file)));
         } catch (Exception e) {
-            logger.info("ERROR: Could not load file: " + file);
+            component.logger.info("ERROR: Could not load file: " + file);
         }
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        ogpixels = image.getRGB(0, 0, width, height, ogpixels, 0, width);
-        pixels = ogpixels;
-    }
+        component.width = component.image.getWidth();
+        component.height = component.image.getHeight();
+        component.ogpixels = component.image.getRGB(0, 0, component.width, component.height, component.ogpixels, 0, component.width);
+        component.pixels = component.ogpixels;
 
-    public SpriteComponent(BufferedImage image) {
-        this.image = image;
-        this.width = image.getWidth();
-        this.height = image.getHeight();
-        ogpixels = image.getRGB(0, 0, width, height, ogpixels, 0, width);
-        pixels = ogpixels;
+        return component;
     }
 
     public int getWidth() {
@@ -200,14 +205,14 @@ public class SpriteComponent extends Component<SpriteComponent> {
     }
 
     public SpriteComponent getSubimage(int x, int y, int w, int h) {
-        return new SpriteComponent(image.getSubimage(x, y, w, h));
+        return invoke(image.getSubimage(x, y, w, h));
     }
 
     public SpriteComponent getNewSubimage(int x, int y, int w, int h) {
         BufferedImage temp = image.getSubimage(x, y, w, h);
         BufferedImage newImage = new BufferedImage(image.getColorModel(), image.getRaster().createCompatibleWritableRaster(w, h), image.isAlphaPremultiplied(), null);
         temp.copyData(newImage.getRaster());
-        return new SpriteComponent(newImage);
+        return invoke(newImage);
     }
 
     public SpriteComponent getNewSubimage() {

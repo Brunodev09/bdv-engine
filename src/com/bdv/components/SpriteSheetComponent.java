@@ -27,7 +27,7 @@ public class SpriteSheetComponent extends Component<SpriteSheetComponent> {
         width = TILE_SIZE;
         height = TILE_SIZE;
 
-        SPRITESHEET = new SpriteComponent(loadSprite(file));
+        SPRITESHEET = SpriteComponent.invoke(loadSprite(file));
 
         wSprite = SPRITESHEET.image.getWidth() / width;
         hSprite = SPRITESHEET.image.getHeight() / height;
@@ -51,7 +51,7 @@ public class SpriteSheetComponent extends Component<SpriteSheetComponent> {
         this.height = height;
         this.file = file;
 
-        SPRITESHEET = new SpriteComponent(loadSprite(file));
+        SPRITESHEET = SpriteComponent.invoke(loadSprite(file));
 
         wSprite = SPRITESHEET.image.getWidth() / width;
         hSprite = SPRITESHEET.image.getHeight() / height;
