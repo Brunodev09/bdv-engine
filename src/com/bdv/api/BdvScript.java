@@ -12,7 +12,7 @@ public abstract class BdvScript {
     private boolean debugShader = false;
     private boolean logFps = false;
     private RendererAPI rendererAPI = RendererAPI.SWING_RENDERER;
-    private ProjectDimensionNumber projectDimensionNumber = ProjectDimensionNumber.TwoDimensions;
+    private ProjectDimensionNumber projectDimensionNumber = ProjectDimensionNumber.twoDimensions;
     public final SystemManager manager = new SystemManager();
 
     protected BdvScript() {

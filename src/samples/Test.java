@@ -25,7 +25,6 @@ public class Test extends BdvScript {
 
         Entity base = manager.createEntity();
         base.addComponent(SpriteComponent.class, "images/assetsComplete.png");
-        System.out.println();
     }
 
     @Override

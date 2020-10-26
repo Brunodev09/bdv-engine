@@ -52,9 +52,9 @@ public class Game {
     private void openglRender() {
         OpenGLRenderManagerComponent.createRender(this.script.getWidth(), this.script.getHeight(), this.script.getWindowTitle());
 
-        if (this.script.getProjectDimensionNumber() == ProjectDimensionNumber.ThreeDimensions) {
+        if (this.script.getProjectDimensionNumber() == ProjectDimensionNumber.threeDimensions) {
 
-        } else if (this.script.getProjectDimensionNumber() == ProjectDimensionNumber.TwoDimensions) {
+        } else if (this.script.getProjectDimensionNumber() == ProjectDimensionNumber.twoDimensions) {
             while (!OpenGLRenderManagerComponent.shouldExit()) {
                 // @TODO - 3d rendering will remain procedural (1 entity -> 1 draw call)
                 // @TODO - 2d rendering will only happen by constructing a mesh composed of all the images in the set positions and dimensions (n entities -> 1 draw call)

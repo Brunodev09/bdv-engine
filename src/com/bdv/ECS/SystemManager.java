@@ -43,7 +43,7 @@ public class SystemManager {
         createdEntities.add(entity);
         entityComponentSignatures.set(entityId, new Signature());
 
-        log.info("[SYSTEM_MANAGER] Created Entity with ID " + entity + " (total = " + totalEntities + ")");
+        log.info("[SYSTEM_MANAGER] Created Entity with ID " + entityId + " (total = " + totalEntities + ")");
 
         return entity;
     }
