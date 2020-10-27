@@ -1,12 +1,9 @@
-package com.bdv.components;
+package com.bdv.renders.opengl;
 
 import com.bdv.ECS.Component;
 import com.bdv.ECS.Entity;
+import com.bdv.components.*;
 import com.bdv.helpers.MatrixUtils;
-import com.bdv.renders.opengl.MeshShader;
-import com.bdv.renders.opengl.RectangleShader;
-import com.bdv.renders.opengl.Sync;
-import com.bdv.renders.opengl.Terrain3DShader;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -22,7 +19,7 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.GL_FALSE;
 
-public class OpenGLRenderManagerComponent extends Component<OpenGLRenderManagerComponent> {
+public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
     private static RectangleShader rectangleShader;
     private static MeshShader meshShader;
     private static Terrain3DShader meshShaderTerrain;
@@ -44,7 +41,7 @@ public class OpenGLRenderManagerComponent extends Component<OpenGLRenderManagerC
 
     private static boolean debugShader;
 
-    private static Logger LOG = Logger.getLogger(OpenGLRenderManagerComponent.class.getName());
+    private static Logger LOG = Logger.getLogger(OpenGLRenderManager.class.getName());
 
     public static long getWindow() {
         return window;

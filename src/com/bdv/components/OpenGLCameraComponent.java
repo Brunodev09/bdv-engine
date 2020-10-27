@@ -1,6 +1,7 @@
 package com.bdv.components;
 
 import com.bdv.ECS.Component;
+import com.bdv.renders.opengl.OpenGLRenderManager;
 import org.lwjgl.util.vector.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -19,7 +20,7 @@ public class OpenGLCameraComponent extends Component<OpenGLCameraComponent> {
     }
 
     public void move() {
-        long windowContext = OpenGLRenderManagerComponent.getWindow();
+        long windowContext = OpenGLRenderManager.getWindow();
 
         if (glfwGetKey(windowContext, GLFW_KEY_W) == GLFW_PRESS) {
             position.z -= speed;

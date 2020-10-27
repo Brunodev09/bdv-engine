@@ -2,7 +2,7 @@ package com.bdv.game;
 
 import com.bdv.api.BdvScript;
 import com.bdv.api.ProjectDimensionNumber;
-import com.bdv.components.OpenGLRenderManagerComponent;
+import com.bdv.renders.opengl.OpenGLRenderManager;
 import com.bdv.renders.swing.RenderManager;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.systems.RenderSystem;
@@ -12,6 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 public class Game {
+    // @TODO - Treat all the components that are being silently created insided nested components, because the ECS system is not aware of them (e.g getSubImage)
     private final BdvScript script;
     private static final Logger log = Logger.getLogger(Game.class.getName());
 
@@ -50,12 +51,12 @@ public class Game {
     }
 
     private void openglRender() {
-        OpenGLRenderManagerComponent.createRender(this.script.getWidth(), this.script.getHeight(), this.script.getWindowTitle());
+        OpenGLRenderManager.createRender(this.script.getWidth(), this.script.getHeight(), this.script.getWindowTitle());
 
         if (this.script.getProjectDimensionNumber() == ProjectDimensionNumber.threeDimensions) {
 
         } else if (this.script.getProjectDimensionNumber() == ProjectDimensionNumber.twoDimensions) {
-            while (!OpenGLRenderManagerComponent.shouldExit()) {
+            while (!OpenGLRenderManager.shouldExit()) {
                 // @TODO - 3d rendering will remain procedural (1 entity -> 1 draw call)
                 // @TODO - 2d rendering will only happen by constructing a mesh composed of all the images in the set positions and dimensions (n entities -> 1 draw call)
                 // @TODO - It's important to remember that these dimensions can and will be dynamic and not restricted to a tileSize or whatever
