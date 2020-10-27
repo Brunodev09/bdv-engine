@@ -1,6 +1,8 @@
 package com.bdv.ECS;
 
 import com.bdv.components.SpriteComponent;
+import com.bdv.components.SpriteSheetComponent;
+import com.bdv.components.TextureComponent;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.pool.Pool;
 
@@ -21,7 +23,7 @@ public class SystemManager {
     private Map<String, Object> systems = new HashMap<>();
     private int totalEntities = 0;
 
-    private final Logger log = Logger.getLogger(SystemManager.class.getName());
+    private final Logger logger = Logger.getLogger(SystemManager.class.getName());
 
     public Entity createEntity() {
         int entityId;
@@ -43,7 +45,7 @@ public class SystemManager {
         createdEntities.add(entity);
         entityComponentSignatures.set(entityId, new Signature());
 
-        log.info("[SYSTEM_MANAGER] Created Entity with ID " + entityId + " (total = " + totalEntities + ")");
+        logger.info("[SYSTEM_MANAGER] Created Entity with ID " + entityId + " (total = " + totalEntities + ")");
 
         return entity;
     }
@@ -101,10 +103,10 @@ public class SystemManager {
             InvocationTargetException,
             ClassNotFoundException {
 
-        final int componentId = Component.<T>getId();
+        final int componentId = Component.<T>getId() + 1;
         final int entityId = entity.getId();
 
-        if (componentId > componentPools.size()) {
+        if (componentId >= componentPools.size()) {
             while (componentPools.size() != componentId + 1) {
                 componentPools.add(null);
             }
@@ -143,6 +145,12 @@ public class SystemManager {
                 paramSignature[i] = String.class;
             } else if (args[i] instanceof BufferedImage) {
                 paramSignature[i] = BufferedImage.class;
+            } else if (args[i] instanceof SpriteComponent) {
+                paramSignature[i] = SpriteComponent.class;
+            } else if (args[i] instanceof TextureComponent) {
+                paramSignature[i] = TextureComponent.class;
+            } else if (args[i] instanceof SpriteSheetComponent) {
+                paramSignature[i] = SpriteSheetComponent.class;
             }
         }
 
@@ -152,6 +160,7 @@ public class SystemManager {
         Object _instance = _class.newInstance();
         Method myMethod = _class.getDeclaredMethod(methodName, paramSignature);
         Object returnedInstance = myMethod.invoke(_instance, args);
+        Component.nextId++;
 
         return (T) returnedInstance;
     }

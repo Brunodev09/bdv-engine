@@ -1,6 +1,7 @@
 package com.bdv.api;
 
 import com.bdv.ECS.SystemManager;
+import com.bdv.assets.AssetPool;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -14,6 +15,8 @@ public abstract class BdvScript {
     private RendererAPI rendererAPI = RendererAPI.SWING_RENDERER;
     private ProjectDimensionNumber projectDimensionNumber = ProjectDimensionNumber.twoDimensions;
     public final SystemManager manager = new SystemManager();
+    public final AssetPool assetPool = new AssetPool();
+
 
     protected BdvScript() {
     }

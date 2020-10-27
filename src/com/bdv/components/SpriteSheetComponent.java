@@ -1,13 +1,12 @@
 package com.bdv.components;
 
 import com.bdv.ECS.Component;
+import com.bdv.exceptions.ComponentException;
 import org.lwjgl.util.vector.Vector2f;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
-import java.util.Objects;
 
 public class SpriteSheetComponent extends Component<SpriteSheetComponent> {
 
@@ -18,40 +17,14 @@ public class SpriteSheetComponent extends Component<SpriteSheetComponent> {
     public int height;
     private int wSprite;
     private int hSprite;
-    private String file;
 
     public static FontComponent currentFont;
 
-    public SpriteSheetComponent(String file) {
-        this.file = file;
-        width = TILE_SIZE;
-        height = TILE_SIZE;
-
-        SPRITESHEET = SpriteComponent.invoke(loadSprite(file));
-
-        wSprite = SPRITESHEET.image.getWidth() / width;
-        hSprite = SPRITESHEET.image.getHeight() / height;
-        loadSpriteArray();
-    }
-
-    public SpriteSheetComponent(SpriteComponent sprite, String name, int width, int height) {
+    public SpriteSheetComponent(SpriteComponent sprite, int width, int height) throws ComponentException {
         this.width = width;
         this.height = height;
 
         SPRITESHEET = sprite;
-
-        wSprite = SPRITESHEET.image.getWidth() / width;
-        hSprite = SPRITESHEET.image.getHeight() / height;
-        loadSpriteArray();
-
-    }
-
-    public SpriteSheetComponent(String file, int width, int height) {
-        this.width = width;
-        this.height = height;
-        this.file = file;
-
-        SPRITESHEET = SpriteComponent.invoke(loadSprite(file));
 
         wSprite = SPRITESHEET.image.getWidth() / width;
         hSprite = SPRITESHEET.image.getHeight() / height;
@@ -78,24 +51,13 @@ public class SpriteSheetComponent extends Component<SpriteSheetComponent> {
     public int getRows() { return hSprite; }
     public int getCols() { return wSprite; }
     public int getTotalTiles() { return wSprite * hSprite; }
-    public String getFilename() { return file; }
 
-    private BufferedImage loadSprite(String file) {
-        BufferedImage sprite = null;
-        try {
-            sprite = ImageIO.read(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(file)));
-        } catch (Exception e) {
-            System.out.println("ERROR: Could not load file: " + file);
-        }
-        return sprite;
-    }
-
-    public void loadSpriteArray() {
+    public void loadSpriteArray() throws ComponentException {
         spriteArray = new SpriteComponent[hSprite][wSprite];
 
         for (int y = 0; y < hSprite; y++) {
             for (int x = 0; x < wSprite; x++) {
-                spriteArray[y][x] = getSprite(x, y);
+                spriteArray[y][x] = getSprite(getClass().getName() + "_SPRITESHEET_" + x + "_" + y, x, y);
             }
         }
     }
@@ -108,20 +70,16 @@ public class SpriteSheetComponent extends Component<SpriteSheetComponent> {
         return SPRITESHEET;
     }
 
-    public SpriteComponent getSprite(int x, int y) {
-        return SPRITESHEET.getSubimage(x * width, y * height, width, height);
+    public SpriteComponent getSprite(String id, int x, int y) throws ComponentException {
+        return SPRITESHEET.getSubimage(id, x * width, y * height, width, height);
     }
 
-    public SpriteComponent getNewSprite(int x, int y) {
-        return SPRITESHEET.getNewSubimage(x * width, y * height, width, height);
+    public SpriteComponent getNewSprite(String id, int x, int y) throws ComponentException {
+        return SPRITESHEET.getNewSubimage(id, x * width, y * height, width, height);
     }
 
-    public SpriteComponent getSprite(int x, int y, int w, int h) {
-        return SPRITESHEET.getSubimage(x * w, y * h, w, h);
-    }
-
-    public BufferedImage getSubimage(int x, int y, int w, int h) {
-        return SPRITESHEET.image.getSubimage(x, y, w, h);
+    public SpriteComponent getSprite(String id, int x, int y, int w, int h) throws ComponentException {
+        return SPRITESHEET.getSubimage(id, x * w, y * h, w, h);
     }
 
     public SpriteComponent[] getSpriteArrayAtIndex(int i) {

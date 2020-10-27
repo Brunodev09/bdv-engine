@@ -1,4 +1,4 @@
-package com.bdv.components;
+package com.bdv.renders.swing;
 
 import com.bdv.api.BdvScript;
 import com.bdv.systems.RenderSystem;
@@ -13,8 +13,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class RenderManagerComponent extends Canvas implements Runnable {
-    private static final Logger LOGGER = Logger.getLogger(RenderManagerComponent.class.getName());
+public class RenderManager extends Canvas implements Runnable {
+    private static final Logger LOGGER = Logger.getLogger(RenderManager.class.getName());
     public JFrame frame;
 
     private ExecutorService exec;
@@ -29,7 +29,7 @@ public class RenderManagerComponent extends Canvas implements Runnable {
 
     private int fps;
 
-    public RenderManagerComponent(BdvScript script) {
+    public RenderManager(BdvScript script) {
         this.script = script;
 
         this.fpsCap = script.getFPS();

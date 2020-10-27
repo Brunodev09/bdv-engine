@@ -1,8 +1,11 @@
 package com.bdv.ECS;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Logger;
 
 public class Entity {
+    private final Logger logger = Logger.getLogger(Entity.class.getName());
+
     private final int id;
     private boolean kill = false;
 

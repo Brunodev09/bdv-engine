@@ -3,7 +3,7 @@ package com.bdv.game;
 import com.bdv.api.BdvScript;
 import com.bdv.api.ProjectDimensionNumber;
 import com.bdv.components.OpenGLRenderManagerComponent;
-import com.bdv.components.RenderManagerComponent;
+import com.bdv.renders.swing.RenderManager;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.systems.RenderSystem;
 
@@ -34,7 +34,7 @@ public class Game {
     private void swingRender() {
         try {
             this.script.manager.addSystem(RenderSystem.class);
-            RenderManagerComponent renderManagerComponent = new RenderManagerComponent(script);
+            RenderManager renderManagerComponent = new RenderManager(script);
             renderManagerComponent.frame.setResizable(false);
             renderManagerComponent.frame.setTitle(this.script.getWindowTitle());
             renderManagerComponent.frame.add(renderManagerComponent);

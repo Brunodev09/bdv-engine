@@ -2,16 +2,16 @@ package com.bdv.ECS;
 
 import java.util.logging.Logger;
 
-public class Component <T> {
-    public static int nextId = 1;
+
+public abstract class Component <T> {
+    public static int nextId = 0;
     public Logger logger = Logger.getLogger(getClass().getName());
 
     public <T> Component() {
-        ++nextId;
     }
 
     public static <T> int getId() {
-        return nextId++;
+        return nextId;
     }
 
     public Logger getLogger() {

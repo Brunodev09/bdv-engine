@@ -4,6 +4,7 @@ import com.bdv.ECS.Entity;
 import com.bdv.Main;
 import com.bdv.api.BdvScript;
 import com.bdv.components.SpriteComponent;
+import com.bdv.components.TextureComponent;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -24,7 +25,10 @@ public class Test extends BdvScript {
             InvocationTargetException {
 
         Entity base = manager.createEntity();
-        base.addComponent(SpriteComponent.class, "images/assetsComplete.png");
+        TextureComponent.bindAssetsStore(assetPool);
+        base.addComponent(TextureComponent.class, "full_spritesheet", "images/assetsComplete.png");
+        TextureComponent textureComponent = base.<TextureComponent>getComponent();
+        base.addComponent(SpriteComponent.class, textureComponent);
     }
 
     @Override

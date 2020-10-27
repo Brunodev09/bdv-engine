@@ -1,6 +1,8 @@
 package com.bdv.components;
 
 import com.bdv.ECS.Component;
+import com.bdv.assets.AssetPool;
+import com.bdv.exceptions.ComponentException;
 import com.bdv.helpers.MatrixUtils;
 
 import javax.imageio.ImageIO;
@@ -26,65 +28,49 @@ public class SpriteComponent extends Component<SpriteComponent> {
     public enum effect {NORMAL, SEPIA, REDISH, GRAYSCALE, NEGATIVE, DECAY}
 
     private final float[][] id =
-                    {{1.0f, 0.0f, 0.0f},
+            {{1.0f, 0.0f, 0.0f},
                     {0.0f, 1.0f, 0.0f},
                     {0.0f, 0.0f, 1.0f},
                     {0.0f, 0.0f, 0.0f}};
 
     private final float[][] negative =
-                    {{1.0f, 0.0f, 0.0f},
+            {{1.0f, 0.0f, 0.0f},
                     {0.0f, 1.0f, 0.0f},
                     {0.0f, 0.0f, 1.0f},
                     {0.0f, 0.0f, 0.0f}};
 
     private final float[][] decay =
-                    {{0.000f, 0.333f, 0.333f},
+            {{0.000f, 0.333f, 0.333f},
                     {0.333f, 0.000f, 0.333f},
                     {0.333f, 0.333f, 0.000f},
                     {0.000f, 0.000f, 0.000f}};
 
     private final float[][] sepia =
-                    {{0.393f, 0.349f, 0.272f},
+            {{0.393f, 0.349f, 0.272f},
                     {0.769f, 0.686f, 0.534f},
                     {0.189f, 0.168f, 0.131f},
                     {0.000f, 0.000f, 0.000f}};
 
     private final float[][] redish =
-                    {{1.0f, 0.0f, 0.0f},
+            {{1.0f, 0.0f, 0.0f},
                     {0.0f, 0.3f, 0.0f},
                     {0.0f, 0.0f, 0.3f},
                     {0.0f, 0.0f, 0.0f}};
 
     private final float[][] grayscale =
-                    {{0.333f, 0.333f, 0.333f},
+            {{0.333f, 0.333f, 0.333f},
                     {0.333f, 0.333f, 0.333f},
                     {0.333f, 0.333f, 0.333f},
                     {0.000f, 0.000f, 0.000f}};
 
     private float[][] currentEffect = id;
 
-    public static SpriteComponent invoke(BufferedImage image) {
+    public static SpriteComponent invoke(TextureComponent textureComponent) {
         SpriteComponent component = new SpriteComponent();
-        component.image = image;
-        component.width = image.getWidth();
-        component.height = image.getHeight();
-        component.ogpixels = image.getRGB(0, 0, component.width, component.height, component.ogpixels, 0, component.width);
-        component.pixels = component.ogpixels;
-
-        return component;
-    }
-
-    public static SpriteComponent invoke(String file) {
-        SpriteComponent component = new SpriteComponent();
-
-        try {
-            component.image = ImageIO.read(Objects.requireNonNull(SpriteComponent.class.getClassLoader().getResourceAsStream(file)));
-        } catch (Exception e) {
-            component.logger.info("ERROR: Could not load file: " + file);
-        }
-        component.width = component.image.getWidth();
-        component.height = component.image.getHeight();
-        component.ogpixels = component.image.getRGB(0, 0, component.width, component.height, component.ogpixels, 0, component.width);
+        component.image = textureComponent.image;
+        component.width = textureComponent.image.getWidth();
+        component.height = textureComponent.image.getHeight();
+        component.ogpixels = textureComponent.image.getRGB(0, 0, component.width, component.height, component.ogpixels, 0, component.width);
         component.pixels = component.ogpixels;
 
         return component;
@@ -202,19 +188,19 @@ public class SpriteComponent extends Component<SpriteComponent> {
         currentEffect = effect;
     }
 
-    public SpriteComponent getSubimage(int x, int y, int w, int h) {
-        return invoke(image.getSubimage(x, y, w, h));
+    public SpriteComponent getSubimage(String id, int x, int y, int w, int h) throws ComponentException {
+        return invoke(TextureComponent.invoke(id, image.getSubimage(x, y, w, h)));
     }
 
-    public SpriteComponent getNewSubimage(int x, int y, int w, int h) {
+    public SpriteComponent getNewSubimage(String id, int x, int y, int w, int h) throws ComponentException {
         BufferedImage temp = image.getSubimage(x, y, w, h);
         BufferedImage newImage = new BufferedImage(image.getColorModel(), image.getRaster().createCompatibleWritableRaster(w, h), image.isAlphaPremultiplied(), null);
         temp.copyData(newImage.getRaster());
-        return invoke(newImage);
+        return invoke(TextureComponent.invoke(id, newImage));
     }
 
-    public SpriteComponent getNewSubimage() {
-        return getNewSubimage(0, 0, this.width, this.height);
+    public SpriteComponent getNewSubimage(String id) throws ComponentException {
+        return getNewSubimage(id, 0, 0, this.width, this.height);
     }
 
 }
