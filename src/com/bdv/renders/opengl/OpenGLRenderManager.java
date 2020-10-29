@@ -139,7 +139,7 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
     }
 
     public static void processEntity(Entity entity) {
-        OpenGLTexturedModelComponent model = entity.<OpenGLTexturedModelComponent>getComponent();
+        OpenGLTexturedModelComponent model = entity.getComponent(OpenGLTexturedModelComponent.class);
         List<Entity> listOfEntities = entities.get(model);
         if (listOfEntities != null) listOfEntities.add(entity);
         else {

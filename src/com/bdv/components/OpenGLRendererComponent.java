@@ -161,7 +161,7 @@ public class OpenGLRendererComponent extends Component<OpenGLRendererComponent> 
     }
 
     private void applyTransformationAndLoadIntoShader(Entity entity) {
-        TransformComponent transformComponent = entity.<TransformComponent>getComponent();
+        TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
         // Applying transformations and loading them to the VAO
         Matrix4f transformationMatrix = MatrixUtils.createTransformationMatrix(
                 transformComponent.position,
@@ -175,7 +175,7 @@ public class OpenGLRendererComponent extends Component<OpenGLRendererComponent> 
     }
 
     private void applyTransformationAndLoadIntoShader2D(Entity entity) {
-        TransformComponent transformComponent = entity.<TransformComponent>getComponent();
+        TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
         Matrix4f transformationMatrix = MatrixUtils.createTransformationMatrix(
                 transformComponent.position,
                 transformComponent.rotation.x,

@@ -3,8 +3,10 @@ package com.bdv.ECS;
 import com.bdv.components.SpriteComponent;
 import com.bdv.components.SpriteSheetComponent;
 import com.bdv.components.TextureComponent;
+import com.bdv.components.TransformComponent;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.pool.Pool;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Constructor;
@@ -21,6 +23,9 @@ public class SystemManager {
     private List<Pool<Object>> componentPools = new ArrayList<>();
     private List<Signature> entityComponentSignatures = new ArrayList<>();
     private Map<String, Object> systems = new HashMap<>();
+
+    private Map<Class<?>, Integer> _typeManager = new HashMap<>();
+
     private int totalEntities = 0;
 
     private final Logger logger = Logger.getLogger(SystemManager.class.getName());
@@ -103,7 +108,16 @@ public class SystemManager {
             InvocationTargetException,
             ClassNotFoundException {
 
-        final int componentId = Component.<T>getId() + 1;
+        int componentId = _typeManager.get(type) != null ? _typeManager.get(type) + 1 : 0;
+
+        if (componentId > 0) {
+            _typeManager.put(type, componentId);
+        } else {
+            _typeManager.put(type, 1);
+            componentId = 1;
+        }
+
+//        final int componentId = Component.<T>getId() + 1;
         final int entityId = entity.getId();
 
         if (componentId >= componentPools.size()) {
@@ -138,11 +152,14 @@ public class SystemManager {
 
         Class<?>[] paramSignature = new Class[args.length];
 
+        // @TODO - Get every component file from the components folder into a array of Class<?>
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof Integer) {
                 paramSignature[i] = Integer.TYPE;
             } else if (args[i] instanceof String) {
                 paramSignature[i] = String.class;
+            } else if (args[i] instanceof Vector3f) {
+                paramSignature[i] = Vector3f.class;
             } else if (args[i] instanceof BufferedImage) {
                 paramSignature[i] = BufferedImage.class;
             } else if (args[i] instanceof SpriteComponent) {
@@ -151,6 +168,8 @@ public class SystemManager {
                 paramSignature[i] = TextureComponent.class;
             } else if (args[i] instanceof SpriteSheetComponent) {
                 paramSignature[i] = SpriteSheetComponent.class;
+            } else if (args[i] instanceof TransformComponent) {
+                paramSignature[i] = TransformComponent.class;
             }
         }
 
@@ -165,21 +184,24 @@ public class SystemManager {
         return (T) returnedInstance;
     }
 
-    public <T> void removeComponent(Entity entity) {
-        final int componentId = Component.<T>getId();
+    public <T> void removeComponent(Entity entity, Class<T> type) {
+//        final int componentId = Component.<T>getId();
+        final int componentId = _typeManager.get(type);
         final int entityId = entity.getId();
         entityComponentSignatures.get(entityId).getSet().set(componentId, false);
     }
 
-    public <T> T getComponent(Entity entity) {
-        final int componentId = Component.<T>getId();
+    public <T> T getComponent(Entity entity, Class<T> type) {
+//        final int componentId = Component.<T>getId();
+        final int componentId = _typeManager.get(type);
         final int entityId = entity.getId();
         Pool<T> pool = (Pool<T>) componentPools.get(componentId);
         return pool.get(entityId);
     }
 
-    public <T> boolean hasComponent(Entity entity) {
-        final int componentId = Component.<T>getId();
+    public <T> boolean hasComponent(Entity entity, Class<T> type) {
+//        final int componentId = Component.<T>getId();
+        final int componentId = _typeManager.get(type);
         final int entityId = entity.getId();
         return entityComponentSignatures.get(entityId).getSet().get(componentId);
     }

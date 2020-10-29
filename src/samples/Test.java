@@ -5,6 +5,10 @@ import com.bdv.Main;
 import com.bdv.api.BdvScript;
 import com.bdv.components.SpriteComponent;
 import com.bdv.components.TextureComponent;
+import com.bdv.components.TransformComponent;
+import com.bdv.exceptions.InvalidInstance;
+import com.bdv.systems.SpriteRendererSystem;
+import org.lwjgl.util.vector.Vector3f;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -22,13 +26,27 @@ public class Test extends BdvScript {
             throws NoSuchMethodException,
             InstantiationException,
             IllegalAccessException,
-            InvocationTargetException {
+            InvocationTargetException,
+            InvalidInstance {
+
+        manager.addSystem(SpriteRendererSystem.class);
 
         Entity base = manager.createEntity();
         TextureComponent.bindAssetsStore(assetPool);
+
         base.addComponent(TextureComponent.class, "full_spritesheet", "images/assetsComplete.png");
-        TextureComponent textureComponent = base.<TextureComponent>getComponent();
+        TextureComponent textureComponent = base.getComponent(TextureComponent.class);
         base.addComponent(SpriteComponent.class, textureComponent);
+        base.addComponent(TransformComponent.class,
+                new Vector3f(0, 0, 0),
+                new Vector3f(1, 1, 1),
+                new Vector3f(1, 1, 1));
+
+        SpriteComponent component = base.getComponent(SpriteComponent.class);
+        TransformComponent component1 = base.getComponent(TransformComponent.class);
+
+        SpriteRendererSystem renderer = (SpriteRendererSystem) manager.getSystem(SpriteRendererSystem.class);
+        renderer.addEntity(base);
     }
 
     @Override

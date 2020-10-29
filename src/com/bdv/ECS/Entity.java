@@ -1,6 +1,5 @@
 package com.bdv.ECS;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Logger;
 
 public class Entity {
@@ -27,8 +26,7 @@ public class Entity {
         return id;
     }
 
-    public <T> void addComponent(Class<T> type, Object... args) throws InvocationTargetException,
-            NoSuchMethodException, InstantiationException, IllegalAccessException {
+    public <T> void addComponent(Class<T> type, Object... args) {
         try {
             manager.<T>addComponent(this, type, args);
 
@@ -37,16 +35,16 @@ public class Entity {
         }
     }
 
-    public <T> T getComponent() {
-        return manager.getComponent(this);
+    public <T> T getComponent(Class<T> type) {
+        return manager.getComponent(this, type);
     }
 
-    public <T> boolean hasComponent() {
-        return manager.<T>hasComponent(this);
+    public <T> boolean hasComponent(Class<T> type) {
+        return manager.<T>hasComponent(this, type);
     }
 
-    public <T> void removeComponent() {
-        manager.<T>removeComponent(this);
+    public <T> void removeComponent(Class<T> type) {
+        manager.<T>removeComponent(this, type);
     }
 
 

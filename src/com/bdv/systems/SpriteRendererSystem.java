@@ -10,18 +10,18 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 
-public class RenderSystem extends System  {
+public class SpriteRendererSystem extends System {
     private BufferedImage image;
     private int width;
     private int height;
     private int[] pixels;
     private int background = 0x892D6F;
 
-    public RenderSystem() {
+    public SpriteRendererSystem() {
 
     }
 
-    public RenderSystem(int width, int height) {
+    public SpriteRendererSystem(int width, int height) {
         this.width = width;
         this.height = height;
     }
@@ -53,15 +53,21 @@ public class RenderSystem extends System  {
 
         for (Entity entity : getEntities()) {
 
-            SpriteComponent spriteComponent = entity.getComponent();
-            TransformComponent transformComponent = entity.getComponent();
+            try {
 
-            display.drawImage(spriteComponent.image,
-                    (int) transformComponent.position.x,
-                    (int) transformComponent.position.y,
-                    spriteComponent.getWidth(),
-                    spriteComponent.getHeight(),
-                    null);
+                SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
+                TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
+
+                display.drawImage(spriteComponent.image,
+                        (int) transformComponent.position.x,
+                        (int) transformComponent.position.y,
+                        spriteComponent.getWidth(),
+                        spriteComponent.getHeight(),
+                        null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
 
         display.dispose();

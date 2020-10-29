@@ -2,6 +2,7 @@ package com.bdv.api;
 
 import com.bdv.ECS.SystemManager;
 import com.bdv.assets.AssetPool;
+import com.bdv.exceptions.InvalidInstance;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -22,7 +23,7 @@ public abstract class BdvScript {
     }
 
     public abstract void init()
-            throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException;
+            throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, InvalidInstance;
     public abstract void update(double deltaTime);
 
     public int getFPS() {

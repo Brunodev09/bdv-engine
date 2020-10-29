@@ -5,7 +5,6 @@ import com.bdv.api.ProjectDimensionNumber;
 import com.bdv.renders.opengl.OpenGLRenderManager;
 import com.bdv.renders.swing.RenderManager;
 import com.bdv.exceptions.InvalidInstance;
-import com.bdv.systems.RenderSystem;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
@@ -18,10 +17,15 @@ public class Game {
 
     public Game(BdvScript script) {
         this.script = script;
-        this.loop();
+        try {
+            this.loop();
+        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvalidInstance | InvocationTargetException exception) {
+            exception.printStackTrace();
+        }
     }
 
-    public void loop() {
+    public void loop() throws InvocationTargetException, NoSuchMethodException, InstantiationException, InvalidInstance, IllegalAccessException {
+        this.script.init();
         switch (this.script.getRendererAPI()) {
             case OPENGL_RENDERER:
                 openglRender();
@@ -33,21 +37,15 @@ public class Game {
     }
 
     private void swingRender() {
-        try {
-            this.script.manager.addSystem(RenderSystem.class);
-            RenderManager renderManagerComponent = new RenderManager(script);
-            renderManagerComponent.frame.setResizable(false);
-            renderManagerComponent.frame.setTitle(this.script.getWindowTitle());
-            renderManagerComponent.frame.add(renderManagerComponent);
-            renderManagerComponent.frame.pack();
-            renderManagerComponent.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            renderManagerComponent.frame.setLocationRelativeTo(null);
-            renderManagerComponent.frame.setVisible(true);
-            renderManagerComponent.start();
-        } catch (InvalidInstance | NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
-            e.printStackTrace();
-        }
-
+        RenderManager renderManagerComponent = new RenderManager(script);
+        renderManagerComponent.frame.setResizable(false);
+        renderManagerComponent.frame.setTitle(this.script.getWindowTitle());
+        renderManagerComponent.frame.add(renderManagerComponent);
+        renderManagerComponent.frame.pack();
+        renderManagerComponent.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        renderManagerComponent.frame.setLocationRelativeTo(null);
+        renderManagerComponent.frame.setVisible(true);
+        renderManagerComponent.start();
     }
 
     private void openglRender() {

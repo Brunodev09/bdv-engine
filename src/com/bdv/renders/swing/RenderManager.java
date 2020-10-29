@@ -1,7 +1,8 @@
 package com.bdv.renders.swing;
 
 import com.bdv.api.BdvScript;
-import com.bdv.systems.RenderSystem;
+import com.bdv.exceptions.InvalidInstance;
+import com.bdv.systems.SpriteRendererSystem;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,7 +19,7 @@ public class RenderManager extends Canvas implements Runnable {
     public JFrame frame;
 
     private ExecutorService exec;
-    private RenderSystem renderSystem;
+    private SpriteRendererSystem renderSystem;
 
     private boolean running = false;
     private final int fpsCap;
@@ -72,18 +73,14 @@ public class RenderManager extends Canvas implements Runnable {
     @Override
     public void run() {
 
-        renderSystem = (RenderSystem) this.script.manager.getSystem(RenderSystem.class);
+        renderSystem = (SpriteRendererSystem) this.script.manager.getSystem(SpriteRendererSystem.class);
+
+        if (renderSystem == null) return;
 
         long lastTimeFps = System.currentTimeMillis();
         long nowFps = System.currentTimeMillis();
 
         requestFocus();
-
-        try {
-            this.script.init();
-        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
 
         while (running) {
             while ((nowFps - lastTimeFps) < 1000) {
