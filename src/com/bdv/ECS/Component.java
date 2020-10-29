@@ -14,6 +14,10 @@ public abstract class Component <T> {
         return nextId;
     }
 
+    public static <T> int getNextId() {
+        return nextId + 1;
+    }
+
     public Logger getLogger() {
         return logger;
     }

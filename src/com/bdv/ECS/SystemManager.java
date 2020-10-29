@@ -108,14 +108,9 @@ public class SystemManager {
             InvocationTargetException,
             ClassNotFoundException {
 
-        int componentId = _typeManager.get(type) != null ? _typeManager.get(type) + 1 : 0;
+        int componentId = Component.getNextId();
 
-        if (componentId > 0) {
-            _typeManager.put(type, componentId);
-        } else {
-            _typeManager.put(type, 1);
-            componentId = 1;
-        }
+        _typeManager.put(type, componentId);
 
 //        final int componentId = Component.<T>getId() + 1;
         final int entityId = entity.getId();

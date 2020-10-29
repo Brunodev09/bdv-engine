@@ -42,9 +42,6 @@ public class Test extends BdvScript {
                 new Vector3f(1, 1, 1),
                 new Vector3f(1, 1, 1));
 
-        SpriteComponent component = base.getComponent(SpriteComponent.class);
-        TransformComponent component1 = base.getComponent(TransformComponent.class);
-
         SpriteRendererSystem renderer = (SpriteRendererSystem) manager.getSystem(SpriteRendererSystem.class);
         renderer.addEntity(base);
     }
