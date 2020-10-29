@@ -6,6 +6,8 @@ import com.bdv.components.SpriteComponent;
 import com.bdv.components.TransformComponent;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -54,16 +56,27 @@ public class SpriteRendererSystem extends System {
         for (Entity entity : getEntities()) {
 
             try {
-
                 SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
                 TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
 
-                display.drawImage(spriteComponent.image,
-                        (int) transformComponent.position.x,
-                        (int) transformComponent.position.y,
-                        spriteComponent.getWidth(),
-                        spriteComponent.getHeight(),
-                        null);
+                if (transformComponent.rotation.x > 0) {
+                    double rotation = Math.toRadians(360.0 / transformComponent.rotation.x);
+                    AffineTransform tx = AffineTransform.getRotateInstance(rotation, spriteComponent.getWidth() / 2.0, spriteComponent.getHeight() / 2.0);
+                    AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+                    display.drawImage(op.filter(spriteComponent.image, null),
+                            (int) transformComponent.position.x,
+                            (int) transformComponent.position.y,
+                            spriteComponent.getWidth(),
+                            spriteComponent.getHeight(),
+                            null);
+                } else {
+                    display.drawImage(spriteComponent.image,
+                            (int) transformComponent.position.x,
+                            (int) transformComponent.position.y,
+                            spriteComponent.getWidth(),
+                            spriteComponent.getHeight(),
+                            null);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
