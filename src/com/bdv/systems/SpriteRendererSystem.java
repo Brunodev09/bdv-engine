@@ -54,20 +54,19 @@ public class SpriteRendererSystem extends System {
         display.fillRect(0, 0, width, height);
 
         for (Entity entity : getEntities()) {
-
             try {
                 SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
                 TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
 
-                if (transformComponent.rotation.x > 0) {
-                    double rotation = Math.toRadians(360.0 / transformComponent.rotation.x);
-                    AffineTransform tx = AffineTransform.getRotateInstance(rotation, spriteComponent.getWidth() / 2.0, spriteComponent.getHeight() / 2.0);
+                if (transformComponent.rotation.x > 0 && transformComponent.rotation.x <= 1.0f) {
+                    double rotation = Math.toRadians(360.0 * transformComponent.rotation.x);
+                    AffineTransform tx = AffineTransform.getRotateInstance(rotation,
+                            spriteComponent.getWidth() / 2.0,
+                            spriteComponent.getHeight() / 2.0);
                     AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
                     display.drawImage(op.filter(spriteComponent.image, null),
                             (int) transformComponent.position.x,
                             (int) transformComponent.position.y,
-                            spriteComponent.getWidth(),
-                            spriteComponent.getHeight(),
                             null);
                 } else {
                     display.drawImage(spriteComponent.image,
@@ -80,9 +79,7 @@ public class SpriteRendererSystem extends System {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
         display.dispose();
         buffer.show();
     }

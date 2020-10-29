@@ -38,8 +38,8 @@ public class Test extends BdvScript {
         TextureComponent textureComponent = base.getComponent(TextureComponent.class);
         base.addComponent(SpriteComponent.class, textureComponent);
         base.addComponent(TransformComponent.class,
-                new Vector3f(0.5f, 0, 0),
-                new Vector3f(1, 1, 1),
+                new Vector3f(0, 0, 0),
+                new Vector3f(0.5f, 1, 1),
                 new Vector3f(1, 1, 1));
 
         SpriteRendererSystem renderer = (SpriteRendererSystem) manager.getSystem(SpriteRendererSystem.class);
