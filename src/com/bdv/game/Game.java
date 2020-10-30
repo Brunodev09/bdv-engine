@@ -49,6 +49,7 @@ public class Game {
     }
 
     private void openglRender() {
+        // @TODO - Make OpenGL multi-threaded as well
         OpenGLRenderManager.createRender(this.script.getWidth(), this.script.getHeight(), this.script.getWindowTitle());
 
         if (this.script.getProjectDimensionNumber() == ProjectDimensionNumber.threeDimensions) {
