@@ -7,11 +7,13 @@ import org.lwjgl.util.vector.Vector3f;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 
-public class OpenGLCameraComponent extends Component<OpenGLCameraComponent> {
+public class OpenGLCameraComponent extends Component<OpenGLCameraComponent> implements CameraComponent {
     private Vector3f position = new Vector3f(0, 4, 0);
     private float pitch;
     private float yaw;
     private float roll;
+
+    private boolean threeDimensions = true;
 
     private float speed = 0.2f;
 
@@ -67,5 +69,10 @@ public class OpenGLCameraComponent extends Component<OpenGLCameraComponent> {
 
     public float getRoll() {
         return roll;
+    }
+
+    @Override
+    public boolean getDimensions() {
+        return threeDimensions;
     }
 }

@@ -1,8 +1,9 @@
-package com.bdv.renders.opengl;
+package com.bdv.renders.opengl.shaders;
 
+import com.bdv.components.CameraComponent;
 import com.bdv.components.OpenGLCamera2DComponent;
 import com.bdv.components.OpenGLCameraComponent;
-import com.bdv.helpers.MatrixUtils;
+import com.bdv.renders.opengl.helpers.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -62,12 +63,7 @@ public class RectangleShader extends Shader {
         super.loadMatrixInUniformVariable(variableLocation2, m4x4);
     }
 
-    public void loadViewMatrix(OpenGLCameraComponent camera) {
-        Matrix4f view = MatrixUtils.createViewMatrix(camera);
-        super.loadMatrixInUniformVariable(variableLocation3, view);
-    }
-
-    public void loadViewMatrix(OpenGLCamera2DComponent camera) {
+    public void loadViewMatrix(CameraComponent camera) {
         Matrix4f view = MatrixUtils.createViewMatrix(camera);
         super.loadMatrixInUniformVariable(variableLocation3, view);
     }

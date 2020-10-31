@@ -3,7 +3,13 @@ package com.bdv.renders.opengl;
 import com.bdv.ECS.Component;
 import com.bdv.ECS.Entity;
 import com.bdv.components.*;
-import com.bdv.helpers.MatrixUtils;
+import com.bdv.exceptions.OpenGLException;
+import com.bdv.renders.opengl.helpers.MatrixUtils;
+import com.bdv.renders.opengl.helpers.Sync;
+import com.bdv.renders.opengl.shaders.MeshShader;
+import com.bdv.renders.opengl.shaders.RectangleShader;
+import com.bdv.renders.opengl.shaders.Shader;
+import com.bdv.renders.opengl.shaders.Terrain3DShader;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
@@ -23,6 +29,9 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
     private static RectangleShader rectangleShader;
     private static MeshShader meshShader;
     private static Terrain3DShader meshShaderTerrain;
+
+    private static List<Shader> shaders;
+
     private static Matrix4f projection;
     private static final Map<OpenGLTexturedModelComponent, List<Entity>> entities = new HashMap<>();
     private static final List<OpenGLTerrainComponent> terrains = new ArrayList<>();
@@ -55,14 +64,14 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
         return windowHeight;
     }
 
-    public static void createRender(int WIDTH, int HEIGHT, String TITLE) {
+    public static void createRender(int WIDTH, int HEIGHT, String TITLE, List<Shader> shadersList) throws OpenGLException {
         glfwSetErrorCallback(errorCallback = GLFWErrorCallback.createPrint(System.err));
 
         windowWidth = WIDTH;
         windowHeight = HEIGHT;
 
         if (!glfwInit()) {
-            throw new RuntimeException("Cannot initialize OpenGL");
+            throw new OpenGLException("Cannot initialize OpenGL");
         }
 
         glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
@@ -73,19 +82,16 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
         window = glfwCreateWindow(WIDTH, HEIGHT, TITLE, 0, 0);
 
         if (window == 0) {
-            throw new RuntimeException("Failed to create window");
+            throw new OpenGLException("Failed to create window");
         }
 
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
         glfwShowWindow(window);
 
-        meshShader = new MeshShader();
-        meshShaderTerrain = new Terrain3DShader();
-        rectangleShader = new RectangleShader();
+        shaders = shadersList;
 
         GL11.glViewport(0, 0, WIDTH, HEIGHT);
-
     }
 
     public static void initAllRenders() {
@@ -127,7 +133,7 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
         entities.clear();
     }
 
-    public static void renderBatch(OpenGLCamera2DComponent camera) {
+    public static void renderBatch(CameraComponent camera) {
         init2DRender();
         mainRenderer.setDebugShaderMode(debugShader);
         rectangleShader.init();

@@ -1,6 +1,6 @@
-package com.bdv.renders.opengl;
+package com.bdv.renders.opengl.shaders;
 
-import com.bdv.helpers.BufferOperations;
+import com.bdv.renders.opengl.helpers.BufferOperations;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;

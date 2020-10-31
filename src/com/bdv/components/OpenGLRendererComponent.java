@@ -2,9 +2,10 @@ package com.bdv.components;
 
 import com.bdv.ECS.Component;
 import com.bdv.ECS.Entity;
-import com.bdv.helpers.MatrixUtils;
-import com.bdv.renders.opengl.MeshShader;
-import com.bdv.renders.opengl.RectangleShader;
+import com.bdv.renders.opengl.helpers.MatrixUtils;
+import com.bdv.renders.opengl.OpenGLModelComponent;
+import com.bdv.renders.opengl.shaders.MeshShader;
+import com.bdv.renders.opengl.shaders.RectangleShader;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;

@@ -1,7 +1,8 @@
 package com.bdv.game;
 
 import com.bdv.api.BdvScript;
-import com.bdv.api.ProjectDimensionNumber;
+import com.bdv.exceptions.OpenGLException;
+import com.bdv.renders.opengl.OpenGLManager;
 import com.bdv.renders.opengl.OpenGLRenderManager;
 import com.bdv.renders.swing.RenderManager;
 import com.bdv.exceptions.InvalidInstance;
@@ -19,17 +20,23 @@ public class Game {
         this.script = script;
         try {
             this.loop();
-        } catch (NoSuchMethodException | IllegalAccessException | InstantiationException | InvalidInstance | InvocationTargetException exception) {
-            exception.printStackTrace();
+        } catch (NoSuchMethodException |
+                IllegalAccessException |
+                InstantiationException |
+                InvalidInstance |
+                InvocationTargetException |
+                OpenGLException e) {
+            e.printStackTrace();
         }
     }
 
-    public void loop() throws InvocationTargetException, NoSuchMethodException, InstantiationException, InvalidInstance, IllegalAccessException {
+    public void loop() throws InvocationTargetException, NoSuchMethodException, InstantiationException, InvalidInstance, IllegalAccessException, OpenGLException {
         this.script.init();
         switch (this.script.getRendererAPI()) {
             case OPENGL_RENDERER:
                 openglRender();
                 break;
+            case SWING_RENDERER:
             default:
                 swingRender();
                 break;
@@ -48,22 +55,9 @@ public class Game {
         renderManagerComponent.start();
     }
 
-    private void openglRender() {
-        // @TODO - Make OpenGL multi-threaded as well
-        OpenGLRenderManager.createRender(this.script.getWidth(), this.script.getHeight(), this.script.getWindowTitle());
-
-        if (this.script.getProjectDimensionNumber() == ProjectDimensionNumber.threeDimensions) {
-
-        } else if (this.script.getProjectDimensionNumber() == ProjectDimensionNumber.twoDimensions) {
-            while (!OpenGLRenderManager.shouldExit()) {
-                // @TODO - 3d rendering will remain procedural (1 entity -> 1 draw call)
-                // @TODO - 2d rendering will only happen by constructing a mesh composed of all the images in the set positions and dimensions (n entities -> 1 draw call)
-                // @TODO - It's important to remember that these dimensions can and will be dynamic and not restricted to a tileSize or whatever
-                // @TODO - No need for 2 chunks between GUI and textures, I can use the z-axis to detect images that are not going to be drawn
-                // @TODO - Sprite and Sprisheet components are going to be used universally (OpenGL and Swing will read the same images)
-
-            }
-        }
-
+    private void openglRender() throws OpenGLException {
+        // @TODO - Make OpenGL multi-threaded as well (once I get it working in the first place)
+        OpenGLManager manager = new OpenGLManager(this.script);
+        manager.loop();
     }
 }

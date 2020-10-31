@@ -1,14 +1,11 @@
 package com.bdv.components;
 
 import com.bdv.ECS.Component;
-import com.bdv.assets.AssetPool;
 import com.bdv.exceptions.ComponentException;
-import com.bdv.helpers.MatrixUtils;
+import com.bdv.renders.opengl.helpers.MatrixUtils;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.Objects;
 
 public class SpriteComponent extends Component<SpriteComponent> {
 
@@ -188,10 +185,12 @@ public class SpriteComponent extends Component<SpriteComponent> {
         currentEffect = effect;
     }
 
+    // @TODO - Treat this with a manager
     public SpriteComponent getSubimage(String id, int x, int y, int w, int h) throws ComponentException {
         return invoke(TextureComponent.invoke(id, image.getSubimage(x, y, w, h)));
     }
 
+    // @TODO - Treat this with a manager
     public SpriteComponent getNewSubimage(String id, int x, int y, int w, int h) throws ComponentException {
         BufferedImage temp = image.getSubimage(x, y, w, h);
         BufferedImage newImage = new BufferedImage(image.getColorModel(), image.getRaster().createCompatibleWritableRaster(w, h), image.isAlphaPremultiplied(), null);

@@ -1,4 +1,4 @@
-package com.bdv.helpers;
+package com.bdv.renders.opengl.helpers;
 
 import org.lwjgl.BufferUtils;
 
@@ -6,6 +6,9 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 public class BufferOperations {
+
+    private BufferOperations() {}
+
     public static FloatBuffer convertFloatToFloatBuffer(float[] array) {
         FloatBuffer buffer = BufferUtils.createFloatBuffer(array.length);
         buffer.put(array);

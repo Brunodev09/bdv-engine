@@ -1,11 +1,14 @@
-package com.bdv.helpers;
+package com.bdv.renders.opengl.helpers;
 
+import com.bdv.components.CameraComponent;
 import com.bdv.components.OpenGLCamera2DComponent;
 import com.bdv.components.OpenGLCameraComponent;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 public class MatrixUtils {
+
+    private MatrixUtils() {}
 
     public static float[][] Multiplication(float[][] A, float[][] B) {
         int AColLength = A[0].length;
@@ -102,25 +105,16 @@ public class MatrixUtils {
         return ortho;
     }
 
-    public static Matrix4f createViewMatrix(OpenGLCameraComponent camera) {
+    public static Matrix4f createViewMatrix(CameraComponent camera) {
         Matrix4f viewMatrix = new Matrix4f();
         viewMatrix.setIdentity();
         Matrix4f.rotate((float) Math.toRadians(camera.getPitch()), new org.lwjgl.util.vector.Vector3f(1, 0, 0), viewMatrix, viewMatrix);
         Matrix4f.rotate((float) Math.toRadians(camera.getYaw()), new org.lwjgl.util.vector.Vector3f(0, 1, 0), viewMatrix, viewMatrix);
         org.lwjgl.util.vector.Vector3f pos = camera.getPosition();
-        org.lwjgl.util.vector.Vector3f negativePos = new org.lwjgl.util.vector.Vector3f(-pos.x, -pos.y, -pos.z);
-        Matrix4f.translate(negativePos, viewMatrix, viewMatrix);
+        org.lwjgl.util.vector.Vector3f negativePos = null;
+        if (camera.getDimensions())  negativePos = new org.lwjgl.util.vector.Vector3f(-pos.x, -pos.y, -pos.z);
+        else negativePos = new Vector3f(-pos.x, -pos.y, 0.0f);
 
-        return viewMatrix;
-    }
-
-    public static Matrix4f createViewMatrix(OpenGLCamera2DComponent camera) {
-        Matrix4f viewMatrix = new Matrix4f();
-        viewMatrix.setIdentity();
-        Matrix4f.rotate((float) Math.toRadians(camera.getPitch()), new org.lwjgl.util.vector.Vector3f(1, 0, 0), viewMatrix, viewMatrix);
-        Matrix4f.rotate((float) Math.toRadians(camera.getYaw()), new org.lwjgl.util.vector.Vector3f(0, 1, 0), viewMatrix, viewMatrix);
-        org.lwjgl.util.vector.Vector3f pos = camera.getPosition();
-        org.lwjgl.util.vector.Vector3f negativePos = new Vector3f(-pos.x, -pos.y, 0.0f);
         Matrix4f.translate(negativePos, viewMatrix, viewMatrix);
 
         return viewMatrix;

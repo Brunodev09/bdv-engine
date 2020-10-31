@@ -1,4 +1,4 @@
-package com.bdv.renders.opengl;
+package com.bdv.renders.opengl.helpers;
 
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
 

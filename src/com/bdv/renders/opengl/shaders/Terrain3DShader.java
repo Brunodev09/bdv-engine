@@ -1,13 +1,13 @@
-package com.bdv.renders.opengl;
+package com.bdv.renders.opengl.shaders;
 
 import com.bdv.components.OpenGLCameraComponent;
 import com.bdv.components.OpenGLightsourceComponent;
-import com.bdv.helpers.MatrixUtils;
+import com.bdv.renders.opengl.helpers.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
 
 import java.io.InputStream;
 
-public class MeshShader extends Shader {
+public class Terrain3DShader extends Shader {
     private int variableLocation1;
     private int variableLocation2;
     private int variableLocation3;
@@ -16,16 +16,16 @@ public class MeshShader extends Shader {
     private int variableLocation6;
     private int variableLocation7;
 
-    public MeshShader() {
+    public Terrain3DShader() {
         super(readVertexData(), readFragmentData());
     }
 
     private static InputStream readVertexData() {
-        return MeshShader.class.getResourceAsStream("/shaders/vertexShader.txt");
+        return MeshShader.class.getResourceAsStream("/shaders/terrain3DVertexShader.txt");
     }
 
     private static InputStream readFragmentData() {
-        return MeshShader.class.getResourceAsStream("/shaders/fragmentShader.txt");
+        return MeshShader.class.getResourceAsStream("/shaders/terrain3DFragmentShader.txt");
     }
 
     @Override

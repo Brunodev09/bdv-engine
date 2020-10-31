@@ -1,8 +1,9 @@
 package com.bdv.components;
 
 import com.bdv.ECS.Component;
-import com.bdv.helpers.MatrixUtils;
-import com.bdv.renders.opengl.Terrain3DShader;
+import com.bdv.renders.opengl.helpers.MatrixUtils;
+import com.bdv.renders.opengl.OpenGLModelComponent;
+import com.bdv.renders.opengl.shaders.Terrain3DShader;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL20;

@@ -1,6 +1,8 @@
 package com.bdv.components;
 
 import com.bdv.ECS.Component;
+import com.bdv.renders.opengl.OpenGLBufferedModel;
+import com.bdv.renders.opengl.OpenGLModelComponent;
 
 public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
     private static final float TILE_SIZE = 800;
@@ -8,7 +10,7 @@ public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
 
     private float x;
     private float z;
-    private OpenGLBufferedModelComponent mdl;
+    private OpenGLBufferedModel mdl;
     private OpenGLTextureCustomComponent texture;
     private OpenGLModelComponent processedModel;
 
@@ -20,7 +22,7 @@ public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
         this.mdl = this.getTerrainData();
     }
 
-    private OpenGLBufferedModelComponent getTerrainData() {
+    private OpenGLBufferedModel getTerrainData() {
         int count = (int) Math.pow(VERTEX_COUNT, 2);
         // (x,y,z)
         float[] vertices = new float[count * 3];
@@ -67,7 +69,7 @@ public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
                 indices[indicesPtr++] = bottomRight;
             }
         }
-        return new OpenGLBufferedModelComponent(vertices, textureCoords, normals, indices);
+        return new OpenGLBufferedModel(vertices, textureCoords, normals, indices);
     }
 
     public static float getTileSize() {
@@ -90,7 +92,7 @@ public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
         this.z = z;
     }
 
-    public OpenGLBufferedModelComponent getMdl() {
+    public OpenGLBufferedModel getMdl() {
         return mdl;
     }
 
@@ -98,7 +100,7 @@ public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
         this.texture = texture;
     }
 
-    public void setMdl(OpenGLBufferedModelComponent mdl) {
+    public void setMdl(OpenGLBufferedModel mdl) {
         this.mdl = mdl;
     }
 
