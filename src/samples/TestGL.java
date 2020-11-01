@@ -33,7 +33,6 @@ public class TestGL extends BdvScript {
         Entity base = manager.createEntity();
         TextureComponent.bindAssetsStore(assetPool);
 
-        base.addComponent(ObjComponent.class, "obj/test");
         base.addComponent(TextureComponent.class, "full_spritesheet", "images/assetsComplete.png");
         TextureComponent textureComponent = base.getComponent(TextureComponent.class);
         base.addComponent(SpriteComponent.class, textureComponent);
@@ -41,8 +40,6 @@ public class TestGL extends BdvScript {
                 new Vector3f(0, 0, 0),
                 new Vector3f(0.5f, 1, 1),
                 new Vector3f(1, 1, 1));
-        base.addComponent(OpenGLReflectivityComponent.class, 1);
-        base.addComponent(OpenGLShineDumperComponent.class, 10);
 
         MeshRendererSystem renderer = (MeshRendererSystem) manager.getSystem(MeshRendererSystem.class);
         renderer.addEntity(base);

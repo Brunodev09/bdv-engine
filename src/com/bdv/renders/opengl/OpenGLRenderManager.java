@@ -150,7 +150,7 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
         }
     }
 
-    public static void renderBatch(OpenGLightsourceComponent light, OpenGLCameraComponent camera) {
+    public static void renderBatch(OpenGLightsourceComponent light, CameraComponent camera) {
         initAllRenders();
 
         meshShader.init();
@@ -184,6 +184,7 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
 
     public static void processEntity(Entity entity) {
         OpenGLTexturedModelComponent model = entity.getComponent(OpenGLTexturedModelComponent.class);
+        if (model == null) return;
         List<Entity> listOfEntities = entities.get(model);
         if (listOfEntities != null) listOfEntities.add(entity);
         else {

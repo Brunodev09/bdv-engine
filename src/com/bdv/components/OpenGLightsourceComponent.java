@@ -7,9 +7,15 @@ public class OpenGLightsourceComponent extends Component<OpenGLightsourceCompone
     private Vector3f position;
     private Vector3f color;
 
-    public OpenGLightsourceComponent(Vector3f position, Vector3f color) {
+    public OpenGLightsourceComponent() {}
+
+    private OpenGLightsourceComponent(Vector3f position, Vector3f color) {
         this.position = position;
         this.color = color;
+    }
+
+    public static OpenGLightsourceComponent invoke(Vector3f position, Vector3f color) {
+        return new OpenGLightsourceComponent(position, color);
     }
 
     public Vector3f getPosition() {

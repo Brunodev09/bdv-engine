@@ -5,10 +5,7 @@ import com.bdv.Main;
 import com.bdv.api.BdvScript;
 import com.bdv.api.ProjectDimensionNumber;
 import com.bdv.api.RendererAPI;
-import com.bdv.components.ObjComponent;
-import com.bdv.components.SpriteComponent;
-import com.bdv.components.TextureComponent;
-import com.bdv.components.TransformComponent;
+import com.bdv.components.*;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.systems.MeshRendererSystem;
 import org.lwjgl.util.vector.Vector3f;
@@ -27,7 +24,13 @@ public class TestGL3D extends BdvScript {
     }
 
     @Override
-    public void init() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, InvalidInstance {
+    public void init()
+            throws NoSuchMethodException,
+            InstantiationException,
+            IllegalAccessException,
+            InvocationTargetException,
+            InvalidInstance {
+
         rendererAPI = RendererAPI.OPENGL_RENDERER;
         projectDimensionNumber = ProjectDimensionNumber.threeDimensions;
 
@@ -44,9 +47,15 @@ public class TestGL3D extends BdvScript {
                 new Vector3f(0, 0, 0),
                 new Vector3f(0.5f, 1, 1),
                 new Vector3f(1, 1, 1));
+        base.addComponent(OpenGLReflectivityComponent.class, 1);
+        base.addComponent(OpenGLShineDumperComponent.class, 10);
+
+        Entity light = manager.createEntity();
+        light.addComponent(OpenGLightsourceComponent.class, new Vector3f(300, 300, -30), new Vector3f(1, 1, 1));
 
         MeshRendererSystem renderer = (MeshRendererSystem) manager.getSystem(MeshRendererSystem.class);
         renderer.addEntity(base);
+        renderer.addEntity(light);
     }
 
     @Override
@@ -55,7 +64,8 @@ public class TestGL3D extends BdvScript {
         List<Entity> entityList = renderer.getEntities();
         for (Entity entity : entityList) {
             TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
-            transformComponent.rotation = new Vector3f(0, transformComponent.rotation.y + 0.5f, transformComponent.rotation.z + 0.5f);
+            if (transformComponent != null)
+                transformComponent.rotation = new Vector3f(0, transformComponent.rotation.y + 0.5f, transformComponent.rotation.z + 0.5f);
         }
     }
 }

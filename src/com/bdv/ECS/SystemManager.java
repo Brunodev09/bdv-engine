@@ -5,6 +5,7 @@ import com.bdv.exceptions.InvalidInstance;
 import com.bdv.pool.Pool;
 import com.bdv.renders.opengl.OpenGLModel;
 import com.bdv.renders.opengl.OpenGLTextureCustom;
+import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.image.BufferedImage;
@@ -155,7 +156,6 @@ public class SystemManager {
 
         if (files != null && files.length != 0) {
             for (File file : files) {
-                logger.info(file.getName());
                 String className = "com.bdv.components." + file.getName().split(".java")[0];
                 Class<?> _class = Class.forName(className);
 
@@ -179,6 +179,8 @@ public class SystemManager {
                 paramSignature[i] = OpenGLModel.class;
             } else if (args[i] instanceof OpenGLTextureCustom) {
                 paramSignature[i] = OpenGLTextureCustom.class;
+            } else if (args[i] instanceof Vector2f) {
+                paramSignature[i] = Vector2f.class;
             }
         }
 
@@ -205,6 +207,7 @@ public class SystemManager {
         final int componentId = _typeManager.get(type);
         final int entityId = entity.getId();
         Pool<T> pool = (Pool<T>) componentPools.get(componentId);
+        if (entityId >= pool.getSize()) return null;
         return pool.get(entityId);
     }
 

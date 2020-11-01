@@ -71,13 +71,10 @@ public class OpenGLManager {
             insertToVAO_2d();
         }
 
-        OpenGLightsourceComponent light = new OpenGLightsourceComponent(new Vector3f(300, 300, -30), new Vector3f(1, 1, 1));
-
         while (!OpenGLRenderManager.shouldExit()) {
             // @TODO - 2d rendering will only happen by constructing a mesh composed of all the images in the set positions and dimensions (n entities -> 1 draw call)
             // @TODO - It's important to remember that these dimensions can and will be dynamic and not restricted to a tileSize or whatever
             // @TODO - No need for 2 chunks between GUI and textures, I can use the z-axis to detect images that are not going to be drawn
-            // @TODO - Sprite and Sprisheet components are going to be used universally (OpenGL and Swing will read the same images)
 
             if (lastUpdate == 0.0) {
                 lastUpdate = currentTimeMillis();
@@ -99,12 +96,18 @@ public class OpenGLManager {
 
             script.update(delta);
             camera.move();
+            OpenGLightsourceComponent light = null;
 
             for (Entity entity : meshRendererSystem.getEntities()) {
-                OpenGLRenderManager.processEntity(entity);
+                if (entity.getComponent(OpenGLightsourceComponent.class) == null)
+                    OpenGLRenderManager.processEntity(entity);
+                else light = entity.getComponent(OpenGLightsourceComponent.class);
             }
 
-            OpenGLRenderManager.renderBatch(light, (OpenGLCameraComponent) camera);
+            if (light != null)
+                OpenGLRenderManager.renderBatch(light, camera);
+            else OpenGLRenderManager.renderBatch(camera);
+
             OpenGLRenderManager.updateRender(script.fps);
         }
         // Freeing memory
@@ -124,6 +127,8 @@ public class OpenGLManager {
         for (Entity entity : meshRendererSystem.getEntities()) {
             ObjComponent objComponent = script.manager.getComponent(entity, ObjComponent.class);
             SpriteComponent spriteComponent = script.manager.getComponent(entity, SpriteComponent.class);
+
+            if (objComponent == null || spriteComponent == null) return;
 
             OpenGLModel mdl = pipeline.loadDataToVAO(objComponent.data.getVertices(), objComponent.data.getTextures(),
                     objComponent.data.getNormals(), objComponent.data.getIndexes());

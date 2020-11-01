@@ -1,6 +1,6 @@
 package com.bdv.renders.opengl.shaders;
 
-import com.bdv.components.OpenGLCameraComponent;
+import com.bdv.components.CameraComponent;
 import com.bdv.components.OpenGLightsourceComponent;
 import com.bdv.renders.opengl.helpers.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
@@ -54,7 +54,7 @@ public class MeshShader extends Shader {
         super.loadMatrixInUniformVariable(variableLocation2, m4x4);
     }
 
-    public void loadViewMatrix(OpenGLCameraComponent camera) {
+    public void loadViewMatrix(CameraComponent camera) {
         Matrix4f view = MatrixUtils.createViewMatrix(camera);
         super.loadMatrixInUniformVariable(variableLocation3, view);
     }
