@@ -5,7 +5,10 @@ import com.bdv.Main;
 import com.bdv.api.BdvScript;
 import com.bdv.api.ProjectDimensionNumber;
 import com.bdv.api.RendererAPI;
-import com.bdv.components.*;
+import com.bdv.components.ObjComponent;
+import com.bdv.components.SpriteComponent;
+import com.bdv.components.TextureComponent;
+import com.bdv.components.TransformComponent;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.systems.MeshRendererSystem;
 import org.lwjgl.util.vector.Vector3f;
@@ -13,11 +16,11 @@ import org.lwjgl.util.vector.Vector3f;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-public class TestGL extends BdvScript {
+public class TestGL3D extends BdvScript {
 
     public static void main(String[] args) {
         try {
-            new Main(TestGL.class);
+            new Main(TestGL3D.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -41,8 +44,6 @@ public class TestGL extends BdvScript {
                 new Vector3f(0, 0, 0),
                 new Vector3f(0.5f, 1, 1),
                 new Vector3f(1, 1, 1));
-        base.addComponent(OpenGLReflectivityComponent.class, 1);
-        base.addComponent(OpenGLShineDumperComponent.class, 10);
 
         MeshRendererSystem renderer = (MeshRendererSystem) manager.getSystem(MeshRendererSystem.class);
         renderer.addEntity(base);

@@ -5,7 +5,6 @@ import com.bdv.api.BdvScript;
 import com.bdv.api.ProjectDimensionNumber;
 import com.bdv.components.*;
 import com.bdv.exceptions.OpenGLException;
-import com.bdv.renders.opengl.helpers.ModelParser;
 import com.bdv.renders.opengl.shaders.MeshShader;
 import com.bdv.renders.opengl.shaders.RectangleShader;
 import com.bdv.renders.opengl.shaders.Terrain3DShader;
@@ -130,8 +129,11 @@ public class OpenGLManager {
                     objComponent.data.getNormals(), objComponent.data.getIndexes());
             OpenGLTextureCustom texture = new OpenGLTextureCustom(pipeline.loadTexture(spriteComponent));
 
-            texture.setShineDamper(10);
-            texture.setReflectivity(1);
+            OpenGLShineDumperComponent openGLShineDumperComponent = entity.getComponent(OpenGLShineDumperComponent.class);
+            OpenGLReflectivityComponent openGLReflectivityComponent = entity.getComponent(OpenGLReflectivityComponent.class);
+
+            texture.setShineDamper(openGLShineDumperComponent.factor);
+            texture.setReflectivity(openGLReflectivityComponent.factor);
 
             entity.addComponent(OpenGLTexturedModelComponent.class, mdl, texture);
         }

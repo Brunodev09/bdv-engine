@@ -8,9 +8,12 @@ import com.bdv.renders.opengl.OpenGLTextureCustom;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -146,7 +149,23 @@ public class SystemManager {
 
         Class<?>[] paramSignature = new Class[args.length];
 
-        // @TODO - Get every component file from the components folder into a array of Class<?>
+        String componentsFolder = new File("src/com/bdv/components").getAbsolutePath();
+        File directory = new File(componentsFolder);
+        File[] files = directory.listFiles();
+
+        if (files != null && files.length != 0) {
+            for (File file : files) {
+                logger.info(file.getName());
+                String className = "com.bdv.components." + file.getName().split(".java")[0];
+                Class<?> _class = Class.forName(className);
+
+                for (int i = 0; i < args.length; i++) {
+                    if (Class.forName(className).isInstance(args[i])) {
+                        paramSignature[i] = _class;
+                    }
+                }
+            }
+        }
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof Integer) {
                 paramSignature[i] = Integer.TYPE;
@@ -156,20 +175,6 @@ public class SystemManager {
                 paramSignature[i] = Vector3f.class;
             } else if (args[i] instanceof BufferedImage) {
                 paramSignature[i] = BufferedImage.class;
-            } else if (args[i] instanceof SpriteComponent) {
-                paramSignature[i] = SpriteComponent.class;
-            } else if (args[i] instanceof TextureComponent) {
-                paramSignature[i] = TextureComponent.class;
-            } else if (args[i] instanceof SpriteSheetComponent) {
-                paramSignature[i] = SpriteSheetComponent.class;
-            } else if (args[i] instanceof TransformComponent) {
-                paramSignature[i] = TransformComponent.class;
-            } else if (args[i] instanceof ObjComponent) {
-                paramSignature[i] = ObjComponent.class;
-            } else if (args[i] instanceof  OpenGLTexturedModelComponent) {
-                paramSignature[i] = OpenGLTexturedModelComponent.class;
-            } else if (args[i] instanceof OpenGLTerrainComponent) {
-                paramSignature[i] = OpenGLTerrainComponent.class;
             } else if (args[i] instanceof OpenGLModel) {
                 paramSignature[i] = OpenGLModel.class;
             } else if (args[i] instanceof OpenGLTextureCustom) {

@@ -12,6 +12,8 @@ import java.util.logging.Logger;
 
 public class Game {
     // @TODO - Treat all the components that are being silently created insided nested components, because the ECS system is not aware of them (e.g getSubImage)
+    // @TODO - Handle sprite and object changes over the same Entity
+
     private final BdvScript script;
     private static final Logger log = Logger.getLogger(Game.class.getName());
 

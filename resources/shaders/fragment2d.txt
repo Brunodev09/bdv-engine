@@ -33,8 +33,7 @@ vec4 applyAmbientLighting(vec4 uv, vec4 pixelColor) {
     if (distance <= lightIntensity) diffuse =  1.0 - abs(distance / lightIntensity);
     if (diffuse <= 0.3) diffuse = 0.3;
 
-    outputFragment = vec4(colorOffset, 1.0) * vec4(min(pixelColor.rgb * ((lightCol * diffuse) + ambientLight),
-                pixelColor.rgb), 1.0);
+    outputFragment = vec4(colorOffset, 1.0) * vec4(min(pixelColor.rgb * ((lightCol * diffuse) + ambientLight), pixelColor.rgb), 1.0);
 
     return outputFragment;
 }
