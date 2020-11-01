@@ -2,7 +2,8 @@ package com.bdv.components;
 
 import com.bdv.ECS.Component;
 import com.bdv.renders.opengl.OpenGLBufferedModel;
-import com.bdv.renders.opengl.OpenGLModelComponent;
+import com.bdv.renders.opengl.OpenGLModel;
+import com.bdv.renders.opengl.OpenGLTextureCustom;
 
 public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
     private static final float TILE_SIZE = 800;
@@ -11,10 +12,10 @@ public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
     private float x;
     private float z;
     private OpenGLBufferedModel mdl;
-    private OpenGLTextureCustomComponent texture;
-    private OpenGLModelComponent processedModel;
+    private OpenGLTextureCustom texture;
+    private OpenGLModel processedModel;
 
-    public OpenGLTerrainComponent(int px, int pz, OpenGLTextureCustomComponent texture) {
+    public OpenGLTerrainComponent(int px, int pz, OpenGLTextureCustom texture) {
         this.texture = texture;
         this.x = px * TILE_SIZE;
         this.z = pz * TILE_SIZE;
@@ -96,7 +97,7 @@ public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
         return mdl;
     }
 
-    public void setTexture(OpenGLTextureCustomComponent texture) {
+    public void setTexture(OpenGLTextureCustom texture) {
         this.texture = texture;
     }
 
@@ -104,15 +105,15 @@ public class OpenGLTerrainComponent extends Component<OpenGLTerrainComponent> {
         this.mdl = mdl;
     }
 
-    public OpenGLTextureCustomComponent getTexture() {
+    public OpenGLTextureCustom getTexture() {
         return texture;
     }
 
-    public void setProcessedModel(OpenGLModelComponent processedModel) {
+    public void setProcessedModel(OpenGLModel processedModel) {
         this.processedModel = processedModel;
     }
 
-    public OpenGLModelComponent getProcessedModel() {
+    public OpenGLModel getProcessedModel() {
         return processedModel;
     }
 }

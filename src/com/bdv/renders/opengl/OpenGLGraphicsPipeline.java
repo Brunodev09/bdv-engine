@@ -117,7 +117,9 @@ public class OpenGLGraphicsPipeline {
     private void _storeVBODataInVAOList(int attrNum, int coordSize, float[] data) {
         int vboId = GL15.glGenBuffers();
 
-        managers.get(managers.size() - 1).addVbo(vboId);
+        if (!managers.isEmpty()) {
+            managers.get(managers.size() - 1).addVbo(vboId);
+        }
 
         VBOs.add(vboId);
 

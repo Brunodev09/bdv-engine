@@ -1,11 +1,10 @@
 package com.bdv.ECS;
 
-import com.bdv.components.SpriteComponent;
-import com.bdv.components.SpriteSheetComponent;
-import com.bdv.components.TextureComponent;
-import com.bdv.components.TransformComponent;
+import com.bdv.components.*;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.pool.Pool;
+import com.bdv.renders.opengl.OpenGLModel;
+import com.bdv.renders.opengl.OpenGLTextureCustom;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.image.BufferedImage;
@@ -165,13 +164,23 @@ public class SystemManager {
                 paramSignature[i] = SpriteSheetComponent.class;
             } else if (args[i] instanceof TransformComponent) {
                 paramSignature[i] = TransformComponent.class;
+            } else if (args[i] instanceof ObjComponent) {
+                paramSignature[i] = ObjComponent.class;
+            } else if (args[i] instanceof  OpenGLTexturedModelComponent) {
+                paramSignature[i] = OpenGLTexturedModelComponent.class;
+            } else if (args[i] instanceof OpenGLTerrainComponent) {
+                paramSignature[i] = OpenGLTerrainComponent.class;
+            } else if (args[i] instanceof OpenGLModel) {
+                paramSignature[i] = OpenGLModel.class;
+            } else if (args[i] instanceof OpenGLTextureCustom) {
+                paramSignature[i] = OpenGLTextureCustom.class;
             }
         }
 
         String methodName = "invoke";
         String className = aClass.getName();
         Class<?> _class = Class.forName(className);
-        Object _instance = _class.newInstance();
+        Object _instance = _class.getDeclaredConstructor().newInstance();
         Method myMethod = _class.getDeclaredMethod(methodName, paramSignature);
         Object returnedInstance = myMethod.invoke(_instance, args);
         Component.nextId++;

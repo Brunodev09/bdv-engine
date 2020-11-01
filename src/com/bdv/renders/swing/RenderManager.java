@@ -1,13 +1,11 @@
 package com.bdv.renders.swing;
 
 import com.bdv.api.BdvScript;
-import com.bdv.exceptions.InvalidInstance;
 import com.bdv.systems.SpriteRendererSystem;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -34,9 +32,9 @@ public class RenderManager extends Canvas implements Runnable {
         this.script = script;
 
         this.fpsCap = script.getFPS();
-        this.windowTitle = script.getWindowTitle();
-        this.width = script.getWidth();
-        this.height = script.getHeight();
+        this.windowTitle = script.windowTitle;
+        this.width = script.width;
+        this.height = script.height;
 
         setPreferredSize(new Dimension(width, height));
         load();

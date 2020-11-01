@@ -10,6 +10,7 @@ import java.util.Objects;
 
 public class TextureComponent extends Component<TextureComponent> {
     public BufferedImage image;
+    public String filePath;
     public static AssetPool pool;
     private static boolean _initialized = false;
 
@@ -21,6 +22,7 @@ public class TextureComponent extends Component<TextureComponent> {
     public static TextureComponent invoke(String id, String filePath) throws ComponentException {
         if (!_initialized) throw new ComponentException("AssetStore must be bound to at least one texture so that this component can function properly.");
         TextureComponent component = new TextureComponent();
+        component.filePath = filePath;
         try {
             component.image = ImageIO.read(Objects.requireNonNull(TextureComponent.class.getClassLoader().getResourceAsStream(filePath)));
             pool.addTexture(component, id, filePath);

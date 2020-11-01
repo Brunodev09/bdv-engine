@@ -1,19 +1,19 @@
 package com.bdv.renders.opengl;
 
 import com.bdv.ECS.Entity;
-import com.bdv.ECS.SystemManager;
 import com.bdv.api.BdvScript;
 import com.bdv.api.ProjectDimensionNumber;
-import com.bdv.components.CameraComponent;
-import com.bdv.components.OpenGLCamera2DComponent;
-import com.bdv.components.OpenGLCameraComponent;
+import com.bdv.components.*;
 import com.bdv.exceptions.OpenGLException;
+import com.bdv.renders.opengl.helpers.ModelParser;
 import com.bdv.renders.opengl.shaders.MeshShader;
 import com.bdv.renders.opengl.shaders.RectangleShader;
-import com.bdv.renders.opengl.shaders.Shader;
 import com.bdv.renders.opengl.shaders.Terrain3DShader;
 import com.bdv.systems.MeshRendererSystem;
+import com.bdv.systems.MeshTerrainRendererSystem;
+import org.lwjgl.util.vector.Vector3f;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -26,38 +26,55 @@ public class OpenGLManager {
 
     private final BdvScript script;
     private final MeshRendererSystem meshRendererSystem;
-    private final List<Shader> shadersToUse = new ArrayList<>();
+    private final MeshTerrainRendererSystem meshTerrainRendererSystem;
     private final OpenGLGraphicsPipeline pipeline = new OpenGLGraphicsPipeline();
     private final CameraComponent camera;
 
-    private double lastTime;
     private double lastUpdate;
+    private double lastTime;
     private int frames = 0;
+
+    public final List<Class<?>> shadersToUse = new ArrayList<>();
 
     public OpenGLManager(BdvScript script) throws OpenGLException {
         this.script = script;
 
-        meshRendererSystem = (MeshRendererSystem) this.script.manager.getSystem(MeshRendererSystem.class);
-
         if (this.script.projectDimensionNumber == ProjectDimensionNumber.threeDimensions) {
-            shadersToUse.add(new Terrain3DShader());
-            shadersToUse.add(new MeshShader());
+            shadersToUse.add(Terrain3DShader.class);
+            shadersToUse.add(MeshShader.class);
             camera = new OpenGLCameraComponent();
         } else {
-            shadersToUse.add(new RectangleShader());
+            shadersToUse.add(RectangleShader.class);
             camera = new OpenGLCamera2DComponent();
         }
 
-        OpenGLRenderManager.createRender(
-                this.script.width,
-                this.script.height,
-                this.script.windowTitle,
-                shadersToUse);
+        try {
+            OpenGLRenderManager.createRender(
+                    this.script.width,
+                    this.script.height,
+                    this.script.windowTitle,
+                    shadersToUse,
+                    this.script.manager);
+        } catch (IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
+            throw new OpenGLException(e.getMessage());
+        }
+
+        meshRendererSystem = (MeshRendererSystem) this.script.manager.getSystem(MeshRendererSystem.class);
+        meshTerrainRendererSystem = (MeshTerrainRendererSystem) this.script.manager.getSystem(MeshTerrainRendererSystem.class);
+
         this.loop();
     }
 
     public void loop() {
         OpenGLRenderManager.toggleDebugShaderMode(this.script.debugShader);
+
+        if (script.projectDimensionNumber == ProjectDimensionNumber.threeDimensions) {
+            insertToVAO_3d();
+        } else {
+
+        }
+
+        OpenGLightsourceComponent light = new OpenGLightsourceComponent(new Vector3f(300, 300, -30), new Vector3f(1, 1, 1));
 
         while (!OpenGLRenderManager.shouldExit()) {
             // @TODO - 2d rendering will only happen by constructing a mesh composed of all the images in the set positions and dimensions (n entities -> 1 draw call)
@@ -78,13 +95,19 @@ public class OpenGLManager {
             }
 
             frames++;
-            script.update(frames);
+
+            double thisTime = currentTimeMillis();
+            double delta = thisTime - lastTime;
+            lastTime = thisTime;
+
+            script.update(delta);
+            camera.move();
 
             for (Entity entity : meshRendererSystem.getEntities()) {
-
+                OpenGLRenderManager.processEntity(entity);
             }
 
-            OpenGLRenderManager.renderBatch(camera);
+            OpenGLRenderManager.renderBatch(light, (OpenGLCameraComponent) camera);
             OpenGLRenderManager.updateRender(script.fps);
 
             // Freeing memory
@@ -95,6 +118,22 @@ public class OpenGLManager {
             OpenGLRenderManager.runCollector();
             pipeline.runCollector();
             OpenGLRenderManager.closeRender();
+        }
+    }
+
+    public void insertToVAO_3d() {
+        for (Entity entity : meshRendererSystem.getEntities()) {
+            ObjComponent objComponent = script.manager.getComponent(entity, ObjComponent.class);
+            SpriteComponent spriteComponent = script.manager.getComponent(entity, SpriteComponent.class);
+
+            OpenGLModel mdl = pipeline.loadDataToVAO(objComponent.data.getVertices(), objComponent.data.getTextures(),
+                    objComponent.data.getNormals(), objComponent.data.getIndexes());
+            OpenGLTextureCustom texture = new OpenGLTextureCustom(pipeline.loadTexture(spriteComponent));
+
+            texture.setShineDamper(10);
+            texture.setReflectivity(1);
+
+            entity.addComponent(OpenGLTexturedModelComponent.class, mdl, texture);
         }
     }
 

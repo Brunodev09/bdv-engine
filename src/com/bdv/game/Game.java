@@ -3,7 +3,6 @@ package com.bdv.game;
 import com.bdv.api.BdvScript;
 import com.bdv.exceptions.OpenGLException;
 import com.bdv.renders.opengl.OpenGLManager;
-import com.bdv.renders.opengl.OpenGLRenderManager;
 import com.bdv.renders.swing.RenderManager;
 import com.bdv.exceptions.InvalidInstance;
 
@@ -32,7 +31,7 @@ public class Game {
 
     public void loop() throws InvocationTargetException, NoSuchMethodException, InstantiationException, InvalidInstance, IllegalAccessException, OpenGLException {
         this.script.init();
-        switch (this.script.getRendererAPI()) {
+        switch (this.script.rendererAPI) {
             case OPENGL_RENDERER:
                 openglRender();
                 break;
@@ -46,7 +45,7 @@ public class Game {
     private void swingRender() {
         RenderManager renderManagerComponent = new RenderManager(script);
         renderManagerComponent.frame.setResizable(false);
-        renderManagerComponent.frame.setTitle(this.script.getWindowTitle());
+        renderManagerComponent.frame.setTitle(this.script.windowTitle);
         renderManagerComponent.frame.add(renderManagerComponent);
         renderManagerComponent.frame.pack();
         renderManagerComponent.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
