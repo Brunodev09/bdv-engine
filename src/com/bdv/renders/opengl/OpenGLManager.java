@@ -61,8 +61,6 @@ public class OpenGLManager {
 
         meshRendererSystem = (MeshRendererSystem) this.script.manager.getSystem(MeshRendererSystem.class);
         meshTerrainRendererSystem = (MeshTerrainRendererSystem) this.script.manager.getSystem(MeshTerrainRendererSystem.class);
-
-        this.loop();
     }
 
     public void loop() {
@@ -71,7 +69,7 @@ public class OpenGLManager {
         if (script.projectDimensionNumber == ProjectDimensionNumber.threeDimensions) {
             insertToVAO_3d();
         } else {
-
+            insertToVAO_2d();
         }
 
         OpenGLightsourceComponent light = new OpenGLightsourceComponent(new Vector3f(300, 300, -30), new Vector3f(1, 1, 1));
@@ -109,16 +107,18 @@ public class OpenGLManager {
 
             OpenGLRenderManager.renderBatch(light, (OpenGLCameraComponent) camera);
             OpenGLRenderManager.updateRender(script.fps);
-
-            // Freeing memory
-            if (script.inputAPI != null) {
-                script.inputAPI.destroy();
-            }
-
-            OpenGLRenderManager.runCollector();
-            pipeline.runCollector();
-            OpenGLRenderManager.closeRender();
         }
+        // Freeing memory
+        if (script.inputAPI != null) {
+            script.inputAPI.destroy();
+        }
+
+        OpenGLRenderManager.runCollector();
+        pipeline.runCollector();
+        OpenGLRenderManager.closeRender();
+    }
+
+    private void insertToVAO_2d() {
     }
 
     public void insertToVAO_3d() {

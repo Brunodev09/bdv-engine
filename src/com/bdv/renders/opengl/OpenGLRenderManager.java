@@ -195,7 +195,7 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
 
     public static void runCollector() {
         meshShader.runCollector();
-        meshShaderTerrain.runCollector();
+//        meshShaderTerrain.runCollector();
     }
 
     public static void updateRender(int fps) {
