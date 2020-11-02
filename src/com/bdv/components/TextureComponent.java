@@ -23,14 +23,17 @@ public class TextureComponent extends Component<TextureComponent> {
         if (!_initialized) throw new ComponentException("AssetStore must be bound to at least one texture so that this component can function properly.");
         TextureComponent component = new TextureComponent();
         component.filePath = filePath;
-        try {
-            component.image = ImageIO.read(Objects.requireNonNull(TextureComponent.class.getClassLoader().getResourceAsStream(filePath)));
-            pool.addTexture(component, id, filePath);
-            return component;
-        } catch (Exception e) {
-            component.logger.info("ERROR: Could not load file: " + filePath);
-            return null;
+        if (pool.getTexture(id) == null) {
+            try {
+                component.image = ImageIO.read(Objects.requireNonNull(TextureComponent.class.getClassLoader().getResourceAsStream(filePath)));
+                pool.addTexture(component, id, filePath);
+                return component;
+            } catch (Exception e) {
+                component.logger.info("ERROR: Could not load file: " + filePath);
+                return null;
+            }
         }
+        return pool.getTexture(id);
     }
 
     public static TextureComponent invoke(String id, BufferedImage image) throws ComponentException {

@@ -129,7 +129,8 @@ public class OpenGLManager {
                 bufferedModel.getTextures(),
                 bufferedModel.getIndexes(),
                 screenMesh.colorPointer);
-
+        // order sprites from top-to-bottom, top-left to bottom-right from the entities
+        // grab this list and assemble it into one OpenGL texture!
 
     }
 
