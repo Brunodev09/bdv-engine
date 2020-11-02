@@ -10,7 +10,6 @@ import com.bdv.renders.opengl.shaders.RectangleShader;
 import com.bdv.renders.opengl.shaders.Terrain3DShader;
 import com.bdv.systems.MeshRendererSystem;
 import com.bdv.systems.MeshTerrainRendererSystem;
-import org.lwjgl.util.vector.Vector3f;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -72,10 +71,6 @@ public class OpenGLManager {
         }
 
         while (!OpenGLRenderManager.shouldExit()) {
-            // @TODO - 2d rendering will only happen by constructing a mesh composed of all the images in the set positions and dimensions (n entities -> 1 draw call)
-            // @TODO - It's important to remember that these dimensions can and will be dynamic and not restricted to a tileSize or whatever
-            // @TODO - No need for 2 chunks between GUI and textures, I can use the z-axis to detect images that are not going to be drawn
-
             if (lastUpdate == 0.0) {
                 lastUpdate = currentTimeMillis();
             }
@@ -121,6 +116,21 @@ public class OpenGLManager {
     }
 
     private void insertToVAO_2d() {
+        OpenGLPolygonMeshGenerator screenMesh = new OpenGLPolygonMeshGenerator(meshRendererSystem.getEntities(),
+                script.effects,
+                script.width,
+                script.height,
+                script.tileSizeX,
+                script.tileSizeY);
+        OpenGLBufferedModel bufferedModel = new OpenGLBufferedModel(screenMesh.mesh,
+                screenMesh.textureCoordinates,
+                screenMesh.indexes);
+        OpenGLModel mdl = pipeline.loadDataToVAO(bufferedModel.getVertices(),
+                bufferedModel.getTextures(),
+                bufferedModel.getIndexes(),
+                screenMesh.colorPointer);
+
+
     }
 
     public void insertToVAO_3d() {
