@@ -16,8 +16,8 @@ public class SpriteComponent extends Component<SpriteComponent> {
     public int[] pixels;
     private int[] ogpixels;
 
-    private int width;
-    private int height;
+    public int width;
+    public int height;
 
     // Used as mask to eliminate the leftover 24 bits from a 32bits integer as 0-255 is within the range of 8bits.
     private final int EIGHT_BIT_MASK = 0xff;

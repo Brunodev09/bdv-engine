@@ -11,6 +11,7 @@ import com.bdv.renders.opengl.shaders.Terrain3DShader;
 import com.bdv.systems.MeshRendererSystem;
 import com.bdv.systems.MeshTerrainRendererSystem;
 
+import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +32,8 @@ public class OpenGLManager {
     private double lastUpdate;
     private double lastTime;
     private int frames = 0;
+
+    private Entity baseCanvasEntity;
 
     public final List<Class<?>> shadersToUse = new ArrayList<>();
 
@@ -67,6 +70,7 @@ public class OpenGLManager {
         if (script.projectDimensionNumber == ProjectDimensionNumber.threeDimensions) {
             insertToVAO_3d();
         } else {
+            baseCanvasEntity = script.manager.createEntity();
             insertToVAO_2d();
         }
 
@@ -93,11 +97,13 @@ public class OpenGLManager {
             camera.move();
             OpenGLightsourceComponent light = null;
 
-            for (Entity entity : meshRendererSystem.getEntities()) {
-                if (entity.getComponent(OpenGLightsourceComponent.class) == null)
-                    OpenGLRenderManager.processEntity(entity);
-                else light = entity.getComponent(OpenGLightsourceComponent.class);
-            }
+            if (baseCanvasEntity == null) {
+                for (Entity entity : meshRendererSystem.getEntities()) {
+                    if (entity.getComponent(OpenGLightsourceComponent.class) == null)
+                        OpenGLRenderManager.processEntity(entity);
+                    else light = entity.getComponent(OpenGLightsourceComponent.class);
+                }
+            } else OpenGLRenderManager.processEntity(baseCanvasEntity);
 
             if (light != null)
                 OpenGLRenderManager.renderBatch(light, camera);
@@ -125,13 +131,24 @@ public class OpenGLManager {
         OpenGLBufferedModel bufferedModel = new OpenGLBufferedModel(screenMesh.mesh,
                 screenMesh.textureCoordinates,
                 screenMesh.indexes);
+
         OpenGLModel mdl = pipeline.loadDataToVAO(bufferedModel.getVertices(),
                 bufferedModel.getTextures(),
                 bufferedModel.getIndexes(),
                 screenMesh.colorPointer);
-        // order sprites from top-to-bottom, top-left to bottom-right from the entities
-        // grab this list and assemble it into one OpenGL texture!
 
+        // @TODO - Control repeated output textures
+        // @TODO - Set mesh generator to generate only one big rectangle mesh and apply one big texture to fill the screen
+
+        BufferedImage canvas = OpenGLTextureMerger.merge(script.width, script.height, meshRendererSystem.getEntities());
+        SpriteComponent spriteComponent = new SpriteComponent();
+        spriteComponent.image = canvas;
+        spriteComponent.width = canvas.getWidth();
+        spriteComponent.height = canvas.getHeight();
+        spriteComponent.pixels = canvas.getRGB(0, 0, canvas.getWidth(), canvas.getHeight(), null, 0, canvas.getWidth());
+        OpenGLTextureCustom texture = new OpenGLTextureCustom(pipeline.loadTexture(spriteComponent));
+
+        baseCanvasEntity.addComponent(OpenGLTexturedModelComponent.class, mdl, texture);
     }
 
     public void insertToVAO_3d() {
