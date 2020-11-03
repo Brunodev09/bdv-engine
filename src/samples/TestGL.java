@@ -26,7 +26,8 @@ public class TestGL extends BdvScript {
     @Override
     public void init() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, InvalidInstance {
         rendererAPI = RendererAPI.OPENGL_RENDERER;
-        projectDimensionNumber = ProjectDimensionNumber.threeDimensions;
+        projectDimensionNumber = ProjectDimensionNumber.twoDimensions;
+        logFps = true;
 
         manager.addSystem(MeshRendererSystem.class);
 
@@ -38,7 +39,7 @@ public class TestGL extends BdvScript {
         base.addComponent(SpriteComponent.class, textureComponent);
         base.addComponent(TransformComponent.class,
                 new Vector3f(0, 0, 0),
-                new Vector3f(0.5f, 1, 1),
+                new Vector3f(0, 0, 0),
                 new Vector3f(1, 1, 1));
 
         MeshRendererSystem renderer = (MeshRendererSystem) manager.getSystem(MeshRendererSystem.class);
@@ -49,9 +50,9 @@ public class TestGL extends BdvScript {
     public void update(double deltaTime) {
         MeshRendererSystem renderer = (MeshRendererSystem) manager.getSystem(MeshRendererSystem.class);
         List<Entity> entityList = renderer.getEntities();
-        for (Entity entity : entityList) {
-            TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
-            transformComponent.rotation = new Vector3f(0, transformComponent.rotation.y + 0.5f, transformComponent.rotation.z + 0.5f);
-        }
+//        for (Entity entity : entityList) {
+//            TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
+//            transformComponent.rotation = new Vector3f(0, transformComponent.rotation.y + 0.5f, transformComponent.rotation.z + 0.5f);
+//        }
     }
 }

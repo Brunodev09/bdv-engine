@@ -34,16 +34,27 @@ public class Test extends BdvScript {
         Entity base = manager.createEntity();
         TextureComponent.bindAssetsStore(assetPool);
 
-        base.addComponent(TextureComponent.class, "full_spritesheet", "images/assetsComplete.png");
+        base.addComponent(TextureComponent.class, "green", "images/green.png");
         TextureComponent textureComponent = base.getComponent(TextureComponent.class);
         base.addComponent(SpriteComponent.class, textureComponent);
         base.addComponent(TransformComponent.class,
+                new Vector3f(0, 100, 0),
                 new Vector3f(0, 0, 0),
-                new Vector3f(0.5f, 0, 0),
+                new Vector3f(1, 1, 1));
+
+        Entity additional = manager.createEntity();
+
+        additional.addComponent(TextureComponent.class, "grey", "images/grey.png");
+        TextureComponent textureComponent2 = additional.getComponent(TextureComponent.class);
+        additional.addComponent(SpriteComponent.class, textureComponent2);
+        additional.addComponent(TransformComponent.class,
+                new Vector3f(200, 0, 0),
+                new Vector3f(0, 0, 0),
                 new Vector3f(1, 1, 1));
 
         SpriteRendererSystem renderer = (SpriteRendererSystem) manager.getSystem(SpriteRendererSystem.class);
         renderer.addEntity(base);
+        renderer.addEntity(additional);
     }
 
     @Override

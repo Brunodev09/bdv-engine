@@ -13,8 +13,6 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -27,7 +25,7 @@ public class SystemManager {
     private List<Signature> entityComponentSignatures = new ArrayList<>();
     private Map<String, Object> systems = new HashMap<>();
 
-    private Map<Class<?>, Integer> _typeManager = new HashMap<>();
+    private Map<Entity, Map<Class<?>, Integer>> _typeManager = new HashMap<>();
 
     private int totalEntities = 0;
 
@@ -113,7 +111,13 @@ public class SystemManager {
 
         int componentId = Component.getNextId();
 
-        _typeManager.put(type, componentId);
+        Map<Class<?>, Integer> entityTypeMap  = _typeManager.get(entity);
+
+        if (entityTypeMap == null) {
+            entityTypeMap = new HashMap<>();
+        }
+        entityTypeMap.put(type, componentId);
+        _typeManager.put(entity, entityTypeMap);
 
 //        final int componentId = Component.<T>getId() + 1;
         final int entityId = entity.getId();
@@ -197,14 +201,16 @@ public class SystemManager {
 
     public <T> void removeComponent(Entity entity, Class<T> type) {
 //        final int componentId = Component.<T>getId();
-        final int componentId = _typeManager.get(type);
+        Map<Class<?>, Integer> entityMap = _typeManager.get(entity);
+        final int componentId = entityMap.get(type);
         final int entityId = entity.getId();
         entityComponentSignatures.get(entityId).getSet().set(componentId, false);
     }
 
     public <T> T getComponent(Entity entity, Class<T> type) {
 //        final int componentId = Component.<T>getId();
-        final int componentId = _typeManager.get(type);
+        Map<Class<?>, Integer> entityMap = _typeManager.get(entity);
+        final int componentId = entityMap.get(type);
         final int entityId = entity.getId();
         Pool<T> pool = (Pool<T>) componentPools.get(componentId);
         if (entityId >= pool.getSize()) return null;
@@ -213,7 +219,8 @@ public class SystemManager {
 
     public <T> boolean hasComponent(Entity entity, Class<T> type) {
 //        final int componentId = Component.<T>getId();
-        final int componentId = _typeManager.get(type);
+        Map<Class<?>, Integer> entityMap = _typeManager.get(entity);
+        final int componentId = entityMap.get(type);
         final int entityId = entity.getId();
         return entityComponentSignatures.get(entityId).getSet().get(componentId);
     }

@@ -12,7 +12,7 @@ public class OpenGLPolygonMeshGenerator {
     public final float[] mesh;
     public final int[] indexes;
     public final float[] textureCoordinates;
-    public final float[] colorPointer;
+    public float[] colorPointer;
 
     private static final int numberOfCoordinatesPerPoint = 3;
     private static final int numberOfPointsPerSquare = 4;
@@ -23,7 +23,38 @@ public class OpenGLPolygonMeshGenerator {
     private final int tx;
     private final int ty;
 
-    private Map<SpriteComponent, TransformComponent> spriteMaps = new HashMap<>();
+    public OpenGLPolygonMeshGenerator(int width, int height) {
+        this.width = width;
+        this.height = height;
+        this.tx = width;
+        this.ty = height;
+        this.tilesPerRow = 1;
+
+        float startX = 0;
+        float startY = 0;
+
+        mesh = new float[]{
+                startX, startY, 0,
+                startX + tx, startY, 0,
+                startX + tx, startY + ty, 0,
+                startX, startY + ty, 0
+        };
+
+        indexes = new int[]{
+                0, 1, 3, 3, 1, 2
+        };
+
+        textureCoordinates = new float[]{
+                1, 0,
+                0, 0,
+                0, 1,
+                1, 1,
+        };
+
+        colorPointer = new float[]{
+                1, 1, 1, 1, 1, 1,
+        };
+    }
 
     public OpenGLPolygonMeshGenerator(List<Entity> entityList, float[][][] effects, int width, int height, float tileSizeX,
                                       float tileSizeY) {
@@ -93,7 +124,7 @@ public class OpenGLPolygonMeshGenerator {
                     colorPointer[itt + 1] = g;
                     colorPointer[itt + 2] = b;
                     counter++;
-                    itt+=3;
+                    itt += 3;
                 }
                 counter = 0;
             }
