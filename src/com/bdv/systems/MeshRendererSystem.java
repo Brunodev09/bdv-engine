@@ -108,8 +108,10 @@ public class MeshRendererSystem extends System {
         rectangleShader.loadCurrentTimeFlow();
         rectangleShader.loadDebugToggle(debugShader);
 
+        bindTexture(tmdl.getModelTexture().getTextureId());
+
+
         if (previousBoundTexture != tmdl.getModelTexture().getTextureId()) {
-            bindTexture(tmdl.getModelTexture().getTextureId());
         }
 
         previousBoundTexture = tmdl.getModelTexture().getTextureId();

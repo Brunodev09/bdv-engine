@@ -41,7 +41,7 @@ public class TestGL3D extends BdvScript {
         TextureComponent.bindAssetsStore(assetPool);
 
         base.addComponent(ObjComponent.class, "obj/test");
-        base.addComponent(TextureComponent.class, "full_spritesheet", "images/assetsComplete.png");
+        base.addComponent(TextureComponent.class, "full_spritesheet", "images/green.png");
         TextureComponent textureComponent = base.getComponent(TextureComponent.class);
         base.addComponent(SpriteComponent.class, textureComponent);
         base.addComponent(TransformComponent.class,

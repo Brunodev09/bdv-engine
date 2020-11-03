@@ -13,8 +13,6 @@ public class OpenGLCamera2DComponent extends Component<OpenGLCamera2DComponent> 
     private float yaw;
     private float roll;
 
-    private final boolean threeDimensions = false;
-
     private float speed = 10.0f;
 
     public void move() {

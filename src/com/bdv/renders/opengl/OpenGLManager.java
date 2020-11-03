@@ -105,11 +105,15 @@ public class OpenGLManager {
                         OpenGLRenderManager.processEntity(entity);
                     else light = entity.getComponent(OpenGLightsourceComponent.class);
                 }
-            } else OpenGLRenderManager.processEntity(baseCanvasEntity);
+            } else {
+                 OpenGLRenderManager.processEntity(baseCanvasEntity);
+            }
 
             if (light != null)
                 OpenGLRenderManager.renderBatch(light, camera);
-            else OpenGLRenderManager.renderBatch(camera);
+            else {
+                OpenGLRenderManager.renderBatch(camera);
+            }
 
             OpenGLRenderManager.updateRender(script.fps);
         }
@@ -124,7 +128,7 @@ public class OpenGLManager {
     }
 
     private void insertToVAO_2d() {
-        OpenGLPolygonMeshGenerator screenMesh = new OpenGLPolygonMeshGenerator(script.width, script.height);
+        OpenGLPolygonMeshGenerator screenMesh = new OpenGLPolygonMeshGenerator(-script.width, script.height);
         OpenGLBufferedModel bufferedModel = new OpenGLBufferedModel(
                 screenMesh.mesh,
                 screenMesh.textureCoordinates,

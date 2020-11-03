@@ -136,7 +136,7 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
     }
 
     public static void init2DRender() {
-        float[] codes = new float[]{0,0,0,0};
+        float[] codes = new float[]{1,1,1,1};
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glClearColor(codes[0], codes[1], codes[2], codes[3]);
@@ -184,7 +184,6 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
 
     public static void processEntity(Entity entity) {
         OpenGLTexturedModelComponent model = entity.getComponent(OpenGLTexturedModelComponent.class);
-        if (model == null) return;
         List<Entity> listOfEntities = entities.get(model);
         if (listOfEntities != null) listOfEntities.add(entity);
         else {

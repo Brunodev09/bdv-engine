@@ -52,9 +52,7 @@ public class OpenGLPolygonMeshGenerator {
                 1, 1,
         };
 
-        colorPointer = new float[]{
-                1, 1, 1, 1, 1, 1,
-        };
+        colorPointer = new float[numberOfCoordinatesPerPoint * numberOfPointsPerSquare];
     }
 
     public OpenGLPolygonMeshGenerator(List<Entity> entityList, float[][][] effects, int width, int height, float tileSizeX,

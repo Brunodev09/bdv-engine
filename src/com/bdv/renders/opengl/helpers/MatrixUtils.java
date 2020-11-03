@@ -1,8 +1,6 @@
 package com.bdv.renders.opengl.helpers;
 
 import com.bdv.components.CameraComponent;
-import com.bdv.components.OpenGLCamera2DComponent;
-import com.bdv.components.OpenGLCameraComponent;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 

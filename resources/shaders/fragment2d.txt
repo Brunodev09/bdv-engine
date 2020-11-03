@@ -19,7 +19,6 @@ uniform vec3 glowColor;
 
 uniform bool debugShader;
 
-uniform bool chunkRendering;
 
 vec4 applyAmbientLighting(vec4 uv, vec4 pixelColor) {
     vec4 outputFragment;
