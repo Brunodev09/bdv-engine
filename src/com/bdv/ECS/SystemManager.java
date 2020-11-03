@@ -5,6 +5,7 @@ import com.bdv.exceptions.InvalidInstance;
 import com.bdv.pool.Pool;
 import com.bdv.renders.opengl.OpenGLModel;
 import com.bdv.renders.opengl.OpenGLTextureCustom;
+import org.lwjgl.util.Dimension;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -14,6 +15,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Logger;
 
 public class SystemManager {
@@ -185,6 +187,8 @@ public class SystemManager {
                 paramSignature[i] = OpenGLTextureCustom.class;
             } else if (args[i] instanceof Vector2f) {
                 paramSignature[i] = Vector2f.class;
+            } else if (args[i] instanceof Dimension) {
+                paramSignature[i] = Dimension.class;
             }
         }
 
@@ -210,7 +214,9 @@ public class SystemManager {
     public <T> T getComponent(Entity entity, Class<T> type) {
 //        final int componentId = Component.<T>getId();
         Map<Class<?>, Integer> entityMap = _typeManager.get(entity);
-        final int componentId = entityMap.get(type);
+        if (entityMap.get(type) == null) return null;
+        final int componentId = entityMap.isEmpty() ? 0 : entityMap.get(type);
+        if (componentId == 0) return null;
         final int entityId = entity.getId();
         Pool<T> pool = (Pool<T>) componentPools.get(componentId);
         if (entityId >= pool.getSize()) return null;

@@ -67,7 +67,8 @@ public class SpriteComponent extends Component<SpriteComponent> {
         component.image = textureComponent.image;
         component.width = textureComponent.image.getWidth();
         component.height = textureComponent.image.getHeight();
-        component.ogpixels = textureComponent.image.getRGB(0, 0, component.width, component.height, component.ogpixels, 0, component.width);
+        component.ogpixels = new int[component.width * component.height];
+        textureComponent.image.getRGB(0, 0, component.width, component.height, component.ogpixels, 0, component.width);
         component.pixels = component.ogpixels;
 
         return component;

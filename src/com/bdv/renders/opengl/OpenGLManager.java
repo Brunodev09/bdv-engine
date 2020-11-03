@@ -10,6 +10,7 @@ import com.bdv.renders.opengl.shaders.RectangleShader;
 import com.bdv.renders.opengl.shaders.Terrain3DShader;
 import com.bdv.systems.MeshRendererSystem;
 import com.bdv.systems.MeshTerrainRendererSystem;
+import org.lwjgl.util.Dimension;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.image.BufferedImage;
@@ -124,7 +125,8 @@ public class OpenGLManager {
 
     private void insertToVAO_2d() {
         OpenGLPolygonMeshGenerator screenMesh = new OpenGLPolygonMeshGenerator(script.width, script.height);
-        OpenGLBufferedModel bufferedModel = new OpenGLBufferedModel(screenMesh.mesh,
+        OpenGLBufferedModel bufferedModel = new OpenGLBufferedModel(
+                screenMesh.mesh,
                 screenMesh.textureCoordinates,
                 screenMesh.indexes);
 
@@ -137,18 +139,20 @@ public class OpenGLManager {
         // @TODO - Control repeated output textures
 
         BufferedImage canvas = OpenGLTextureMerger.merge(script.width, script.height, meshRendererSystem.getEntities());
-        SpriteComponent spriteComponent = new SpriteComponent();
-        spriteComponent.image = canvas;
-        spriteComponent.width = canvas.getWidth();
-        spriteComponent.height = canvas.getHeight();
-        spriteComponent.pixels = canvas.getRGB(0, 0, canvas.getWidth(), canvas.getHeight(), null, 0, canvas.getWidth());
-        OpenGLTextureCustom texture = new OpenGLTextureCustom(pipeline.loadTexture(spriteComponent));
+        baseCanvasEntity.addComponent(TextureComponent.class, "canvas", canvas);
+        TextureComponent textureComponent = baseCanvasEntity.getComponent(TextureComponent.class);
+
+        baseCanvasEntity.addComponent(SpriteComponent.class, textureComponent);
+        SpriteComponent spriteComponent = baseCanvasEntity.getComponent(SpriteComponent.class);
 
         baseCanvasEntity.addComponent(
                 TransformComponent.class,
                 new Vector3f(0, 0, 0),
-                new Vector3f(0,0,0),
-                new Vector3f(1, 1, 1));
+                new Vector3f(0, 0, 0),
+                new Vector3f(1, 1, 1),
+                new Dimension(100, 100));
+
+        OpenGLTextureCustom texture = new OpenGLTextureCustom(pipeline.loadTexture(spriteComponent));
 
         baseCanvasEntity.addComponent(OpenGLTexturedModelComponent.class, mdl, texture);
     }

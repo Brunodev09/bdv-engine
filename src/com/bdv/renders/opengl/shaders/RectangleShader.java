@@ -1,11 +1,8 @@
 package com.bdv.renders.opengl.shaders;
 
 import com.bdv.components.CameraComponent;
-import com.bdv.components.OpenGLCamera2DComponent;
-import com.bdv.components.OpenGLCameraComponent;
 import com.bdv.renders.opengl.helpers.MatrixUtils;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector2f;
 
 import java.io.InputStream;
 
@@ -19,9 +16,6 @@ public class RectangleShader extends Shader {
     private int variableLocation4;
     private int variableLocation5;
     private int variableLocation6;
-    private int variableLocation7;
-    private int variableLocation8;
-    private int variableLocation9;
 
     public RectangleShader() {
         super(readVertexData(), readFragmentData());
@@ -43,9 +37,6 @@ public class RectangleShader extends Shader {
         variableLocation4 = super.getUniformVariable("tick");
         variableLocation5 = super.getUniformVariable("debugShader");
         variableLocation6 = super.getUniformVariable("isPlayer");
-        variableLocation7 = super.getUniformVariable("colorTileset");
-        variableLocation8 = super.getUniformVariable("chunkRendering");
-        variableLocation9 = super.getUniformVariable("tileSize");
     }
 
     @Override
@@ -80,15 +71,4 @@ public class RectangleShader extends Shader {
         super.loadBinaryInUniformVariable(variableLocation6, player);
     }
 
-    public void loadTileColors(float[] positionsAndColors) {
-        super.loadFloatArrayIntoUniformVariable(variableLocation7, positionsAndColors);
-    }
-
-    public void loadChunkTileSize(Vector2f chunkTileSize) {
-        super.loadVector2fInUniformVariable(variableLocation8, chunkTileSize);
-    }
-
-    public void loadIsChunkRendering(boolean rendering) {
-        super.loadBinaryInUniformVariable(variableLocation9, rendering);
-    }
 }

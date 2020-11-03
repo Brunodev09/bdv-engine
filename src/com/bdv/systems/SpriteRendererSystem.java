@@ -72,8 +72,8 @@ public class SpriteRendererSystem extends System {
                     display.drawImage(spriteComponent.image,
                             (int) transformComponent.position.x,
                             (int) transformComponent.position.y,
-                            spriteComponent.getWidth(),
-                            spriteComponent.getHeight(),
+                            transformComponent.dimension.getWidth(),
+                            transformComponent.dimension.getHeight(),
                             null);
                 }
             } catch (Exception e) {

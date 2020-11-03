@@ -60,7 +60,6 @@ vec3 shaderPlay(vec4 uv) {
 
 void main(void) {
 
-    bool specificShader = true;
     vec4 newColorPointerVertex = vec4(1.0, 1.0, 1.0, 1.0);
 
     if (debugShader) {
@@ -75,9 +74,6 @@ void main(void) {
 
         outputColor = vec4(colorOffset, 1.0) * pixelColor;
 
-        if (toggleAmbientLight) {
-            outputColor = applyAmbientLighting(vertexPosition, pixelColor);
-        }
 
         if (toggleGlow) {
             float mask = applyGlow(vertexPosition, vec2(0.5), 0.3, 0.2);
@@ -87,7 +83,6 @@ void main(void) {
                 outputColor += applyAmbientLighting(vertexPosition, pixelColor);
             }
         }
-        if (!chunkRendering) out_Color = outputColor * newColorPointerVertex;
-        else out_Color = outputColor * vec4(colorPointerVertex, 1.0);
+        out_Color = outputColor * vec4(colorPointerVertex, 1.0);
 }
 

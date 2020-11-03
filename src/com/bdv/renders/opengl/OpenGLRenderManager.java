@@ -136,7 +136,7 @@ public class OpenGLRenderManager extends Component<OpenGLRenderManager> {
     }
 
     public static void init2DRender() {
-        float[] codes = new float[]{0, 0, 0, 0};
+        float[] codes = new float[]{0,0,0,0};
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         GL11.glClearColor(codes[0], codes[1], codes[2], codes[3]);

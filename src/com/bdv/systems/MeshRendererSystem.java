@@ -70,7 +70,7 @@ public class MeshRendererSystem extends System {
                 // GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, mdl.getVertexCount());
                 GL11.glDrawElements(GL11.GL_TRIANGLES, key.getModel().vertexCount, GL11.GL_UNSIGNED_INT, 0);
             }
-            this.unbindTexture(3);
+            unbindTexture(3);
         }
     }
 
@@ -101,16 +101,6 @@ public class MeshRendererSystem extends System {
         if (tmdl.getModelTexture().getColorPointer() != null) {
             bindVertexes(3, mdl.vaoId);
         } else bindVertexes(2, mdl.vaoId);
-
-        if (tmdl.getModelTexture().getRgbTilesetEffects() != null) {
-            rectangleShader.loadTileColors(tmdl.getModelTexture().getRgbTilesetEffects());
-        }
-        if (tmdl.getModelTexture().isChunkRendering()) {
-            rectangleShader.loadIsChunkRendering(tmdl.getModelTexture().isChunkRendering());
-        }
-        if (tmdl.getModelTexture().getChunkTileSize() != null) {
-            rectangleShader.loadChunkTileSize(tmdl.getModelTexture().getChunkTileSize());
-        }
 
         rectangleShader.loadIsPlayer(tmdl.getModelTexture().isPlayer());
 

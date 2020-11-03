@@ -8,6 +8,7 @@ import com.bdv.components.TextureComponent;
 import com.bdv.components.TransformComponent;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.systems.SpriteRendererSystem;
+import org.lwjgl.util.Dimension;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.lang.reflect.InvocationTargetException;
@@ -40,7 +41,8 @@ public class Test extends BdvScript {
         base.addComponent(TransformComponent.class,
                 new Vector3f(0, 100, 0),
                 new Vector3f(0, 0, 0),
-                new Vector3f(1, 1, 1));
+                new Vector3f(1, 1, 1),
+                new Dimension(100, 100));
 
         Entity additional = manager.createEntity();
 
@@ -50,7 +52,8 @@ public class Test extends BdvScript {
         additional.addComponent(TransformComponent.class,
                 new Vector3f(200, 0, 0),
                 new Vector3f(0, 0, 0),
-                new Vector3f(1, 1, 1));
+                new Vector3f(1, 1, 1),
+                new Dimension(100, 100));
 
         SpriteRendererSystem renderer = (SpriteRendererSystem) manager.getSystem(SpriteRendererSystem.class);
         renderer.addEntity(base);

@@ -8,6 +8,7 @@ import com.bdv.api.RendererAPI;
 import com.bdv.components.*;
 import com.bdv.exceptions.InvalidInstance;
 import com.bdv.systems.MeshRendererSystem;
+import org.lwjgl.util.Dimension;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.lang.reflect.InvocationTargetException;
@@ -46,7 +47,8 @@ public class TestGL3D extends BdvScript {
         base.addComponent(TransformComponent.class,
                 new Vector3f(0, 0, 0),
                 new Vector3f(0.5f, 1, 1),
-                new Vector3f(1, 1, 1));
+                new Vector3f(1, 1, 1),
+                new Dimension(100, 100));
         base.addComponent(OpenGLReflectivityComponent.class, 1);
         base.addComponent(OpenGLShineDumperComponent.class, 10);
 
