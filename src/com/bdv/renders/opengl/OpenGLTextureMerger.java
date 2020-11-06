@@ -30,7 +30,7 @@ public class OpenGLTextureMerger {
                     transformComponent.position.y >= 0 &&
                     transformComponent.position.y <= height) {
                 graphics2D.setColor(oldColor);
-                graphics2D.drawImage(spriteComponent.image, null, (int) transformComponent.position.x, (int) transformComponent.position.y);
+                graphics2D.drawImage(spriteComponent.image, (int) transformComponent.position.x, (int) transformComponent.position.y, transformComponent.dimension.getWidth(), transformComponent.dimension.getHeight(), null);
             }
         }
 

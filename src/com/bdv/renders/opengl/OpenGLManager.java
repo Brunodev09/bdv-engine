@@ -151,10 +151,10 @@ public class OpenGLManager {
 
         baseCanvasEntity.addComponent(
                 TransformComponent.class,
-                new Vector3f(0, 0, 0),
+                new Vector3f(script.width / 2.0f, -script.height / 2.0f, 0),
                 new Vector3f(0, 0, 0),
                 new Vector3f(1, 1, 1),
-                new Dimension(100, 100));
+                new Dimension(0,0));
 
         OpenGLTextureCustom texture = new OpenGLTextureCustom(pipeline.loadTexture(spriteComponent));
 

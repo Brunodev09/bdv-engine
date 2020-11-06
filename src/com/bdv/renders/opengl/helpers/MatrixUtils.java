@@ -106,11 +106,11 @@ public class MatrixUtils {
     public static Matrix4f createViewMatrix(CameraComponent camera) {
         Matrix4f viewMatrix = new Matrix4f();
         viewMatrix.setIdentity();
-        Matrix4f.rotate((float) Math.toRadians(camera.getPitch()), new org.lwjgl.util.vector.Vector3f(1, 0, 0), viewMatrix, viewMatrix);
-        Matrix4f.rotate((float) Math.toRadians(camera.getYaw()), new org.lwjgl.util.vector.Vector3f(0, 1, 0), viewMatrix, viewMatrix);
-        org.lwjgl.util.vector.Vector3f pos = camera.getPosition();
-        org.lwjgl.util.vector.Vector3f negativePos = null;
-        if (camera.getDimensions())  negativePos = new org.lwjgl.util.vector.Vector3f(-pos.x, -pos.y, -pos.z);
+        Matrix4f.rotate((float) Math.toRadians(camera.getPitch()), new Vector3f(1, 0, 0), viewMatrix, viewMatrix);
+        Matrix4f.rotate((float) Math.toRadians(camera.getYaw()), new Vector3f(0, 1, 0), viewMatrix, viewMatrix);
+        Vector3f pos = camera.getPosition();
+        Vector3f negativePos = null;
+        if (camera.getDimensions())  negativePos = new Vector3f(-pos.x, -pos.y, -pos.z);
         else negativePos = new Vector3f(-pos.x, -pos.y, 0.0f);
 
         Matrix4f.translate(negativePos, viewMatrix, viewMatrix);
