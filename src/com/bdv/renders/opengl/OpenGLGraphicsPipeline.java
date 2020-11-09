@@ -65,7 +65,8 @@ public class OpenGLGraphicsPipeline {
         if (vaoManager == null) return;
         _usePreviouslyCreatedVAO(vaoManager.getVid());
         _updateDataInExistingVBO(vaoManager.getVboPointers().get(1), 1, 2, textureCoords);
-        _updateDataInExistingVBO(vaoManager.getVboPointers().get(2), 2, 3, colorPointer);
+        if (colorPointer.length > 0)
+            _updateDataInExistingVBO(vaoManager.getVboPointers().get(2), 2, 3, colorPointer);
         _unbindVAO();
     }
 

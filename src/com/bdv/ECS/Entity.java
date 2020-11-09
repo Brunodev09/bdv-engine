@@ -35,6 +35,15 @@ public class Entity {
         }
     }
 
+    public <T> void updateComponent(Class<T> type, Object... args) {
+        try {
+            manager.<T>updateComponent(this, type, args);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public <T> T getComponent(Class<T> type) {
         return manager.getComponent(this, type);
     }
@@ -46,6 +55,5 @@ public class Entity {
     public <T> void removeComponent(Class<T> type) {
         manager.<T>removeComponent(this, type);
     }
-
 
 }

@@ -3,6 +3,7 @@ package com.bdv.renders.opengl;
 import com.bdv.ECS.Entity;
 import com.bdv.components.SpriteComponent;
 import com.bdv.components.TransformComponent;
+import org.lwjgl.util.Dimension;
 
 import java.awt.*;
 import java.util.*;
@@ -55,7 +56,11 @@ public class OpenGLPolygonMeshGenerator {
         colorPointer = new float[numberOfCoordinatesPerPoint * numberOfPointsPerSquare];
     }
 
-    public OpenGLPolygonMeshGenerator(List<Entity> entityList, float[][][] effects, int width, int height, float tileSizeX,
+    public OpenGLPolygonMeshGenerator(List<Entity> entityList,
+                                      float[][][] effects,
+                                      int width,
+                                      int height,
+                                      float tileSizeX,
                                       float tileSizeY) {
         // Self explanatory
         int numberOfTiles = (width / (int) tileSizeX) * (height / (int) tileSizeY);
@@ -144,10 +149,28 @@ public class OpenGLPolygonMeshGenerator {
         // Assembling the textures into the mesh
         // Coordinates (x,y) from the texture for each point of the square, that makes 8 points of texture coordinates
         // for each square tile
-//        SpriteComponent[] spriteComponents = extractSprites(entityList);
+        // For now, textures must be squares and not rectangles, therefore w = h
+        int texIterator = 0;
+        int spritePointer = 0;
+        Map<Integer, Integer> numberOfSubTexturesForEachSprite = new HashMap<>();
+        SpriteComponent[] spriteComponents = extractSprites(entityList);
+        for (SpriteComponent sprite : spriteComponents) {
+            numberOfSubTexturesForEachSprite.put(texIterator, sprite.getWidth() / tx);
+            texIterator++;
+        }
+        texIterator = 0;
         for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
-            float uOffset = tx;
-            float vOffset = ty;
+            int timesToFillSprite = numberOfSubTexturesForEachSprite.get(spritePointer);
+
+            if (texIterator > timesToFillSprite) {
+                texIterator = 0;
+                spritePointer++;
+            }
+
+            SpriteComponent spriteComponent = spriteComponents[spritePointer];
+
+            float uOffset = (float) spriteComponent.getWidth() / tx;
+            float vOffset = (float) spriteComponent.getHeight() / ty;
             float u = 0;
             float v = 0;
 
@@ -159,6 +182,8 @@ public class OpenGLPolygonMeshGenerator {
             textureCoordinates[i + 5] = (v + (vOffset * v));
             textureCoordinates[i + 6] = (u * uOffset);
             textureCoordinates[i + 7] = (v + (vOffset * v));
+
+            texIterator++;
         }
     }
 

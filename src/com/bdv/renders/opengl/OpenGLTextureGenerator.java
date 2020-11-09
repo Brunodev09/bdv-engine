@@ -14,6 +14,15 @@ public class OpenGLTextureGenerator {
     private OpenGLTextureGenerator() {}
 
     public static int generateTexture(SpriteComponent sprite) {
+        int[] data = extractPixels(sprite);
+        int texture = glGenTextures();
+        bind(texture);
+        enableTexture(data, sprite.getWidth(), sprite.getHeight());
+        unbind();
+        return texture;
+    }
+
+    public static int[] extractPixels(SpriteComponent sprite) {
         int[] data = new int[sprite.getWidth() * sprite.getHeight()];
 
         for (int i = 0; i < sprite.getWidth() * sprite.getHeight(); i++) {
@@ -24,11 +33,10 @@ public class OpenGLTextureGenerator {
 
             data[i] = a << 24 | b << 16 | g << 8 | r;
         }
+        return data;
+    }
 
-        int texture = glGenTextures();
-
-        bind(texture);
-
+    public static void enableTexture(int[] data, int w, int h) {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
@@ -36,11 +44,7 @@ public class OpenGLTextureGenerator {
                 .order(ByteOrder.nativeOrder()).asIntBuffer();
         buffer.put(data).flip();
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, sprite.getWidth(), sprite.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
-
-        unbind();
-
-        return texture;
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
     }
 
     public static void bind(int texture) {

@@ -113,7 +113,7 @@ public class SystemManager {
 
         int componentId = Component.getNextId();
 
-        Map<Class<?>, Integer> entityTypeMap  = _typeManager.get(entity);
+        Map<Class<?>, Integer> entityTypeMap = _typeManager.get(entity);
 
         if (entityTypeMap == null) {
             entityTypeMap = new HashMap<>();
@@ -137,6 +137,8 @@ public class SystemManager {
         T component;
         if (args.length == 0) component = getInstanceOfT(type);
         else component = getInstanceOfT(type, args);
+
+        Component.nextId++;
 
         componentPool.set(entityId, component);
         entityComponentSignatures.get(entityId).getSet().set(componentId);
@@ -198,7 +200,6 @@ public class SystemManager {
         Object _instance = _class.getDeclaredConstructor().newInstance();
         Method myMethod = _class.getDeclaredMethod(methodName, paramSignature);
         Object returnedInstance = myMethod.invoke(_instance, args);
-        Component.nextId++;
 
         return (T) returnedInstance;
     }
@@ -221,6 +222,23 @@ public class SystemManager {
         Pool<T> pool = (Pool<T>) componentPools.get(componentId);
         if (entityId >= pool.getSize()) return null;
         return pool.get(entityId);
+    }
+
+    public <T> void updateComponent(Entity entity, Class<T> type, Object... args)
+            throws InvocationTargetException,
+            NoSuchMethodException,
+            ClassNotFoundException,
+            InstantiationException,
+            IllegalAccessException {
+        Map<Class<?>, Integer> entityMap = _typeManager.get(entity);
+        if (entityMap.get(type) == null) return;
+        final int componentId = entityMap.isEmpty() ? 0 : entityMap.get(type);
+        if (componentId == 0) return;
+        final int entityId = entity.getId();
+        Pool<T> pool = (Pool<T>) componentPools.get(componentId);
+        if (entityId >= pool.getSize()) return;
+        T component = getInstanceOfT(type, args);
+        pool.set(entityId, component);
     }
 
     public <T> boolean hasComponent(Entity entity, Class<T> type) {

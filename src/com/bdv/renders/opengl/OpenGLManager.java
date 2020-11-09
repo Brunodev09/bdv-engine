@@ -5,6 +5,7 @@ import com.bdv.api.BdvScript;
 import com.bdv.api.ProjectDimensionNumber;
 import com.bdv.components.*;
 import com.bdv.exceptions.OpenGLException;
+import com.bdv.renders.opengl.constants.OpenGLVAOEvents;
 import com.bdv.renders.opengl.shaders.MeshShader;
 import com.bdv.renders.opengl.shaders.RectangleShader;
 import com.bdv.renders.opengl.shaders.Terrain3DShader;
@@ -39,6 +40,9 @@ public class OpenGLManager {
 
     public final List<Class<?>> shadersToUse = new ArrayList<>();
 
+    private OpenGLModel baseCanvas2dModel;
+    private int baseCanvasTextureId;
+
     public OpenGLManager(BdvScript script) throws OpenGLException {
         this.script = script;
 
@@ -70,10 +74,10 @@ public class OpenGLManager {
         OpenGLRenderManager.toggleDebugShaderMode(this.script.debugShader);
 
         if (script.projectDimensionNumber == ProjectDimensionNumber.threeDimensions) {
-            insertToVAO_3d();
+            insertToVAO3d();
         } else {
             baseCanvasEntity = script.manager.createEntity();
-            insertToVAO_2d();
+            insertToVAO2d(OpenGLVAOEvents.INIT);
         }
 
         while (!OpenGLRenderManager.shouldExit()) {
@@ -106,7 +110,8 @@ public class OpenGLManager {
                     else light = entity.getComponent(OpenGLightsourceComponent.class);
                 }
             } else {
-                 OpenGLRenderManager.processEntity(baseCanvasEntity);
+                insertToVAO2d(OpenGLVAOEvents.UPDATE);
+                OpenGLRenderManager.processEntity(baseCanvasEntity);
             }
 
             if (light != null)
@@ -127,41 +132,34 @@ public class OpenGLManager {
         OpenGLRenderManager.closeRender();
     }
 
-    private void insertToVAO_2d() {
-        OpenGLPolygonMeshGenerator screenMesh = new OpenGLPolygonMeshGenerator(-script.width, script.height);
-        OpenGLBufferedModel bufferedModel = new OpenGLBufferedModel(
-                screenMesh.mesh,
-                screenMesh.textureCoordinates,
-                screenMesh.indexes);
+    // @TODO - Get all loaded players texture and make a new image with a fixed space step as a spritesheet
+    // @TODO - Based on this spritesheet we can associate every entity to the same model and then update inner texture coordinates from the buffers
+    private void insertToVAO2d(OpenGLVAOEvents event) {
 
-        OpenGLModel mdl = pipeline.loadDataToVAO(
-                bufferedModel.getVertices(),
-                bufferedModel.getTextures(),
-                bufferedModel.getIndexes(),
-                screenMesh.colorPointer);
+        if (event == OpenGLVAOEvents.INIT) {
+            float[][][] effects = new float[][][]{{{0}}};
+            OpenGLPolygonMeshGenerator screenMesh = new OpenGLPolygonMeshGenerator(meshRendererSystem.getEntities(), effects, script.width, script.height, script.tileSizeX, script.tileSizeY);
+            OpenGLBufferedModel bufferedModel = new OpenGLBufferedModel(
+                    screenMesh.mesh,
+                    screenMesh.textureCoordinates,
+                    screenMesh.indexes);
 
-        // @TODO - Control repeated output textures
+            OpenGLModel model = pipeline.loadDataToVAO(
+                    bufferedModel.getVertices(),
+                    bufferedModel.getTextures(),
+                    bufferedModel.getIndexes(),
+                    screenMesh.colorPointer);
 
-        BufferedImage canvas = OpenGLTextureMerger.merge(script.width, script.height, meshRendererSystem.getEntities());
-        baseCanvasEntity.addComponent(TextureComponent.class, "canvas", canvas);
-        TextureComponent textureComponent = baseCanvasEntity.getComponent(TextureComponent.class);
+            for (Entity entity : meshRendererSystem.getEntities()) {
+                SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
+                OpenGLTextureCustom texture = new OpenGLTextureCustom(pipeline.loadTexture(spriteComponent));
+            }
+        }
 
-        baseCanvasEntity.addComponent(SpriteComponent.class, textureComponent);
-        SpriteComponent spriteComponent = baseCanvasEntity.getComponent(SpriteComponent.class);
 
-        baseCanvasEntity.addComponent(
-                TransformComponent.class,
-                new Vector3f(script.width / 2.0f, -script.height / 2.0f, 0),
-                new Vector3f(0, 0, 0),
-                new Vector3f(1, 1, 1),
-                new Dimension(0,0));
-
-        OpenGLTextureCustom texture = new OpenGLTextureCustom(pipeline.loadTexture(spriteComponent));
-
-        baseCanvasEntity.addComponent(OpenGLTexturedModelComponent.class, mdl, texture);
     }
 
-    public void insertToVAO_3d() {
+    private void insertToVAO3d() {
         for (Entity entity : meshRendererSystem.getEntities()) {
             ObjComponent objComponent = script.manager.getComponent(entity, ObjComponent.class);
             SpriteComponent spriteComponent = script.manager.getComponent(entity, SpriteComponent.class);

@@ -17,8 +17,8 @@ public class AssetPool {
     }
 
     public void addTexture(TextureComponent texture, String assetId, String filePath) {
-        logger.info("[ASSETS_POOL]: Texture loaded with the id of " + assetId + " from file path " + filePath);
-        textures.putIfAbsent(assetId, texture);
+//        logger.info("[ASSETS_POOL]: Texture loaded with the id of " + assetId + " from file path " + filePath);
+        textures.put(assetId, texture);
     }
 
     public TextureComponent getTexture(String assetId) {
