@@ -11,10 +11,6 @@ import com.bdv.renders.opengl.shaders.RectangleShader;
 import com.bdv.renders.opengl.shaders.Terrain3DShader;
 import com.bdv.systems.MeshRendererSystem;
 import com.bdv.systems.MeshTerrainRendererSystem;
-import org.lwjgl.util.Dimension;
-import org.lwjgl.util.vector.Vector3f;
-
-import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;

@@ -147,8 +147,7 @@ public class OpenGLPolygonMeshGenerator {
         }
 
         // Assembling the textures into the mesh
-        // Coordinates (x,y) from the texture for each point of the square, that makes 8 points of texture coordinates
-        // for each square tile
+        // Coordinates (x,y) from the texture for each point of the square, that makes 8 points of texture coordinates for each square tile
         // For now, textures must be squares and not rectangles, therefore w = h
         int texIterator = 0;
         int spritePointer = 0;
