@@ -1,7 +1,7 @@
 package com.bdv.renders.opengl;
 
 import com.bdv.exceptions.OpenGLTextureProcessorException;
-import com.bdv.renders.opengl.helpers.CartesianCoordinatesForRectangles;
+import com.bdv.renders.opengl.helpers.RectangularTextureCoordinates;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -9,12 +9,12 @@ import java.util.*;
 
 public class OpenGLTextureProcessor {
 
-    public static final Map<String, CartesianCoordinatesForRectangles> texturesById = new HashMap<>();
+    public static final Map<String, RectangularTextureCoordinates> texturesById = new HashMap<>();
 
     private static BufferedImage masterCanvas;
     private static Graphics2D graphics2D;
 
-    private static final Deque<CartesianCoordinatesForRectangles> textureMapper = new LinkedList<>();
+    private static final Deque<RectangularTextureCoordinates> textureMapper = new LinkedList<>();
 
     private static int width;
     private static int height;
@@ -43,9 +43,9 @@ public class OpenGLTextureProcessor {
             throw new OpenGLTextureProcessorException("This sprite dimensions are incompatible with the master canvas.");
         }
 
-        CartesianCoordinatesForRectangles latestInserted = textureMapper.peekFirst();
+        RectangularTextureCoordinates latestInserted = textureMapper.peekFirst();
         if (latestInserted == null) {
-            latestInserted = new CartesianCoordinatesForRectangles(0, 0, 0, 0);
+            latestInserted = new RectangularTextureCoordinates(0, 0, 0, 0);
         }
 
         int x0 = latestInserted.x2;
@@ -74,9 +74,9 @@ public class OpenGLTextureProcessor {
             int conqueredNodes = 0;
 
             while (!free) {
-                Iterator<CartesianCoordinatesForRectangles> it = textureMapper.iterator();
+                Iterator<RectangularTextureCoordinates> it = textureMapper.iterator();
                 while (it.hasNext()) {
-                    CartesianCoordinatesForRectangles nextNode = it.next();
+                    RectangularTextureCoordinates nextNode = it.next();
 
                     if (nextNode.x <= testX && nextNode.y4 > testY) {
                         testX += nextNode.x2;
@@ -97,14 +97,15 @@ public class OpenGLTextureProcessor {
                     free = true;
                 }
             }
-            textureMapper.push(new CartesianCoordinatesForRectangles(testX - toMerge.getWidth(), testY - toMerge.getHeight(), testX, testY));
+            textureMapper.push(new RectangularTextureCoordinates(testX - toMerge.getWidth(), testY - toMerge.getHeight(), testX, testY));
         } else {
-            textureMapper.push(new CartesianCoordinatesForRectangles(x0, y0, x1, y1));
+            textureMapper.push(new RectangularTextureCoordinates(x0, y0, x1, y1));
         }
 
-        final CartesianCoordinatesForRectangles current = textureMapper.peekFirst();
+        final RectangularTextureCoordinates current = textureMapper.peekFirst();
 
-        if (current == null) throw new OpenGLTextureProcessorException("TextureMapper stack is empty. This should never happen.");
+        if (current == null)
+            throw new OpenGLTextureProcessorException("TextureMapper stack is empty. This should never happen.");
 
         texturesById.put(id, current);
 

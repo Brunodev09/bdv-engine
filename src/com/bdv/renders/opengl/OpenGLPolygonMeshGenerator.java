@@ -3,7 +3,7 @@ package com.bdv.renders.opengl;
 import com.bdv.ECS.Entity;
 import com.bdv.components.SpriteComponent;
 import com.bdv.components.TransformComponent;
-import com.bdv.renders.opengl.helpers.CartesianCoordinatesForRectangles;
+import com.bdv.renders.opengl.helpers.RectangularTextureCoordinates;
 
 import java.util.*;
 import java.util.List;
@@ -151,7 +151,7 @@ public class OpenGLPolygonMeshGenerator {
 
         int textureRunner = 0;
         for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
-            CartesianCoordinatesForRectangles subImagePosition = OpenGLTextureProcessor.texturesById.get(spriteComponents[textureRunner].textureId);
+            RectangularTextureCoordinates subImagePosition = OpenGLTextureProcessor.texturesById.get(spriteComponents[textureRunner].textureId);
             int masterCanvasWidth = OpenGLTextureProcessor.getWidth();
             int masterCanvasHeight = OpenGLTextureProcessor.getHeight();
             float uOffset = spriteComponents[textureRunner].getWidth() / (float) masterCanvasWidth;

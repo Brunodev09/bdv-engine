@@ -1,6 +1,6 @@
 package com.bdv.renders.opengl.helpers;
 
-public class CartesianCoordinatesForRectangles {
+public class RectangularTextureCoordinates {
     public final int x;
     public final int y;
     public final int x2;
@@ -12,7 +12,7 @@ public class CartesianCoordinatesForRectangles {
 
     // Textures coordinates will be stored from top-left (x, y, w, h)
     // That derives to p1 = (x, y), p2 = (x + w, y), p3 = (x, y + h) and p4 = (x + w, y + h)
-    public CartesianCoordinatesForRectangles(int x, int y, int w, int h) {
+    public RectangularTextureCoordinates(int x, int y, int w, int h) {
         this.x = x;
         this.y = y;
 
