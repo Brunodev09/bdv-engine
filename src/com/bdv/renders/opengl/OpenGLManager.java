@@ -5,6 +5,7 @@ import com.bdv.api.BdvScript;
 import com.bdv.api.ProjectDimensionNumber;
 import com.bdv.components.*;
 import com.bdv.exceptions.OpenGLException;
+import com.bdv.exceptions.OpenGLTextureProcessorException;
 import com.bdv.renders.opengl.constants.OpenGLVAOEvents;
 import com.bdv.renders.opengl.shaders.MeshShader;
 import com.bdv.renders.opengl.shaders.RectangleShader;
@@ -39,8 +40,13 @@ public class OpenGLManager {
     private OpenGLModel baseCanvas2dModel;
     private int baseCanvasTextureId;
 
-    public OpenGLManager(BdvScript script) throws OpenGLException {
+    private int masterCanvasWidth = 2000;
+    private int masterCanvasHeight = 2000;
+
+    public OpenGLManager(BdvScript script) throws OpenGLException, OpenGLTextureProcessorException {
         this.script = script;
+
+        OpenGLTextureProcessor.init(masterCanvasWidth, masterCanvasHeight);
 
         if (this.script.projectDimensionNumber == ProjectDimensionNumber.threeDimensions) {
             shadersToUse.add(Terrain3DShader.class);

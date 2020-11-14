@@ -24,6 +24,8 @@ public class SpriteComponent extends Component<SpriteComponent> {
 
     public enum effect {NORMAL, SEPIA, REDISH, GRAYSCALE, NEGATIVE, DECAY}
 
+    public String textureId;
+
     private final float[][] id =
             {{1.0f, 0.0f, 0.0f},
                     {0.0f, 1.0f, 0.0f},
@@ -70,6 +72,7 @@ public class SpriteComponent extends Component<SpriteComponent> {
         component.ogpixels = new int[component.width * component.height];
         textureComponent.image.getRGB(0, 0, component.width, component.height, component.ogpixels, 0, component.width);
         component.pixels = component.ogpixels;
+        component.textureId = textureComponent.id;
 
         return component;
     }

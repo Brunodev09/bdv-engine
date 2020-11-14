@@ -3,9 +3,8 @@ package com.bdv.renders.opengl;
 import com.bdv.ECS.Entity;
 import com.bdv.components.SpriteComponent;
 import com.bdv.components.TransformComponent;
-import org.lwjgl.util.Dimension;
+import com.bdv.renders.opengl.helpers.CartesianCoordinatesForRectangles;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
@@ -147,31 +146,18 @@ public class OpenGLPolygonMeshGenerator {
         }
 
         // Assembling the textures into the mesh
-        // Coordinates (x,y) from the texture for each point of the square, that makes 8 points of texture coordinates for each square tile
-        // For now, textures must be squares and not rectangles, therefore w = h
-        int texIterator = 0;
-        int spritePointer = 0;
-        Map<Integer, Integer> numberOfSubTexturesForEachSprite = new HashMap<>();
+        // Coordinates (x,y) from the texture for each point of the square, that makes 8 coordinates (4 points) of texture coordinates for each square tile
         SpriteComponent[] spriteComponents = extractSprites(entityList);
-        for (SpriteComponent sprite : spriteComponents) {
-            numberOfSubTexturesForEachSprite.put(texIterator, sprite.getWidth() / tx);
-            texIterator++;
-        }
-        texIterator = 0;
+
+        int textureRunner = 0;
         for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
-            int timesToFillSprite = numberOfSubTexturesForEachSprite.get(spritePointer);
-
-            if (texIterator > timesToFillSprite) {
-                texIterator = 0;
-                spritePointer++;
-            }
-
-            SpriteComponent spriteComponent = spriteComponents[spritePointer];
-
-            float uOffset = (float) spriteComponent.getWidth() / tx;
-            float vOffset = (float) spriteComponent.getHeight() / ty;
-            float u = 0;
-            float v = 0;
+            CartesianCoordinatesForRectangles subImagePosition = OpenGLTextureProcessor.texturesById.get(spriteComponents[textureRunner].textureId);
+            int masterCanvasWidth = OpenGLTextureProcessor.getWidth();
+            int masterCanvasHeight = OpenGLTextureProcessor.getHeight();
+            float uOffset = spriteComponents[textureRunner].getWidth() / (float) masterCanvasWidth;
+            float vOffset = spriteComponents[textureRunner].getHeight() / (float) masterCanvasHeight;
+            float u = (float) subImagePosition.x / masterCanvasWidth;
+            float v = (float) subImagePosition.y / masterCanvasHeight;
 
             textureCoordinates[i] = (u * uOffset);
             textureCoordinates[i + 1] = (vOffset * v);
@@ -181,12 +167,11 @@ public class OpenGLPolygonMeshGenerator {
             textureCoordinates[i + 5] = (v + (vOffset * v));
             textureCoordinates[i + 6] = (u * uOffset);
             textureCoordinates[i + 7] = (v + (vOffset * v));
-
-            texIterator++;
+            textureRunner++;
         }
     }
 
-    // Extract sprites in row-order from top-left to bottom-right according to the positions on the Transformation component
+    // Extract sprites in row-order from top-left to bottom-right according to the positions on the Transformation component of each entity
     public SpriteComponent[] extractSprites(List<Entity> entityList) {
         List<TransformComponent> transformComponentsList = new ArrayList<>();
         List<SpriteComponent> spriteComponents = new ArrayList<>();
