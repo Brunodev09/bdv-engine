@@ -9,12 +9,12 @@ import java.util.*;
 
 public class OpenGLTextureProcessor {
 
-    public static final Map<String, RectangularTextureCoordinates> texturesById = new HashMap<>();
+    public static final Map<String, RectangularTextureCoordinates<Integer>> texturesById = new HashMap<>();
 
     private static BufferedImage masterCanvas;
     private static Graphics2D graphics2D;
 
-    private static final Deque<RectangularTextureCoordinates> textureMapper = new LinkedList<>();
+    private static final Deque<RectangularTextureCoordinates<Integer>> textureMapper = new LinkedList<>();
 
     private static int width;
     private static int height;
@@ -30,7 +30,7 @@ public class OpenGLTextureProcessor {
         OpenGLTextureProcessor.height = height;
         masterCanvas = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
         graphics2D = masterCanvas.createGraphics();
-        graphics2D.setPaint(Color.WHITE);
+        graphics2D.setPaint(Color.PINK);
         graphics2D.fillRect(0, 0, width, height);
 
     }
@@ -43,9 +43,9 @@ public class OpenGLTextureProcessor {
             throw new OpenGLTextureProcessorException("This sprite dimensions are incompatible with the master canvas.");
         }
 
-        RectangularTextureCoordinates latestInserted = textureMapper.peekFirst();
+        RectangularTextureCoordinates<Integer> latestInserted = textureMapper.peekFirst();
         if (latestInserted == null) {
-            latestInserted = new RectangularTextureCoordinates(0, 0, 0, 0);
+            latestInserted = new RectangularTextureCoordinates<>(0, 0, 0, 0);
         }
 
         int x0 = latestInserted.x2;
@@ -74,9 +74,9 @@ public class OpenGLTextureProcessor {
             int conqueredNodes = 0;
 
             while (!free) {
-                Iterator<RectangularTextureCoordinates> it = textureMapper.iterator();
+                Iterator<RectangularTextureCoordinates<Integer>> it = textureMapper.iterator();
                 while (it.hasNext()) {
-                    RectangularTextureCoordinates nextNode = it.next();
+                    RectangularTextureCoordinates<Integer> nextNode = it.next();
 
                     if (nextNode.x <= testX && nextNode.y4 > testY) {
                         testX += nextNode.x2;
@@ -86,6 +86,8 @@ public class OpenGLTextureProcessor {
                             if (testY > masterCanvas.getHeight()) {
                                 // @TODO - Maybe calculate the area in pixels overflown by the sprite
                                 throw new OpenGLTextureProcessorException("Cannot fit sprite into master canvas.");
+                            } else if (testX > masterCanvas.getWidth() - 256 && testY >= masterCanvas.getHeight() - 256) {
+                                throw new OpenGLTextureProcessorException("Cannot fit sprite into master canvas. Invading default texture pixels.");
                             }
                         }
                         break;
@@ -97,12 +99,12 @@ public class OpenGLTextureProcessor {
                     free = true;
                 }
             }
-            textureMapper.push(new RectangularTextureCoordinates(testX - toMerge.getWidth(), testY - toMerge.getHeight(), testX, testY));
+            textureMapper.push(new RectangularTextureCoordinates<>(testX - toMerge.getWidth(), testY - toMerge.getHeight(), testX, testY));
         } else {
-            textureMapper.push(new RectangularTextureCoordinates(x0, y0, x1, y1));
+            textureMapper.push(new RectangularTextureCoordinates<>(x0, y0, x1, y1));
         }
 
-        final RectangularTextureCoordinates current = textureMapper.peekFirst();
+        final RectangularTextureCoordinates<Integer> current = textureMapper.peekFirst();
 
         if (current == null)
             throw new OpenGLTextureProcessorException("TextureMapper stack is empty. This should never happen.");
@@ -118,11 +120,19 @@ public class OpenGLTextureProcessor {
         return masterCanvas;
     }
 
+    public static RectangularTextureCoordinates<Integer> getDefaultTexture() {
+        return new RectangularTextureCoordinates<>(OpenGLTextureProcessor.width - 256, OpenGLTextureProcessor.height - 256, 256, 256);
+    }
+
     public static int getHeight() {
         return height;
     }
 
     public static int getWidth() {
         return width;
+    }
+
+    public static BufferedImage getMasterCanvas() {
+        return masterCanvas;
     }
 }

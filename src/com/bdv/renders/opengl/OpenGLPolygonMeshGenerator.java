@@ -89,8 +89,8 @@ public class OpenGLPolygonMeshGenerator {
             float[] points = new float[]{
                     startX, startY, 0,
                     startX + tileSizeX, startY, 0,
-                    startX + tileSizeX, startY + tileSizeY, 0,
-                    startX, startY + tileSizeY, 0
+                    startX + tileSizeX, startY - tileSizeY, 0,
+                    startX, startY - tileSizeY, 0
             };
             for (int j = 0; j < points.length; j++) {
                 mesh[i + j] = points[j];
@@ -100,7 +100,7 @@ public class OpenGLPolygonMeshGenerator {
                 startY = 0;
                 tilesInRow = 0;
             } else {
-                startY += tileSizeY;
+                startY -= tileSizeY;
                 tilesInRow++;
             }
         }
@@ -146,27 +146,76 @@ public class OpenGLPolygonMeshGenerator {
         }
 
         // Assembling the textures into the mesh
-        // Coordinates (x,y) from the texture for each point of the square, that makes 8 coordinates (4 points) of texture coordinates for each square tile
+        // Coordinates (x,y) from the texture for each point of the rectangle, that makes 8 coordinates (4 points) of texture coordinates for each square tile
         SpriteComponent[] spriteComponents = extractSprites(entityList);
 
         int textureRunner = 0;
+        float wFactor = 0;
+        float hFactor = 0;
+        int iterationsDoneForSprite = 0;
+
+        RectangularTextureCoordinates<Integer> subImagePosition = null;
+        List<RectangularTextureCoordinates<Float>> subRectanglesInSubImage = new ArrayList<>();
+
         for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
-            RectangularTextureCoordinates subImagePosition = OpenGLTextureProcessor.texturesById.get(spriteComponents[textureRunner].textureId);
+            if (iterationsDoneForSprite >= Math.max(wFactor, hFactor)) {
+                iterationsDoneForSprite = 0;
+                subRectanglesInSubImage.clear();
+
+                if (textureRunner >= spriteComponents.length) {
+                    subImagePosition = OpenGLTextureProcessor.getDefaultTexture();
+                    wFactor = 256 / tileSizeX;
+                    hFactor = 256 / tileSizeY;
+                }
+                else {
+                    subImagePosition = OpenGLTextureProcessor.texturesById.get(spriteComponents[textureRunner].textureId);
+                    wFactor = spriteComponents[textureRunner].getWidth() / tileSizeX;
+                    hFactor = spriteComponents[textureRunner].getHeight() / tileSizeY;
+                }
+
+                int splitCounter = 1;
+
+                float x0 = subImagePosition.x / wFactor;
+                float y0 = subImagePosition.y / hFactor;
+
+                float x1 = subImagePosition.x2 / wFactor;
+                float y1 = subImagePosition.y2 / hFactor;
+
+                float x2 = subImagePosition.x3 / wFactor;
+                float y2 = subImagePosition.y3 / hFactor;
+
+                float x3 = subImagePosition.x4 / wFactor;
+                float y3 = subImagePosition.y4 / hFactor;
+
+                while (splitCounter <= Math.max(wFactor, hFactor)) {
+                    float offsetX = splitCounter > wFactor ? wFactor : splitCounter;
+                    float offsetY = splitCounter > hFactor ? hFactor : splitCounter;
+                    subRectanglesInSubImage.add(new RectangularTextureCoordinates<>(
+                            x0 + (offsetX * tileSizeX),
+                            y0 + (offsetY * tileSizeY),
+                            x1 + (offsetX * tileSizeX),
+                            y1 + (offsetY * tileSizeY),
+                            x2 + (offsetX * tileSizeX),
+                            y2 + (offsetY * tileSizeY),
+                            x3 + (offsetX * tileSizeX),
+                            y3 + (offsetY * tileSizeY)));
+                    splitCounter++;
+                }
+            }
+
             int masterCanvasWidth = OpenGLTextureProcessor.getWidth();
             int masterCanvasHeight = OpenGLTextureProcessor.getHeight();
-            float uOffset = spriteComponents[textureRunner].getWidth() / (float) masterCanvasWidth;
-            float vOffset = spriteComponents[textureRunner].getHeight() / (float) masterCanvasHeight;
-            float u = (float) subImagePosition.x / masterCanvasWidth;
-            float v = (float) subImagePosition.y / masterCanvasHeight;
 
-            textureCoordinates[i] = (u * uOffset);
-            textureCoordinates[i + 1] = (vOffset * v);
-            textureCoordinates[i + 2] = (u + (u * uOffset));
-            textureCoordinates[i + 3] = (vOffset * v);
-            textureCoordinates[i + 4] = (u + (u * uOffset));
-            textureCoordinates[i + 5] = (v + (vOffset * v));
-            textureCoordinates[i + 6] = (u * uOffset);
-            textureCoordinates[i + 7] = (v + (vOffset * v));
+            textureCoordinates[i] = subRectanglesInSubImage.get(iterationsDoneForSprite).x / masterCanvasWidth;
+            textureCoordinates[i + 1] = subRectanglesInSubImage.get(iterationsDoneForSprite).y / masterCanvasHeight;
+            textureCoordinates[i + 2] = subRectanglesInSubImage.get(iterationsDoneForSprite).x2 / masterCanvasWidth;
+            textureCoordinates[i + 3] = subRectanglesInSubImage.get(iterationsDoneForSprite).y2 / masterCanvasHeight;
+            textureCoordinates[i + 4] = subRectanglesInSubImage.get(iterationsDoneForSprite).x3 / masterCanvasWidth;
+            textureCoordinates[i + 5] = subRectanglesInSubImage.get(iterationsDoneForSprite).y3 / masterCanvasHeight;
+            textureCoordinates[i + 6] = subRectanglesInSubImage.get(iterationsDoneForSprite).x4 / masterCanvasWidth;
+            textureCoordinates[i + 7] = subRectanglesInSubImage.get(iterationsDoneForSprite).y4 / masterCanvasHeight;
+
+            iterationsDoneForSprite++;
             textureRunner++;
         }
     }
