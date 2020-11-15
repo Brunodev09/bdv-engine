@@ -70,7 +70,7 @@ public class OpenGLPolygonMeshGenerator {
         this.ty = (int) tileSizeY;
 
         // Number of squares to be built before jumping to the next row
-        tilesPerRow = width / (int) tileSizeX;
+        tilesPerRow = height / (int) tileSizeY;
         mesh = new float[numberOfTiles * numberOfCoordinatesPerPoint * numberOfPointsPerSquare];
 
         // To index 2 triangles we need 6 points (5 actually, since one is reused)
@@ -100,7 +100,7 @@ public class OpenGLPolygonMeshGenerator {
                 startY = 0;
                 tilesInRow = 0;
             } else {
-                startY -= tileSizeY;
+                startY += tileSizeY;
                 tilesInRow++;
             }
         }
@@ -158,7 +158,7 @@ public class OpenGLPolygonMeshGenerator {
         List<RectangularTextureCoordinates<Float>> subRectanglesInSubImage = new ArrayList<>();
 
         for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
-            if (iterationsDoneForSprite >= Math.max(wFactor, hFactor)) {
+            if (iterationsDoneForSprite >= wFactor + hFactor) {
                 iterationsDoneForSprite = 0;
                 subRectanglesInSubImage.clear();
 
@@ -166,17 +166,16 @@ public class OpenGLPolygonMeshGenerator {
                     subImagePosition = OpenGLTextureProcessor.getDefaultTexture();
                     wFactor = 256 / tileSizeX;
                     hFactor = 256 / tileSizeY;
-                }
-                else {
+                } else {
                     subImagePosition = OpenGLTextureProcessor.texturesById.get(spriteComponents[textureRunner].textureId);
                     wFactor = spriteComponents[textureRunner].getWidth() / tileSizeX;
                     hFactor = spriteComponents[textureRunner].getHeight() / tileSizeY;
                 }
 
-                int splitCounter = 1;
+                int splitCounter = 0;
 
-                float x0 = subImagePosition.x / wFactor;
-                float y0 = subImagePosition.y / hFactor;
+                float x0 = subImagePosition.x;
+                float y0 = subImagePosition.y;
 
                 float x1 = subImagePosition.x2 / wFactor;
                 float y1 = subImagePosition.y2 / hFactor;
@@ -187,18 +186,47 @@ public class OpenGLPolygonMeshGenerator {
                 float x3 = subImagePosition.x4 / wFactor;
                 float y3 = subImagePosition.y4 / hFactor;
 
-                while (splitCounter <= Math.max(wFactor, hFactor)) {
-                    float offsetX = splitCounter > wFactor ? wFactor : splitCounter;
-                    float offsetY = splitCounter > hFactor ? hFactor : splitCounter;
+                while (splitCounter < hFactor) {
+                    float offset = splitCounter;
                     subRectanglesInSubImage.add(new RectangularTextureCoordinates<>(
-                            x0 + (offsetX * tileSizeX),
-                            y0 + (offsetY * tileSizeY),
-                            x1 + (offsetX * tileSizeX),
-                            y1 + (offsetY * tileSizeY),
-                            x2 + (offsetX * tileSizeX),
-                            y2 + (offsetY * tileSizeY),
-                            x3 + (offsetX * tileSizeX),
-                            y3 + (offsetY * tileSizeY)));
+                            x0,
+                            y0 + (offset * tileSizeY),
+                            x1,
+                            y1 + (offset * tileSizeY),
+                            x2,
+                            y2 + (offset * tileSizeY),
+                            x3,
+                            y3 + (offset * tileSizeY)));
+
+                    splitCounter++;
+                }
+
+                splitCounter = 0;
+
+                x0 = subImagePosition.x;
+                y0 = subImagePosition.y;
+
+                x1 = subImagePosition.x2 / wFactor;
+                y1 = subImagePosition.y2 / hFactor;
+
+                x2 = subImagePosition.x3 / wFactor;
+                y2 = subImagePosition.y3 / hFactor;
+
+                x3 = subImagePosition.x4 / wFactor;
+                y3 = subImagePosition.y4 / hFactor;
+
+                while (splitCounter < wFactor) {
+                    float offset = splitCounter;
+                    subRectanglesInSubImage.add(new RectangularTextureCoordinates<>(
+                            x0 + (offset * tileSizeX),
+                            y0,
+                            x1 + (offset * tileSizeX),
+                            y1,
+                            x2 + (offset * tileSizeX),
+                            y2,
+                            x3 + (offset * tileSizeX),
+                            y3));
+
                     splitCounter++;
                 }
             }
