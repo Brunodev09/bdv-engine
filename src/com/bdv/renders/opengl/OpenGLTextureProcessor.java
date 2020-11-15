@@ -32,7 +32,6 @@ public class OpenGLTextureProcessor {
         graphics2D = masterCanvas.createGraphics();
         graphics2D.setPaint(Color.PINK);
         graphics2D.fillRect(0, 0, width, height);
-
     }
 
     public static BufferedImage merge(String id, BufferedImage toMerge) throws OpenGLTextureProcessorException {
@@ -101,7 +100,7 @@ public class OpenGLTextureProcessor {
             }
             textureMapper.push(new RectangularTextureCoordinates<>(testX - toMerge.getWidth(), testY - toMerge.getHeight(), testX, testY));
         } else {
-            textureMapper.push(new RectangularTextureCoordinates<>(x0, y0, x1, y1));
+            textureMapper.push(new RectangularTextureCoordinates<>(x0, y0, toMerge.getWidth(), toMerge.getHeight()));
         }
 
         final RectangularTextureCoordinates<Integer> current = textureMapper.peekFirst();
@@ -111,9 +110,9 @@ public class OpenGLTextureProcessor {
 
         texturesById.put(id, current);
 
-        Color oldColor = graphics2D.getColor();
-        graphics2D.setColor(oldColor);
-        graphics2D.drawImage(toMerge, current.x, current.y, current.x2, current.y3, null);
+        graphics2D = masterCanvas.createGraphics();
+
+        graphics2D.drawImage(toMerge, current.x, current.y, toMerge.getWidth(), toMerge.getHeight(), null);
 
         graphics2D.dispose();
 
