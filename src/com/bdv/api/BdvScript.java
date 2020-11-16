@@ -7,8 +7,8 @@ import com.bdv.exceptions.InvalidInstance;
 import java.lang.reflect.InvocationTargetException;
 
 public abstract class BdvScript {
-    public int width = 1024;
-    public int height = 768;
+    public int width = 1440;
+    public int height = 900;
     public String windowTitle = "Unnamed window";
     public int fps = 60;
     public boolean logFps = false;

@@ -70,7 +70,7 @@ public class OpenGLPolygonMeshGenerator {
         this.ty = (int) tileSizeY;
 
         // Number of squares to be built before jumping to the next row
-        tilesPerRow = height / (int) tileSizeY;
+        tilesPerRow = width / (int) tileSizeX;
         mesh = new float[numberOfTiles * numberOfCoordinatesPerPoint * numberOfPointsPerSquare];
 
         // To index 2 triangles we need 6 points (5 actually, since one is reused)
@@ -87,20 +87,20 @@ public class OpenGLPolygonMeshGenerator {
         // Building each square with 2 right triangles
         for (int i = 0; i < mesh.length - 11; i += 12) {
             float[] points = new float[]{
-                    startX, startY, 0,
                     startX + tileSizeX, startY, 0,
-                    startX + tileSizeX, startY - tileSizeY, 0,
-                    startX, startY - tileSizeY, 0
+                    startX, startY, 0,
+                    startX, startY + tileSizeY, 0,
+                    startX + tileSizeX, startY + tileSizeY, 0,
             };
             for (int j = 0; j < points.length; j++) {
                 mesh[i + j] = points[j];
             }
             if (tilesInRow == tilesPerRow) {
-                startX += tileSizeX;
-                startY = 0;
+                startY += tileSizeY;
+                startX = 0;
                 tilesInRow = 0;
             } else {
-                startY += tileSizeY;
+                startX += tileSizeX;
                 tilesInRow++;
             }
         }
@@ -153,6 +153,8 @@ public class OpenGLPolygonMeshGenerator {
         float wFactor = 0;
         float hFactor = 0;
         int iterationsDoneForSprite = 0;
+        int iterationsDoneForSpriteW = 0;
+        int iterationsDonesForSpriteH = 0;
 
         RectangularTextureCoordinates<Integer> subImagePosition = null;
         List<RectangularTextureCoordinates<Float>> subRectanglesInSubImage = new ArrayList<>();

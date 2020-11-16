@@ -40,7 +40,7 @@ public class OpenGLManager {
 
     private Entity masterCanvasEntity;
 
-    public OpenGLManager(BdvScript script) throws OpenGLException, OpenGLTextureProcessorException {
+    public OpenGLManager(BdvScript script) throws OpenGLException {
         this.script = script;
 
         if (this.script.projectDimensionNumber == ProjectDimensionNumber.threeDimensions) {

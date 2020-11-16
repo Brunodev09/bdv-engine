@@ -127,7 +127,7 @@ public class OpenGLGraphicsPipeline {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
         FloatBuffer buffer = BufferOperations.convertFloatToFloatBuffer(data);
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-        // coordSize = 3 for 3D vectors
+        // 3 coordinates for 3d vectors
         GL20.glVertexAttribPointer(attrNum, coordSize, GL11.GL_FLOAT, false, 0, 0);
         // unbinding VBO
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
