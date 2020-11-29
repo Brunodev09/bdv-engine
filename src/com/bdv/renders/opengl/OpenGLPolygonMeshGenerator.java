@@ -153,8 +153,6 @@ public class OpenGLPolygonMeshGenerator {
         float wFactor = 0;
         float hFactor = 0;
         int iterationsDoneForSprite = 0;
-        int iterationsDoneForSpriteW = 0;
-        int iterationsDonesForSpriteH = 0;
 
         RectangularTextureCoordinates<Integer> subImagePosition = null;
         List<RectangularTextureCoordinates<Float>> subRectanglesInSubImage = new ArrayList<>();
@@ -189,28 +187,26 @@ public class OpenGLPolygonMeshGenerator {
                 int offsetX = 0;
                 int offsetY = 0;
 
-                while (offsetX < wFactor) {
-                    while (offsetY < hFactor) {
-                        float offset = offsetY;
+                while (offsetY < wFactor) {
+                    while (offsetX < hFactor) {
                         subRectanglesInSubImage.add(new RectangularTextureCoordinates<>(
-                                x0,
-                                y0 + (offset * tileSizeY),
-                                x1,
-                                y1 + (offset * tileSizeY),
-                                x2,
-                                y2 + (offset * tileSizeY),
-                                x3,
-                                y3 + (offset * tileSizeY)));
+                                x0 + (offsetX * tileSizeX),
+                                y0,
+                                x1 + (offsetX * tileSizeX),
+                                y1,
+                                x2 + (offsetX * tileSizeX),
+                                y2,
+                                x3 + (offsetX * tileSizeX),
+                                y3));
 
-                        offsetY++;
+                        offsetX++;
                     }
-                    offsetY = 0;
-                    offsetX++;
-
-                    x0 += (offsetX * tileSizeX);
-                    x1 += (offsetX * tileSizeX);
-                    x2 += (offsetX * tileSizeX);
-                    x3 += (offsetX * tileSizeX);
+                    offsetX = 0;
+                    offsetY++;
+                    y0 += (offsetY * tileSizeY);
+                    y1 += (offsetY * tileSizeY);
+                    y2 += (offsetY * tileSizeY);
+                    y3 += (offsetY * tileSizeY);
                 }
             }
 
