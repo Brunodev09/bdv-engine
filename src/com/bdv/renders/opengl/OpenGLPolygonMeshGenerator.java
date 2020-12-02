@@ -313,7 +313,11 @@ public class OpenGLPolygonMeshGenerator {
                         spriteMesh.put(spriteComponent, new ArrayList<>());
                         indexList = spriteMesh.get(spriteComponent);
                     }
-                    indexList.add(indexInMeshArray);
+                    int innerIndex = 1;
+                    while (innerIndex <= 8) {
+                        indexList.add(indexInMeshArray + innerIndex);
+                        innerIndex++;
+                    }
                     x++;
                 }
                 y++;
