@@ -148,6 +148,7 @@ public class OpenGLPolygonMeshGenerator {
         // Assembling the textures into the mesh
         // Coordinates (x,y) from the texture for each point of the rectangle, that makes 8 coordinates (4 points) of texture coordinates for each square tile
         SpriteComponent[] spriteComponents = extractSprites(entityList);
+        Map<SpriteComponent, List<Integer>> spriteMeshes = extractIndexes(getSpriteToTransform(entityList), (width / (int) tileSizeX), tileSizeX, tileSizeY);
 
         int textureRunner = 0;
         float wFactor = 0;
@@ -255,6 +256,19 @@ public class OpenGLPolygonMeshGenerator {
         return spriteComponents.toArray(spriteComponentsArray);
     }
 
+    public Map<SpriteComponent, TransformComponent> getSpriteToTransform(List<Entity> entityList) {
+        Map<SpriteComponent, TransformComponent> out = new HashMap<>();
+
+        for (Entity entity : entityList) {
+            SpriteComponent spriteComponent = entity.getComponent(SpriteComponent.class);
+            TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
+            if (transformComponent != null && spriteComponent != null) {
+                out.put(spriteComponent, transformComponent);
+            }
+        }
+        return out;
+    }
+
     static class TransformSort implements Comparator<TransformComponent> {
         public int compare(TransformComponent a, TransformComponent b) {
             int weightA = 0;
@@ -272,6 +286,42 @@ public class OpenGLPolygonMeshGenerator {
             } else if (a.position.x < b.position.x) weightB += 500;
             return weightB - weightA;
         }
+    }
+
+    public Map<SpriteComponent, List<Integer>> extractIndexes(Map<SpriteComponent, TransformComponent> map, int width, float tileSizeX, float tileSizeY) {
+
+        Map<SpriteComponent, List<Integer>> spriteMesh =  new HashMap<>();
+
+        for (Map.Entry<SpriteComponent, TransformComponent> entry : map.entrySet()) {
+
+            SpriteComponent spriteComponent = entry.getKey();
+            TransformComponent transformComponent = entry.getValue();
+
+            // Transforming screen pixel coordinate to tile coordinate
+            int startX = (int) transformComponent.position.x / (int) tileSizeX;
+            int startY = (int) transformComponent.position.y / (int) tileSizeY;
+
+            int y = 0;
+            while (y < spriteComponent.getHeight() / (int) tileSizeY) {
+                int x = 0;
+                while (x < spriteComponent.getWidth() / (int) tileSizeX) {
+                    // Transforming from tile coordinate to 1d array coordinate
+                    // (y - 1) * w + x
+                    int indexInMeshArray = (((startX + (x * (int) tileSizeX)) - 1) * width + (startY + (y * (int) tileSizeY)));
+                    List<Integer> indexList = spriteMesh.get(spriteComponent);
+                    if (indexList == null) {
+                        spriteMesh.put(spriteComponent, new ArrayList<>());
+                        indexList = spriteMesh.get(spriteComponent);
+                    }
+                    indexList.add(indexInMeshArray);
+                    x++;
+                }
+                y++;
+            }
+
+        }
+
+        return spriteMesh;
     }
 
 }
