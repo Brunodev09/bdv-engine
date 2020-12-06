@@ -1,5 +1,8 @@
 package com.bdv.renders.opengl.helpers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class RectangularTextureCoordinates<T extends Number> {
     public T x;
     public T y;
@@ -9,6 +12,8 @@ public class RectangularTextureCoordinates<T extends Number> {
     public T y3;
     public T x4;
     public T y4;
+
+    public Map<Integer, T> counterClockWiseGetter = new HashMap<>();
 
     // Textures coordinates will be stored from top-left (x, y, w, h) clock-wise order
     // That derives to p1 = (x, y), p2 = (x + w, y), p3 = (x + w, y + h) and p4 = (x, y + h)
@@ -40,5 +45,37 @@ public class RectangularTextureCoordinates<T extends Number> {
         this.y3 = y3;
         this.x4 = x4;
         this.y4 = y4;
+    }
+
+    public T queryOrderedPoint(int order) {
+        if (order < 1 || order > 8) return null;
+        T value = null;
+        switch (order) {
+            case 1:
+                value = x2;
+                break;
+            case 2:
+                value = y2;
+                break;
+            case 3:
+                value = x;
+                break;
+            case 4:
+                value = y;
+                break;
+            case 5:
+                value = x4;
+                break;
+            case 6:
+                value = y4;
+                break;
+            case 7:
+                value = x3;
+                break;
+            case 8:
+                value = y3;
+                break;
+        }
+        return value;
     }
 }
