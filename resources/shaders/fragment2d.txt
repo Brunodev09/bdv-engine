@@ -1,0 +1,78 @@
+#version 400 core
+
+in vec2 passTextureCoordinates;
+in vec4 vertexPosition;
+in vec3 colorPointerVertex;
+
+layout(location = 0) out vec4 out_Color;
+
+uniform sampler2D textureSampler;
+uniform vec3 colorOffset;
+
+uniform float tick;
+
+uniform bool toggleAmbientLight;
+uniform vec3 ambientLight;
+
+uniform bool toggleGlow;
+uniform vec3 glowColor;
+
+uniform bool debugShader;
+
+
+vec4 applyAmbientLighting(vec4 uv, vec4 pixelColor) {
+    vec4 outputFragment;
+    vec2 lightPos = vec2(0.4, 0.3);
+    vec3 lightCol = vec3(1, 1, 1);
+    float lightIntensity = 0.8;
+
+    float distance = distance(lightPos, uv.xy);
+    float diffuse = 0.0;
+
+    if (distance <= lightIntensity) diffuse =  1.0 - abs(distance / lightIntensity);
+    if (diffuse <= 0.3) diffuse = 0.3;
+
+    outputFragment = vec4(colorOffset, 1.0) * vec4(min(pixelColor.rgb * ((lightCol * diffuse) + ambientLight), pixelColor.rgb), 1.0);
+
+    return outputFragment;
+}
+
+float applyGlow(vec4 uv, vec2 p, float r, float blur) {
+//    uv -= vec4(1, 0.5, 0, 0);
+    float d = length(uv.xy - p);
+    return smoothstep(r, r-blur, d);
+}
+
+vec3 shaderPlay(vec4 uv) {
+    vec3 originalMask = vec3(applyGlow(uv, vec2(-0.5 * sin(tick), 0.5 * cos(tick)), 0.3, 0.5));
+    vec3 mask2 = vec3(applyGlow(uv, vec2(-0.2 * sin(tick), -0.6 * cos(tick)), 0.3, 0.4));
+    vec3 mask3 = vec3(applyGlow(uv, vec2(-0.2 * -0.5*cos(tick), -0.0 * sin(tick * 2.0)), 0.3, 0.4));
+    vec3 mask4 = vec3(applyGlow(uv, vec2(-0.2 * sin(tick), -0.5 * sin(tick * 2.0)), 0.5 * cos(tick), 0.4));
+
+    vec3 colorBlend = vec3(0.0, 0.0, 1.0) * originalMask;
+    colorBlend += vec3(1.0, 0.0, -1.0) * mask2;
+    colorBlend += vec3(0.0, 1.0, 0.0) * mask3;
+    colorBlend += vec3(1.0, 1.0, 0.0) * mask4;
+
+    return colorBlend;
+}
+
+void main(void) {
+
+    vec4 newColorPointerVertex = vec4(1.0, 1.0, 1.0, 1.0);
+
+    if (debugShader) {
+        out_Color = vec4(shaderPlay(vertexPosition), 1.0);
+        return;
+    }
+
+    vec4 pixelColor = texture(textureSampler, passTextureCoordinates);
+        vec4 outputColor;
+
+        if (pixelColor.a < 1.0) discard;
+
+        outputColor = pixelColor;
+
+        out_Color = outputColor;
+}
+
