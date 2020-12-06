@@ -26,7 +26,7 @@ public class GL_SHADER_PLAY extends BdvScriptGL {
         this.entities = new ArrayList<>();
         this.resolution = new Dimension(1024, 768);
         this.background = new RGBAf(0, 0, 0, 255);
-        this.debugShader = false;
+        this.debugShader = true;
         this.init(this.entities, this.resolution, this.background);
     }
 
@@ -34,6 +34,7 @@ public class GL_SHADER_PLAY extends BdvScriptGL {
     public void init(List<EntityAPI> entities, Dimension resolution, RGBAf background) {
         // 0, 0 -> (w/2, h/2)
         EntityAPI entity = new EntityAPI(SPRITESHEET_FILE_PATH, new Vector3f(-resolution.width / 2, -resolution.height / 2, 0), this.resolution, new Vector2f(0,0));
+        entity.setShouldRender(true);
         this.entities.add(entity);
     }
 

@@ -28,7 +28,7 @@ public class GL_TEST_GRID extends BdvScriptGL {
     public GL_TEST_GRID() {
         this.camera2d = new Camera2D();
         this.entities = new ArrayList<>();
-        this.resolution = new Dimension(1024, 768);
+        this.resolution = new Dimension(800, 600);
         this.background = new RGBAf(0, 0, 0, 255);
         this.logFps = true;
         this.init(this.entities, this.resolution, this.background);

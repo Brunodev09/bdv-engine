@@ -83,7 +83,6 @@ public class MatrixUtils {
 
         float zNear = 0.01f;
         float zFar = 100f;
-
         ortho.m00 = 2 / (float) RenderManager.getWindowWidth();
         ortho.m11 = 2 / -(float) RenderManager.getWindowHeight();
         ortho.m22 = -2 / (zFar - zNear);

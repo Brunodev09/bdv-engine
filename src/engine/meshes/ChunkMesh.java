@@ -97,7 +97,6 @@ public class ChunkMesh {
             }
         }
 
-
         int it = 0;
         for (int i = 0; i < indexes.length - 5; i += 6) {
             indexes[i] = it;

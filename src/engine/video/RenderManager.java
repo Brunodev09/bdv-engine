@@ -157,7 +157,9 @@ public class RenderManager {
     public static void processEntity(Entity entity) {
         TexturedModel model = entity.getModel();
         List<Entity> listOfEntities = _entities.get(model);
-        if (listOfEntities != null) listOfEntities.add(entity);
+        if (listOfEntities != null) {
+            listOfEntities.add(entity);
+        }
         else {
             List<Entity> newList = new ArrayList<>();
             newList.add(entity);
