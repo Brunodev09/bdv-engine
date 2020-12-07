@@ -162,29 +162,30 @@ public class OpenGLPolygonMeshGenerator {
             }
         }
 
-        if (filledIndexes.size() < textureCoordinates.length) {
-
-            RectangularTextureCoordinates<Integer> subImagePosition = OpenGLTextureProcessor.getDefaultTexture();
-            List<RectangularTextureCoordinates<Float>> defPositions = getSubImagesInImage(new Dimension(256, 256), subImagePosition);
-
-            for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
-                int it1 = 0;
-                int it2 = 0;
-                while (it1 < 8) {
-                    if (filledIndexes.get(i + it1) == null) {
-                        it2++;
-                    }
-                    it1++;
-                }
-                if (it2 == 8) {
-                    it1 = 1;
-                    while (it1 < 8) {
-                        textureCoordinates[i + it1] = defPositions.get(0).queryOrderedPoint(it1);
-                        it1++;
-                    }
-                }
-            }
-        }
+//        if (filledIndexes.size() < textureCoordinates.length) {
+//
+//            RectangularTextureCoordinates<Integer> subImagePosition = OpenGLTextureProcessor.getDefaultTexture();
+//            List<RectangularTextureCoordinates<Float>> defPositions = getSubImagesInImage(new Dimension(256, 256), subImagePosition);
+//
+//            for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
+//                int it1 = 0;
+//                int it2 = 0;
+//                while (it1 < 8) {
+//                    if (filledIndexes.get(i + it1) == null) {
+//                        it2++;
+//                    }
+//                    it1++;
+//                }
+//                if (it2 == 8) {
+//                    it1 = 1;
+//                    while (it1 < 8) {
+//                        // Since the default images rectangles have all the same texture we can get any of them
+//                        textureCoordinates[i + it1] = defPositions.get(0).queryOrderedPoint(it1);
+//                        it1++;
+//                    }
+//                }
+//            }
+//        }
 
 //        int textureRunner = 0;
 //        float wFactor = 0;
@@ -350,12 +351,15 @@ public class OpenGLPolygonMeshGenerator {
             }
 
             int y = 0;
+            int it = 0;
             while (y < spriteComponent.getHeight() / (int) tileSizeY) {
                 int x = 0;
                 while (x < spriteComponent.getWidth() / (int) tileSizeX) {
                     // Transforming from tile coordinate to 1d array coordinate
                     // (y - 1) * w + x
-                    int indexInMeshArray = (((startX + (x * (int) tileSizeX)) - 1) * width + (startY + (y * (int) tileSizeY)));
+                    int auxY = y == 0 ? startY : startY + y;
+                    int auxX = x == 0 ? startX : startX + x;
+                    int indexInMeshArray = 8 * (auxY * width + auxX);
 
                     Map<Integer, Float> indexedMap = new HashMap<>();
                     indexStruct.add(indexedMap);
@@ -363,10 +367,11 @@ public class OpenGLPolygonMeshGenerator {
                     int innerIndex = 1;
 
                     while (innerIndex <= 8) {
-                        indexedMap.put(indexInMeshArray + innerIndex, subRectanglesInSubImage.get(x + y + innerIndex).queryOrderedPoint(innerIndex));
+                        indexedMap.put(indexInMeshArray + innerIndex, subRectanglesInSubImage.get(it).queryOrderedPoint(innerIndex));
                         innerIndex++;
                     }
                     x++;
+                    it++;
                 }
                 y++;
             }
@@ -380,8 +385,8 @@ public class OpenGLPolygonMeshGenerator {
         float wFactor = dimension.getWidth() / (float) this.tx;
         float hFactor = dimension.getHeight() / (float) this.ty;
 
-        float x0 = subImagePositionInSheet.x;
-        float y0 = subImagePositionInSheet.y;
+        float x0 = subImagePositionInSheet.x / wFactor;
+        float y0 = subImagePositionInSheet.y / hFactor;
 
         float x1 = subImagePositionInSheet.x2 / wFactor;
         float y1 = subImagePositionInSheet.y2 / hFactor;
