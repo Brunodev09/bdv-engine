@@ -364,15 +364,15 @@ public class OpenGLPolygonMeshGenerator {
                     // y * w + x
                     int auxY = y == 0 ? startY : startY + y;
                     int auxX = x == 0 ? startX : startX + x;
-                    int indexInMeshArray = (8 * auxY) * width + (8 * auxX);
+                    int indexInMeshArray = 8 * ((auxY * (width + 1)) + auxX);
 
                     Map<Integer, Float> indexedMap = new HashMap<>();
                     indexStruct.add(indexedMap);
 
-                    int innerIndex = 1;
+                    int innerIndex = 0;
 
-                    while (innerIndex <= 8) {
-                        indexedMap.put(indexInMeshArray + innerIndex, subRectanglesInSubImage.get(iterator).queryOrderedPoint(innerIndex));
+                    while (innerIndex <= 7) {
+                        indexedMap.put(indexInMeshArray + innerIndex, subRectanglesInSubImage.get(iterator).queryOrderedPoint(innerIndex + 1));
                         innerIndex++;
                     }
                     x++;

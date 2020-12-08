@@ -38,13 +38,24 @@ public class TestGL extends BdvScript {
         TextureComponent textureComponent = base.getComponent(TextureComponent.class);
         base.addComponent(SpriteComponent.class, textureComponent);
         base.addComponent(TransformComponent.class,
-                new Vector3f(0,0, 0),
+                new Vector3f(400, 0, 0),
+                new Vector3f(0, 0, 0),
+                new Vector3f(1, 1, 1),
+                new Dimension(100, 100));
+
+        Entity base2 = manager.createEntity();
+        base2.addComponent(TextureComponent.class, "test2", "images/grey.png");
+        TextureComponent textureComponent1 = base2.getComponent(TextureComponent.class);
+        base2.addComponent(SpriteComponent.class, textureComponent1);
+        base2.addComponent(TransformComponent.class,
+                new Vector3f(500, 300, 0),
                 new Vector3f(0, 0, 0),
                 new Vector3f(1, 1, 1),
                 new Dimension(100, 100));
 
         MeshRendererSystem renderer = (MeshRendererSystem) manager.getSystem(MeshRendererSystem.class);
         renderer.addEntity(base);
+        renderer.addEntity(base2);
     }
 
     @Override
