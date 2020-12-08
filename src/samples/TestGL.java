@@ -38,7 +38,7 @@ public class TestGL extends BdvScript {
         TextureComponent textureComponent = base.getComponent(TextureComponent.class);
         base.addComponent(SpriteComponent.class, textureComponent);
         base.addComponent(TransformComponent.class,
-                new Vector3f(500,200, 0),
+                new Vector3f(0,0, 0),
                 new Vector3f(0, 0, 0),
                 new Vector3f(1, 1, 1),
                 new Dimension(100, 100));

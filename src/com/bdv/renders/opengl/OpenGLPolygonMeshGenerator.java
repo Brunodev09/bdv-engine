@@ -10,9 +10,9 @@ import java.util.*;
 import java.util.List;
 
 public class OpenGLPolygonMeshGenerator {
-    public final float[] mesh;
-    public final int[] indexes;
-    public final float[] textureCoordinates;
+    public float[] mesh;
+    public int[] indexes;
+    public float[] textureCoordinates;
     public float[] colorPointer;
 
     private static final int numberOfCoordinatesPerPoint = 3;
@@ -23,6 +23,8 @@ public class OpenGLPolygonMeshGenerator {
     private final int height;
     private final int tx;
     private final int ty;
+    private final int numberOfTextureDimensions = 2;
+    private int numberOfTiles;
 
     public OpenGLPolygonMeshGenerator(int width, int height) {
         this.width = width;
@@ -54,6 +56,7 @@ public class OpenGLPolygonMeshGenerator {
         };
 
         colorPointer = new float[numberOfCoordinatesPerPoint * numberOfPointsPerSquare];
+        numberOfTiles = 1;
     }
 
     public OpenGLPolygonMeshGenerator(List<Entity> entityList,
@@ -63,7 +66,8 @@ public class OpenGLPolygonMeshGenerator {
                                       float tileSizeX,
                                       float tileSizeY) {
         // Self explanatory
-        int numberOfTiles = (width / (int) tileSizeX) * (height / (int) tileSizeY);
+        float unroundedNumberOfTiles = (width / tileSizeX) * (height / tileSizeY);
+        numberOfTiles = (int) unroundedNumberOfTiles;
 
         this.width = width;
         this.height = height;
@@ -77,7 +81,7 @@ public class OpenGLPolygonMeshGenerator {
         // To index 2 triangles we need 6 points (5 actually, since one is reused)
         indexes = new int[numberOfTiles * 6];
 
-        textureCoordinates = new float[numberOfTiles * 8];
+        textureCoordinates = new float[numberOfTiles * numberOfPointsPerSquare * numberOfTextureDimensions];
         colorPointer = new float[numberOfTiles * 3 * numberOfPointsPerSquare];
 
         float startX = 0;
@@ -103,6 +107,13 @@ public class OpenGLPolygonMeshGenerator {
             } else {
                 startX += tileSizeX;
                 tilesInRow++;
+            }
+            if (i == mesh.length - 12 && tilesInRow > 0 && tilesInRow < tilesPerRow) {
+                numberOfTiles = numberOfTiles + (tilesPerRow - tilesInRow + 1);
+                mesh = Arrays.copyOf(mesh, mesh.length + (tilesPerRow - tilesInRow + 1) * numberOfCoordinatesPerPoint * numberOfPointsPerSquare);
+                indexes = new int[numberOfTiles * 6];
+                textureCoordinates = new float[numberOfTiles * numberOfPointsPerSquare * numberOfTextureDimensions];
+                colorPointer = new float[numberOfTiles * 3 * numberOfPointsPerSquare];
             }
         }
 
@@ -148,8 +159,8 @@ public class OpenGLPolygonMeshGenerator {
 
         // Assembling the textures into the mesh
         // Coordinates (x,y) from the texture for each point of the rectangle, that makes 8 coordinates (4 points) of texture coordinates for each square tile
+//        SpriteComponent[] spriteComponents = extractSprites(entityList);
         Map<Integer, Boolean> filledIndexes = new HashMap<>();
-        SpriteComponent[] spriteComponents = extractSprites(entityList);
         Map<SpriteComponent, List<Map<Integer, Float>>> spriteMeshes = extractIndexes(getSpriteToTransform(entityList), (width / (int) tileSizeX), tileSizeX, tileSizeY);
 
         for (Map.Entry<SpriteComponent, List<Map<Integer, Float>>> entry : spriteMeshes.entrySet()) {
@@ -359,7 +370,7 @@ public class OpenGLPolygonMeshGenerator {
                     // y * w + x
                     int auxY = y == 0 ? startY : startY + y;
                     int auxX = x == 0 ? startX : startX + x;
-                    int indexInMeshArray = 8 * (auxY * width + auxX);
+                    int indexInMeshArray = (8 * auxY) * width + (8 * auxX);
 
                     Map<Integer, Float> indexedMap = new HashMap<>();
                     indexStruct.add(indexedMap);
@@ -397,10 +408,9 @@ public class OpenGLPolygonMeshGenerator {
         float x3 = subImagePositionInSheet.x4 / wFactor;
         float y3 = subImagePositionInSheet.y4 / hFactor;
 
-        int offsetX = 0;
         int offsetY = 0;
-
         while (offsetY < wFactor) {
+            int offsetX = 0;
             while (offsetX < hFactor) {
                 result.add(new RectangularTextureCoordinates<>(
                         x0 + (offsetX * this.tx),
@@ -414,7 +424,6 @@ public class OpenGLPolygonMeshGenerator {
 
                 offsetX++;
             }
-            offsetX = 0;
             offsetY++;
             y0 += (offsetY * this.ty);
             y1 += (offsetY * this.ty);
