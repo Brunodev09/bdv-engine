@@ -356,7 +356,7 @@ public class OpenGLPolygonMeshGenerator {
                 int x = 0;
                 while (x < spriteComponent.getWidth() / (int) tileSizeX) {
                     // Transforming from tile coordinate to 1d array coordinate
-                    // (y - 1) * w + x
+                    // y * w + x
                     int auxY = y == 0 ? startY : startY + y;
                     int auxX = x == 0 ? startX : startX + x;
                     int indexInMeshArray = 8 * (auxY * width + auxX);
