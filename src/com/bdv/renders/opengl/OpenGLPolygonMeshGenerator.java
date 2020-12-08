@@ -161,6 +161,7 @@ public class OpenGLPolygonMeshGenerator {
         // Coordinates (x,y) from the texture for each point of the rectangle, that makes 8 coordinates (4 points) of texture coordinates for each square tile
 //        SpriteComponent[] spriteComponents = extractSprites(entityList);
         Map<Integer, Boolean> filledIndexes = new HashMap<>();
+        List<Integer> unfilledIndexes = new ArrayList<>();
         Map<SpriteComponent, List<Map<Integer, Float>>> spriteMeshes = extractIndexes(getSpriteToTransform(entityList), (width / (int) tileSizeX), tileSizeX, tileSizeY);
 
         for (Map.Entry<SpriteComponent, List<Map<Integer, Float>>> entry : spriteMeshes.entrySet()) {
@@ -173,31 +174,24 @@ public class OpenGLPolygonMeshGenerator {
             }
         }
 
-//        if (filledIndexes.size() < textureCoordinates.length) {
-//
-//            RectangularTextureCoordinates<Integer> subImagePosition = OpenGLTextureProcessor.getDefaultTexture();
-//            List<RectangularTextureCoordinates<Float>> defPositions = getSubImagesInImage(new Dimension(256, 256), subImagePosition);
-//
-//            for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
-//                int it1 = 0;
-//                int it2 = 0;
-//                while (it1 < 8) {
-//                    if (filledIndexes.get(i + it1) == null) {
-//                        it2++;
-//                    }
-//                    it1++;
-//                }
-//                if (it2 == 8) {
-//                    it1 = 1;
-//                    while (it1 < 8) {
-//                        // Since the default images rectangles have all the same texture we can get any of them
-//                        textureCoordinates[i + it1] = defPositions.get(0).queryOrderedPoint(it1);
-//                        it1++;
-//                    }
-//                }
-//            }
-//        }
+        if (filledIndexes.size() < textureCoordinates.length) {
 
+            RectangularTextureCoordinates<Integer> subImagePosition = OpenGLTextureProcessor.getDefaultTexture();
+            List<RectangularTextureCoordinates<Float>> defPositions = getSubImagesInImage(new Dimension(256, 256), subImagePosition);
+
+            for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
+                int it1 = 1;
+                while (it1 < 7) {
+                    if (!filledIndexes.containsKey(i + it1)) {
+                        unfilledIndexes.add(i + it1);
+                    }
+                    it1++;
+                }
+            }
+            for (Integer index : unfilledIndexes) {
+                textureCoordinates[index] = (float) (2000 - 256) / 2000;
+            }
+        }
 //        int textureRunner = 0;
 //        float wFactor = 0;
 //        float hFactor = 0;
@@ -362,7 +356,7 @@ public class OpenGLPolygonMeshGenerator {
             }
 
             int y = 0;
-            int it = 0;
+            int iterator = 0;
             while (y < spriteComponent.getHeight() / (int) tileSizeY) {
                 int x = 0;
                 while (x < spriteComponent.getWidth() / (int) tileSizeX) {
@@ -378,11 +372,11 @@ public class OpenGLPolygonMeshGenerator {
                     int innerIndex = 1;
 
                     while (innerIndex <= 8) {
-                        indexedMap.put(indexInMeshArray + innerIndex, subRectanglesInSubImage.get(it).queryOrderedPoint(innerIndex));
+                        indexedMap.put(indexInMeshArray + innerIndex, subRectanglesInSubImage.get(iterator).queryOrderedPoint(innerIndex));
                         innerIndex++;
                     }
                     x++;
-                    it++;
+                    iterator++;
                 }
                 y++;
             }
@@ -396,39 +390,47 @@ public class OpenGLPolygonMeshGenerator {
         float wFactor = dimension.getWidth() / (float) this.tx;
         float hFactor = dimension.getHeight() / (float) this.ty;
 
-        float x0 = subImagePositionInSheet.x / wFactor;
-        float y0 = subImagePositionInSheet.y / hFactor;
+        float sx0 = subImagePositionInSheet.x / wFactor;
+        float sy0 = subImagePositionInSheet.y / hFactor;
 
-        float x1 = subImagePositionInSheet.x2 / wFactor;
-        float y1 = subImagePositionInSheet.y2 / hFactor;
+        float sx1 = subImagePositionInSheet.x2 / wFactor;
+        float sy1 = subImagePositionInSheet.y2 / hFactor;
 
-        float x2 = subImagePositionInSheet.x3 / wFactor;
-        float y2 = subImagePositionInSheet.y3 / hFactor;
+        float sx2 = subImagePositionInSheet.x3 / wFactor;
+        float sy2 = subImagePositionInSheet.y3 / hFactor;
 
-        float x3 = subImagePositionInSheet.x4 / wFactor;
-        float y3 = subImagePositionInSheet.y4 / hFactor;
+        float sx3 = subImagePositionInSheet.x4 / wFactor;
+        float sy3 = subImagePositionInSheet.y4 / hFactor;
+
+        float x0 = sx0, y0 = sy0, x1 = sx1, y1 = sy1, x2 = sx2, y2 = sy2, x3 = sx3, y3 = sy3;
 
         int offsetY = 0;
         while (offsetY < wFactor) {
             int offsetX = 0;
             while (offsetX < hFactor) {
                 result.add(new RectangularTextureCoordinates<>(
-                        x0 + (offsetX * this.tx),
-                        y0,
-                        x1 + (offsetX * this.tx),
-                        y1,
-                        x2 + (offsetX * this.tx),
-                        y2,
-                        x3 + (offsetX * this.tx),
-                        y3));
+                        x0 / OpenGLTextureProcessor.getMasterCanvas().getWidth(),
+                        y0 / OpenGLTextureProcessor.getMasterCanvas().getHeight(),
+                        x1 / OpenGLTextureProcessor.getMasterCanvas().getWidth(),
+                        y1 / OpenGLTextureProcessor.getMasterCanvas().getHeight(),
+                        x2 / OpenGLTextureProcessor.getMasterCanvas().getWidth(),
+                        y2 / OpenGLTextureProcessor.getMasterCanvas().getHeight(),
+                        x3 / OpenGLTextureProcessor.getMasterCanvas().getWidth(),
+                        y3 / OpenGLTextureProcessor.getMasterCanvas().getHeight()));
+
+                x0 = sx0 + (offsetX * this.tx);
+                x1 = sx1 + (offsetX * this.tx);
+                x2 = sx2 + (offsetX * this.tx);
+                x3 = sx3 + (offsetX * this.tx);
 
                 offsetX++;
             }
+            y0 = sy0 + (offsetY * this.ty);
+            y1 = sy1 + (offsetY * this.ty);
+            y2 = sy2 + (offsetY * this.ty);
+            y3 = sy3 + (offsetY * this.ty);
+
             offsetY++;
-            y0 += (offsetY * this.ty);
-            y1 += (offsetY * this.ty);
-            y2 += (offsetY * this.ty);
-            y3 += (offsetY * this.ty);
         }
 
         return result;
