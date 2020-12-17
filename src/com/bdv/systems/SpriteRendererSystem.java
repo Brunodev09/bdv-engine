@@ -7,6 +7,7 @@ import com.bdv.components.TextureComponent;
 import com.bdv.components.TransformComponent;
 import com.bdv.exceptions.OpenGLTextureProcessorException;
 import com.bdv.renders.opengl.OpenGLTextureProcessor;
+import com.bdv.renders.opengl.helpers.RectangularTextureCoordinates;
 import org.lwjgl.util.vector.Vector3f;
 
 import java.awt.*;
@@ -61,6 +62,9 @@ public class SpriteRendererSystem extends System {
         Graphics display = buffer.getDrawGraphics();
         display.setColor(new Color(background));
         display.fillRect(0, 0, width, height);
+
+        RectangularTextureCoordinates t = OpenGLTextureProcessor.texturesById.get("grey");
+        BufferedImage subImage = OpenGLTextureProcessor.getMasterCanvas().getSubimage((int)t.x, (int)t.y, 256, 256);
 
         try {
             display.drawImage(OpenGLTextureProcessor.getMasterCanvas(),

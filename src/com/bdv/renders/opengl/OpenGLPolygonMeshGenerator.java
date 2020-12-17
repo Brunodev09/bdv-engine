@@ -176,8 +176,8 @@ public class OpenGLPolygonMeshGenerator {
 
         if (filledIndexes.size() < textureCoordinates.length) {
 
-            RectangularTextureCoordinates<Integer> subImagePosition = OpenGLTextureProcessor.getDefaultTexture();
-            List<RectangularTextureCoordinates<Float>> defPositions = getSubImagesInImage(new Dimension(256, 256), subImagePosition);
+//            RectangularTextureCoordinates<Integer> subImagePosition = OpenGLTextureProcessor.getDefaultTexture();
+//            List<RectangularTextureCoordinates<Float>> defPositions = getSubImagesInImage(new Dimension(256, 256), subImagePosition);
 
             for (int i = 0; i < textureCoordinates.length - 7; i += 8) {
                 int it1 = 1;
@@ -313,17 +313,17 @@ public class OpenGLPolygonMeshGenerator {
         float wFactor = dimension.getWidth() / (float) this.tx;
         float hFactor = dimension.getHeight() / (float) this.ty;
 
-        float sx0 = subImagePositionInSheet.x / wFactor;
-        float sy0 = subImagePositionInSheet.y / hFactor;
+        float sx0 = subImagePositionInSheet.x;
+        float sy0 = subImagePositionInSheet.y;
 
-        float sx1 = subImagePositionInSheet.x2 / wFactor;
-        float sy1 = subImagePositionInSheet.y2 / hFactor;
+        float sx1 = sx0 + (subImagePositionInSheet.x2 / wFactor);
+        float sy1 = sy0 + (subImagePositionInSheet.y2 / hFactor);
 
-        float sx2 = subImagePositionInSheet.x3 / wFactor;
-        float sy2 = subImagePositionInSheet.y3 / hFactor;
+        float sx2 = sx0 + (subImagePositionInSheet.x3 / wFactor);
+        float sy2 = sy0 + (subImagePositionInSheet.y3 / hFactor);
 
-        float sx3 = subImagePositionInSheet.x4 / wFactor;
-        float sy3 = subImagePositionInSheet.y4 / hFactor;
+        float sx3 = sx0 + (subImagePositionInSheet.x4 / wFactor);
+        float sy3 = sy0 + (subImagePositionInSheet.y4 / hFactor);
 
         float x0 = sx0, y0 = sy0, x1 = sx1, y1 = sy1, x2 = sx2, y2 = sy2, x3 = sx3, y3 = sy3;
 
