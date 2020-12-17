@@ -41,7 +41,7 @@ public class TestGL3D extends BdvScript {
         TextureComponent.bindAssetsStore(assetPool);
 
         base.addComponent(ObjComponent.class, "obj/test");
-        base.addComponent(TextureComponent.class, "full_spritesheet", "images/green.png");
+        base.addComponent(TextureComponent.class, "full_spritesheet", "images/grey.png");
         TextureComponent textureComponent = base.getComponent(TextureComponent.class);
         base.addComponent(SpriteComponent.class, textureComponent);
         base.addComponent(TransformComponent.class,
@@ -67,7 +67,7 @@ public class TestGL3D extends BdvScript {
         for (Entity entity : entityList) {
             TransformComponent transformComponent = entity.getComponent(TransformComponent.class);
             if (transformComponent != null)
-                transformComponent.rotation = new Vector3f(0, transformComponent.rotation.y + 0.5f, transformComponent.rotation.z + 0.5f);
+                transformComponent.rotation = new Vector3f(0, transformComponent.rotation.y + 0.5f, transformComponent.rotation.z);
         }
     }
 }

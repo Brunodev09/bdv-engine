@@ -24,7 +24,7 @@ public class OpenGLTextureProcessor {
 
     public static void init(int width, int height) throws OpenGLTextureProcessorException {
         if (masterCanvas != null) {
-            throw new OpenGLTextureProcessorException("The master canvas can only be initialized once.");
+            throw new OpenGLTextureProcessorException("The master canvas is meant to be used as a singleton.");
         }
         OpenGLTextureProcessor.width = width;
         OpenGLTextureProcessor.height = height;

@@ -44,11 +44,11 @@ public class TestGL extends BdvScript {
                 new Dimension(100, 100));
 
         Entity base2 = manager.createEntity();
-        base2.addComponent(TextureComponent.class, "test2", "images/grey.png");
+        base2.addComponent(TextureComponent.class, "second", "images/grey.png");
         TextureComponent textureComponent1 = base2.getComponent(TextureComponent.class);
         base2.addComponent(SpriteComponent.class, textureComponent1);
         base2.addComponent(TransformComponent.class,
-                new Vector3f(500, 300, 0),
+                new Vector3f(0, 0, 0),
                 new Vector3f(0, 0, 0),
                 new Vector3f(1, 1, 1),
                 new Dimension(100, 100));
