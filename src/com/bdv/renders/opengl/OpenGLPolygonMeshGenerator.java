@@ -316,14 +316,14 @@ public class OpenGLPolygonMeshGenerator {
         float sx0 = subImagePositionInSheet.x;
         float sy0 = subImagePositionInSheet.y;
 
-        float sx1 = sx0 + (subImagePositionInSheet.x2 / wFactor);
-        float sy1 = sy0 + (subImagePositionInSheet.y2 / hFactor);
+        float sx1 = sx0 + this.tx;
+        float sy1 = sy0;
 
-        float sx2 = sx0 + (subImagePositionInSheet.x3 / wFactor);
-        float sy2 = sy0 + (subImagePositionInSheet.y3 / hFactor);
+        float sx2 = sx0 + this.tx;
+        float sy2 = sy1 + this.ty;
 
-        float sx3 = sx0 + (subImagePositionInSheet.x4 / wFactor);
-        float sy3 = sy0 + (subImagePositionInSheet.y4 / hFactor);
+        float sx3 = sx0;
+        float sy3 = sy0 + this.ty;
 
         float x0 = sx0, y0 = sy0, x1 = sx1, y1 = sy1, x2 = sx2, y2 = sy2, x3 = sx3, y3 = sy3;
 

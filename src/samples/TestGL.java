@@ -34,7 +34,7 @@ public class TestGL extends BdvScript {
         Entity base = manager.createEntity();
         TextureComponent.bindAssetsStore(assetPool);
 
-        base.addComponent(TextureComponent.class, "test", "images/greenTex.png");
+        base.addComponent(TextureComponent.class, "test", "images/grey.png");
         TextureComponent textureComponent = base.getComponent(TextureComponent.class);
         base.addComponent(SpriteComponent.class, textureComponent);
         base.addComponent(TransformComponent.class,
@@ -44,7 +44,7 @@ public class TestGL extends BdvScript {
                 new Dimension(100, 100));
 
         Entity base2 = manager.createEntity();
-        base2.addComponent(TextureComponent.class, "second", "images/grey.png");
+        base2.addComponent(TextureComponent.class, "second", "images/greenTex.png");
         TextureComponent textureComponent1 = base2.getComponent(TextureComponent.class);
         base2.addComponent(SpriteComponent.class, textureComponent1);
         base2.addComponent(TransformComponent.class,
