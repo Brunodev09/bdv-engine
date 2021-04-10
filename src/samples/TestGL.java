@@ -24,7 +24,11 @@ public class TestGL extends BdvScript {
     }
 
     @Override
-    public void init() throws NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException, InvalidInstance {
+    public void init() throws NoSuchMethodException,
+            InstantiationException,
+            IllegalAccessException,
+            InvocationTargetException,
+            InvalidInstance {
         rendererAPI = RendererAPI.OPENGL_RENDERER;
         projectDimensionNumber = ProjectDimensionNumber.twoDimensions;
         logFps = true;
